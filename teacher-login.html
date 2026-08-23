@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="hi" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Teacher Login - Home Tuition</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --navy-950:#0e1326; --navy-900:#161d3a; --navy-800:#232c56;
+    --cream:#fdf6e8; --cream-dim:#f4e8d0;
+    --amber:#ffb347; --amber-deep:#ff8c42; --amber-shadow:#d9691f; --coral:#ff6f61;
+    --text-onDark:#f3ecd9; --text-onDark-soft:#b7bcdc;
+    --text-onLight:#241f14; --text-onLight-soft:#7a715c;
+    --radius-lg:26px; --radius-md:16px;
+    --ease:cubic-bezier(.16,.84,.44,1);
+
+    --page-bg:radial-gradient(ellipse 90% 60% at 50% 0%, var(--navy-800) 0%, var(--navy-950) 65%);
+    --ink:var(--text-onDark); --ink-soft:var(--text-onDark-soft);
+    --card-bg:rgba(255,255,255,.045); --card-border:rgba(255,255,255,.12);
+    --input-bg:rgba(255,255,255,.05); --input-border:rgba(255,255,255,.14);
+    --star-op:.9;
+  }
+  html[data-theme="light"]{
+    --page-bg:radial-gradient(ellipse 90% 60% at 50% 0%, #fff2da 0%, var(--cream) 65%);
+    --ink:var(--text-onLight); --ink-soft:var(--text-onLight-soft);
+    --card-bg:#ffffff; --card-border:rgba(36,31,20,.08);
+    --input-bg:#fbf5e8; --input-border:rgba(36,31,20,.12);
+    --star-op:0;
+  }
+
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  body{
+    font-family:'Inter', sans-serif;
+    background:var(--page-bg);
+    color:var(--ink);
+    min-height:100svh;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    padding:60px 22px;
+    overflow-x:hidden;
+    transition:background .6s var(--ease), color .6s var(--ease);
+    position:relative;
+  }
+  h1,h2{ font-family:'Fraunces', serif; font-weight:600; }
+  a{ text-decoration:none; }
+
+  .star{ position:absolute; width:2px; height:2px; background:#d7dcf5; border-radius:50%;
+    opacity:var(--star-op); animation:twinkle 3.6s ease-in-out infinite; transition:opacity .5s var(--ease); }
+  @keyframes twinkle{ 0%,100%{opacity:calc(var(--star-op)*.15);} 50%{opacity:var(--star-op);} }
+
+  /* ---- lamp ---- */
+  .lamp-wrap{ position:relative; width:150px; perspective:600px;
+    animation:dropIn .8s var(--ease) both, lampBob 5.5s ease-in-out 1s infinite; margin-bottom:4px; }
+  @keyframes dropIn{ from{opacity:0; transform:translateY(-20px);} to{opacity:1; transform:translateY(0);} }
+  @keyframes lampBob{ 0%,100%{transform:translateY(0);} 50%{transform:translateY(-5px);} }
+  .lamp-svg{ transform-style:preserve-3d; transition:transform .2s ease-out;
+    filter:drop-shadow(0 16px 14px rgba(0,0,0,.4)); }
+  .lamp-glow{ animation:lampPulse 3.2s ease-in-out infinite; transform-origin:100px 95px; }
+  @keyframes lampPulse{ 0%,100%{opacity:.85; transform:scale(1);} 50%{opacity:1; transform:scale(1.06);} }
+  .pull-cord{ cursor:pointer; transform-box:fill-box; transform-origin:50% 0%; animation:cordSway 3.6s ease-in-out infinite; }
+  .pull-cord.pulled{ animation:pullTug .5s ease-out; }
+  .pull-cord:focus-visible{ outline:2px solid var(--amber); outline-offset:5px; border-radius:8px; }
+  @keyframes cordSway{ 0%,100%{transform:rotate(-4deg);} 50%{transform:rotate(4deg);} }
+  @keyframes pullTug{ 0%{transform:translateY(0) rotate(0);} 35%{transform:translateY(16px) rotate(2deg);} 65%{transform:translateY(-4px) rotate(-1deg);} 100%{transform:translateY(0) rotate(0);} }
+
+  .brand-title{ font-size:clamp(24px, 6vw, 30px); text-align:center; line-height:1.15; margin-top:6px; animation:fadeUp .7s .2s var(--ease) both; }
+  .brand-title span{ color:var(--amber); }
+  @keyframes fadeUp{ from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:translateY(0);} }
+
+  .subtitle-divider{ display:flex; align-items:center; gap:10px; margin:16px 0 26px; animation:fadeUp .7s .3s var(--ease) both; }
+  .subtitle-divider .line{ width:26px; height:1px; background:rgba(255,255,255,.25); }
+  .subtitle-divider .dot{ width:4px; height:4px; border-radius:50%; background:var(--amber); }
+  .subtitle-divider .subtitle-text{ font-size:12px; font-weight:600; letter-spacing:1.2px; text-transform:uppercase; color:var(--ink-soft); }
+
+  /* ---- glass 3D card ---- */
+  .login-card{
+    width:100%; max-width:380px;
+    background:var(--card-bg);
+    border:1px solid var(--card-border);
+    backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px);
+    border-radius:var(--radius-lg);
+    padding:34px 28px 30px;
+    box-shadow:0 30px 60px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.06);
+    text-align:center;
+    transition:transform .15s ease-out, background-color .6s var(--ease), border-color .6s var(--ease);
+    transform-style:preserve-3d; will-change:transform;
+    animation:cardIn .7s .35s var(--ease) both;
+  }
+  @keyframes cardIn{ from{opacity:0; transform:translateY(24px) scale(.97);} to{opacity:1; transform:translateY(0) scale(1);} }
+
+  .avatar-circle{
+    width:70px; height:70px; margin:0 auto 16px;
+    border-radius:50%;
+    background:linear-gradient(135deg, var(--amber) 0%, var(--coral) 100%);
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 10px 24px rgba(255,140,66,.35), inset 0 -4px 8px rgba(0,0,0,.15);
+    font-size:26px; color:#2a1608;
+  }
+  .welcome-title{ font-size:21px; color:var(--ink); margin-bottom:6px; }
+  .welcome-subtitle{ font-size:12.5px; color:var(--ink-soft); line-height:1.5; margin-bottom:24px; }
+
+  .field-label{ display:block; text-align:left; font-size:12px; font-weight:600; color:var(--ink-soft); margin-bottom:6px; }
+  .input-wrap{ position:relative; margin-bottom:16px; }
+  .input-wrap .input-icon{ position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--ink-soft); font-size:13px; }
+  .input-wrap input{
+    width:100%; padding:13px 14px 13px 38px;
+    background:var(--input-bg); border:1.5px solid var(--input-border);
+    border-radius:12px; color:var(--ink); font-size:14px; font-family:inherit;
+    box-shadow:inset 0 2px 4px rgba(0,0,0,.12);
+    transition:border-color .2s var(--ease), box-shadow .2s var(--ease), background-color .6s var(--ease);
+  }
+  .input-wrap input::placeholder{ color:var(--ink-soft); opacity:.7; }
+  .input-wrap input:focus{ outline:none; border-color:var(--amber); box-shadow:inset 0 2px 4px rgba(0,0,0,.12), 0 0 0 3px rgba(255,179,71,.18); }
+  .pw-toggle{ position:absolute; right:12px; top:50%; transform:translateY(-50%); background:none; border:none; color:var(--ink-soft); cursor:pointer; font-size:13px; padding:4px; }
+
+  .dob-hint{ font-size:11.5px; color:var(--ink-soft); text-align:left; margin:-6px 0 18px; line-height:1.5; }
+
+  .login-btn{
+    width:100%; display:flex; align-items:center; justify-content:center; gap:8px;
+    padding:14px; border:none; border-radius:999px; cursor:pointer;
+    background:linear-gradient(135deg, var(--amber) 0%, var(--coral) 100%);
+    color:#241608; font-weight:700; font-size:14.5px; font-family:inherit;
+    box-shadow:0 4px 0 var(--amber-shadow), 0 14px 28px rgba(255,140,66,.28);
+    transition:transform .15s var(--ease), box-shadow .15s var(--ease);
+  }
+  .login-btn:hover{ transform:translateY(-2px); box-shadow:0 6px 0 var(--amber-shadow), 0 18px 34px rgba(255,140,66,.36); }
+  .login-btn:active{ transform:translateY(2px); box-shadow:0 2px 0 var(--amber-shadow), 0 8px 16px rgba(255,140,66,.3); }
+
+  .secure-login{ display:flex; align-items:center; justify-content:center; gap:8px; margin-top:22px; font-size:11px; color:var(--ink-soft); letter-spacing:.3px; }
+  .secure-login .line{ width:30px; height:1px; background:var(--input-border); }
+
+  .back-link{ margin-top:20px; font-size:13px; color:var(--ink-soft); display:inline-flex; align-items:center; gap:6px; transition:color .2s var(--ease); animation:fadeUp .7s .5s var(--ease) both; }
+  .back-link:hover{ color:var(--amber); }
+
+  @media (prefers-reduced-motion: reduce){ *{ animation:none !important; transition:none !important; } }
+</style>
+</head>
+<body>
+
+<div class="star" style="top:10%; left:12%; animation-delay:.2s;"></div>
+<div class="star" style="top:16%; left:85%; animation-delay:1.1s;"></div>
+<div class="star" style="top:7%;  left:50%; animation-delay:.6s;"></div>
+<div class="star" style="top:26%; left:6%;  animation-delay:1.8s;"></div>
+<div class="star" style="top:20%; left:70%; animation-delay:2.3s;"></div>
+
+<div class="lamp-wrap" id="lampWrap">
+  <svg class="lamp-svg" viewBox="0 0 200 220" width="130" height="143" aria-hidden="true">
+    <defs>
+      <radialGradient id="glowGrad" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#fff0cf" stop-opacity="0.95"/>
+        <stop offset="55%" stop-color="#ffb347" stop-opacity="0.35"/>
+        <stop offset="100%" stop-color="#ffb347" stop-opacity="0"/>
+      </radialGradient>
+      <linearGradient id="shadeGrad" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="#eccb92"/><stop offset="55%" stop-color="#caa46a"/><stop offset="100%" stop-color="#96723f"/>
+      </linearGradient>
+      <linearGradient id="poleGrad" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="#4d3f28"/><stop offset="50%" stop-color="#3a2f1e"/><stop offset="100%" stop-color="#241d11"/>
+      </linearGradient>
+      <linearGradient id="baseGrad" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="#3c311e"/><stop offset="50%" stop-color="#2c2416"/><stop offset="100%" stop-color="#18130a"/>
+      </linearGradient>
+    </defs>
+    <ellipse class="lamp-glow" cx="100" cy="92" rx="62" ry="62" fill="url(#glowGrad)"/>
+    <rect x="70" y="200" width="60" height="12" rx="6" fill="url(#baseGrad)"/>
+    <rect x="96" y="108" width="8" height="96" rx="4" fill="url(#poleGrad)"/>
+    <path d="M76 50 L124 50 L146 108 L54 108 Z" fill="url(#shadeGrad)"/>
+    <path d="M76 50 L124 50 L118 60 L82 60 Z" fill="#f3dcae"/>
+    <circle cx="100" cy="82" r="7" fill="#fff3d6"/>
+    <g class="pull-cord" id="pullCord" tabindex="0" role="button" aria-label="Toggle light and dark mode">
+      <line x1="119" y1="68" x2="119" y2="132" stroke="#d8c9a3" stroke-width="2" stroke-linecap="round"/>
+      <circle cx="119" cy="138" r="6.5" fill="#e8c46a" stroke="#a9803a" stroke-width="1.4"/>
+    </g>
+  </svg>
+</div>
+
+<h1 class="brand-title">Home <span>Tuition</span></h1>
+
+<div class="subtitle-divider">
+  <span class="line"></span><span class="dot"></span>
+  <span class="subtitle-text">Teacher Login</span>
+  <span class="dot"></span><span class="line"></span>
+</div>
+
+<div class="login-card" id="loginCard">
+  <div class="avatar-circle"><i class="fa-solid fa-chalkboard-user"></i></div>
+  <h2 class="welcome-title">Welcome, Teacher!</h2>
+  <p class="welcome-subtitle">Apni class, attendance aur students dekhne ke liye login karein</p>
+
+  <form id="teacherLoginForm" novalidate>
+    <label class="field-label" for="teacherEmail">Email</label>
+    <div class="input-wrap">
+      <i class="fa-regular fa-envelope input-icon"></i>
+      <input type="email" id="teacherEmail" name="teacherEmail" placeholder="Apna email enter karein" autocomplete="username">
+    </div>
+
+    <label class="field-label" for="teacherPassword">Password</label>
+    <div class="input-wrap">
+      <i class="fa-solid fa-lock input-icon"></i>
+      <input type="password" id="teacherPassword" name="teacherPassword" placeholder="Apna password enter karein" autocomplete="current-password">
+      <button type="button" class="pw-toggle" id="pwToggle" aria-label="Show password"><i class="fa-regular fa-eye"></i></button>
+    </div>
+
+    <p class="dob-hint">Naye teachers ko unke email par ek password-setup link milta hai jab Admin unhe add karta hai.</p>
+
+    <button type="submit" class="login-btn"><i class="fa-solid fa-chalkboard-user"></i><span>Login</span></button>
+
+    <div class="secure-login"><span class="line"></span><i class="fa-solid fa-shield-halved"></i><span>Secure Login</span><span class="line"></span></div>
+  </form>
+</div>
+
+<a href="login.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Login Selection par jaayein</a>
+
+<script>
+  const html = document.documentElement;
+  const cord = document.getElementById('pullCord');
+  function toggleTheme(){
+    const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    if (!reduceMotion){ cord.classList.remove('pulled'); void cord.offsetWidth; cord.classList.add('pulled'); }
+  }
+  cord.addEventListener('click', toggleTheme);
+  cord.addEventListener('keydown', (e) => { if(e.key==='Enter'||e.key===' '){ e.preventDefault(); toggleTheme(); } });
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (!reduceMotion && window.matchMedia('(hover:hover)').matches){
+    const lampWrap = document.getElementById('lampWrap');
+    const lampSvg = lampWrap.querySelector('.lamp-svg');
+    const card = document.getElementById('loginCard');
+    window.addEventListener('pointermove', (e) => {
+      const r = lampWrap.getBoundingClientRect();
+      const dx = (e.clientX - (r.left+r.width/2)) / window.innerWidth;
+      const dy = (e.clientY - (r.top+r.height/2)) / window.innerHeight;
+      lampSvg.style.transform = `rotateY(${dx*20}deg) rotateX(${-dy*16}deg)`;
+    });
+    card.addEventListener('pointermove', (e) => {
+      const r = card.getBoundingClientRect();
+      const x = (e.clientX - r.left)/r.width - 0.5;
+      const y = (e.clientY - r.top)/r.height - 0.5;
+      card.style.transform = `perspective(900px) rotateY(${x*6}deg) rotateX(${-y*6}deg)`;
+    });
+    card.addEventListener('pointerleave', () => { card.style.transform = ''; });
+  }
+
+  const pwToggle = document.getElementById('pwToggle');
+  const pwInput = document.getElementById('teacherPassword');
+  pwToggle.addEventListener('click', () => {
+    const showing = pwInput.type === 'text';
+    pwInput.type = showing ? 'password' : 'text';
+    pwToggle.innerHTML = showing ? '<i class="fa-regular fa-eye"></i>' : '<i class="fa-regular fa-eye-slash"></i>';
+  });
+</script>
+
+<script type="module" src="teacher.js"></script>
+</body>
+</html>
