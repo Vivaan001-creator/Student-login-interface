@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Dashboard - Home Tuition</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --navy-950:#0e1326; --navy-900:#161d3a; --navy-800:#232c56;
+    --cream:#fdf6e8; --cream-dim:#f4e8d0; --paper:#f7f2e4;
+    --amber:#ffb347; --amber-deep:#ff8c42; --amber-shadow:#d9691f; --coral:#ff6f61;
+    --ink:#241f14; --ink-soft:#7a715c; --ink-faint:#a89d84;
+    --green:#2fb87f; --green-bg:#e4f7ee;
+    --red:#e5584a; --red-bg:#fdeceb;
+    --blue:#4a7fd6; --blue-bg:#e9f0fd;
+    --purple:#8a6fe8; --purple-bg:#f0ecfd;
+    --teal:#22b8a4; --teal-bg:#e3f8f5;
+    --pink:#e2649e; --pink-bg:#fceaf3;
+    --radius-lg:24px; --radius-md:16px; --radius-sm:12px;
+    --ease:cubic-bezier(.16,.84,.44,1);
+  }
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  body{ font-family:'Inter', sans-serif; background:var(--paper); color:var(--ink); }
+  h1,h2,h3,h4{ font-family:'Fraunces', serif; font-weight:600; }
+  a{ text-decoration:none; color:inherit; }
+  ::-webkit-scrollbar{ width:8px; height:8px; }
+  ::-webkit-scrollbar-thumb{ background:rgba(36,31,20,.15); border-radius:8px; }
+
+  .app{ display:flex; min-height:100vh; }
+
+  /* ============ SIDEBAR ============ */
+  .sidebar{
+    width:78px;
+    background:linear-gradient(180deg, var(--navy-900) 0%, var(--navy-950) 100%);
+    color:#f3ecd9; display:flex; flex-direction:column; padding:20px 0;
+    position:sticky; top:0; height:100vh; transition:width .3s var(--ease); z-index:40; overflow:hidden;
+  }
+  .sidebar.expanded{ width:230px; }
+  .menu-toggle{
+    background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); color:#f3ecd9;
+    width:36px; height:36px; border-radius:10px; cursor:pointer; font-size:14px;
+    margin:0 auto 22px; display:flex; align-items:center; justify-content:center; transition:background .2s var(--ease);
+  }
+  .menu-toggle:hover{ background:rgba(255,255,255,.12); }
+  .sidebar-brand{ display:flex; align-items:center; gap:12px; padding:0 20px; margin-bottom:30px; }
+  .brand-icon{ min-width:38px; height:38px; border-radius:11px; background:linear-gradient(135deg, var(--amber) 0%, var(--coral) 100%);
+    display:flex; align-items:center; justify-content:center; color:#241608; font-size:16px; box-shadow:0 6px 14px rgba(255,140,66,.3); }
+  .brand-text{ white-space:nowrap; opacity:0; transition:opacity .25s var(--ease) .1s; }
+  .sidebar.expanded .brand-text{ opacity:1; }
+  .brand-text h1{ font-size:16px; line-height:1; }
+  .brand-text h1 .accent{ color:var(--amber); }
+  .brand-text p{ font-size:10.5px; color:#b7bcdc; letter-spacing:.4px; text-transform:uppercase; margin-top:2px; }
+  .sidebar-nav{ display:flex; flex-direction:column; gap:4px; padding:0 14px; flex:1; }
+  .nav-link{ display:flex; align-items:center; gap:14px; padding:12px 12px; border-radius:12px; color:#c7cbe0; font-size:13.5px; font-weight:500; white-space:nowrap; transition:background .2s var(--ease), color .2s var(--ease); }
+  .nav-link i{ width:18px; text-align:center; font-size:15px; }
+  .nav-link:hover{ background:rgba(255,255,255,.06); color:#fff; }
+  .nav-link.active{ background:rgba(255,179,71,.14); color:var(--amber); }
+  .link-text{ opacity:0; transition:opacity .2s var(--ease); }
+  .sidebar.expanded .link-text{ opacity:1; }
+  .sidebar-backdrop{ display:none; position:fixed; inset:0; background:rgba(14,19,38,.5); z-index:30; }
+  .sidebar-backdrop.active{ display:block; }
+
+  /* ============ MAIN ============ */
+  .main{ flex:1; min-width:0; }
+  .dashboard-hero{
+    position:relative; overflow:hidden;
+    background:radial-gradient(ellipse 120% 100% at 100% 0%, var(--navy-800) 0%, var(--navy-950) 70%);
+    color:#f3ecd9; padding:34px 30px 46px; display:flex; align-items:flex-start; justify-content:space-between; gap:20px; flex-wrap:wrap;
+  }
+  .dashboard-hero::before{ content:''; position:absolute; top:-40px; right:60px; width:220px; height:220px;
+    background:radial-gradient(circle, rgba(255,179,71,.28) 0%, transparent 70%); filter:blur(4px); }
+  .topbar-left, .topbar-right{ position:relative; z-index:1; }
+  .topbar-left h1{ font-size:clamp(22px,3.5vw,28px); }
+  .topbar-left h1 span{ color:var(--amber); }
+  .topbar-left p{ font-size:13px; color:#b7bcdc; margin-top:6px; }
+  .admin-profile{ display:flex; align-items:center; gap:10px; background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.1); padding:8px 16px 8px 8px; border-radius:999px; }
+  .avatar{ width:32px; height:32px; border-radius:50%; background:linear-gradient(135deg, var(--amber), var(--coral)); display:flex; align-items:center; justify-content:center; color:#241608; font-size:13px; }
+  .admin-profile span{ font-size:12.5px; font-weight:600; }
+
+  .content{ padding:30px 30px 50px; max-width:1100px; margin:0 auto; margin-top:-26px; position:relative; z-index:2; }
+
+  .card{ background:#ffffff; border:1px solid rgba(36,31,20,.06); border-radius:var(--radius-lg); padding:26px 24px; margin-bottom:22px; box-shadow:0 16px 36px rgba(36,31,20,.07); }
+  .card-title{ display:flex; align-items:center; gap:10px; margin-bottom:20px; }
+  .card-title i{ color:var(--amber-deep); font-size:16px; }
+  .card-title h2{ font-size:17px; }
+  .card-note{ font-size:13px; color:var(--ink-soft); margin:-12px 0 18px; }
+
+  .mini-stats-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(150px,1fr)); gap:14px; }
+  .mini-stat-card{ display:flex; align-items:center; gap:12px; background:var(--paper); border:1px solid rgba(36,31,20,.05); border-radius:var(--radius-md); padding:14px 16px;
+    transition:transform .15s ease-out, box-shadow .2s var(--ease); transform-style:preserve-3d; will-change:transform; }
+  .mini-stat-card.full-width{ grid-column:1 / -1; }
+  .mini-stat-card:hover{ box-shadow:0 12px 24px rgba(36,31,20,.1); }
+  .mini-stat-icon{ min-width:40px; height:40px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:15px; }
+  .mini-stat-icon.purple{ background:var(--purple-bg); color:var(--purple); }
+  .mini-stat-icon.blue{ background:var(--blue-bg); color:var(--blue); }
+  .mini-stat-icon.green{ background:var(--green-bg); color:var(--green); }
+  .mini-stat-icon.orange{ background:#fdf0e3; color:var(--amber-deep); }
+  .mini-stat-icon.teal{ background:var(--teal-bg); color:var(--teal); }
+  .mini-stat-icon.pink{ background:var(--pink-bg); color:var(--pink); }
+  .mini-stat-number{ font-size:15px; font-weight:700; }
+  .mini-stat-label{ font-size:11px; color:var(--ink-soft); margin-top:1px; }
+
+  .field{ display:flex; flex-direction:column; gap:6px; }
+  .field label{ font-size:12px; font-weight:600; color:var(--ink-soft); }
+  .input-wrap.select-wrap{ position:relative; }
+  .input-wrap select{
+    width:100%; appearance:none; background:var(--paper); border:1.5px solid rgba(36,31,20,.08);
+    border-radius:12px; padding:11px 34px 11px 14px; font-size:13.5px; font-family:inherit; color:var(--ink); cursor:pointer;
+    transition:border-color .2s var(--ease);
+  }
+  .input-wrap select:focus{ outline:none; border-color:var(--amber-deep); }
+  .select-icon{ position:absolute; right:14px; top:50%; transform:translateY(-50%); font-size:11px; color:var(--ink-soft); pointer-events:none; }
+
+  .btn-primary{
+    display:inline-flex; align-items:center; gap:8px; border:none; cursor:pointer;
+    background:linear-gradient(135deg, var(--amber) 0%, var(--coral) 100%); color:#241608;
+    font-weight:700; font-size:13.5px; font-family:inherit; padding:12px 22px; border-radius:999px;
+    box-shadow:0 4px 0 var(--amber-shadow), 0 10px 22px rgba(255,140,66,.28);
+    transition:transform .15s var(--ease), box-shadow .15s var(--ease);
+  }
+  .btn-primary:hover{ transform:translateY(-2px); box-shadow:0 6px 0 var(--amber-shadow), 0 14px 26px rgba(255,140,66,.34); }
+  .btn-primary:active{ transform:translateY(2px); box-shadow:0 2px 0 var(--amber-shadow), 0 6px 14px rgba(255,140,66,.3); }
+
+  .table-wrapper{ overflow-x:auto; border-radius:var(--radius-md); border:1px solid rgba(36,31,20,.06); }
+  table.classes-table{ width:100%; border-collapse:collapse; font-size:13px; }
+  table.classes-table th{ text-align:left; background:var(--paper); color:var(--ink-soft); font-weight:600; font-size:11.5px; text-transform:uppercase; letter-spacing:.3px; padding:12px 16px; }
+  table.classes-table td{ padding:12px 16px; border-top:1px solid rgba(36,31,20,.05); }
+  .status-active{ background:var(--green-bg); color:var(--green); font-size:11.5px; font-weight:700; padding:4px 12px; border-radius:999px; }
+  .status-inactive{ background:var(--red-bg); color:var(--red); font-size:11.5px; font-weight:700; padding:4px 12px; border-radius:999px; }
+
+  .result-empty-msg{ font-size:13px; color:var(--ink-soft); padding:14px 0; text-align:center; }
+
+  .notice-item{ display:flex; gap:14px; padding:16px 0; border-top:1px solid rgba(36,31,20,.06); }
+  .notice-item:first-child{ border-top:none; padding-top:2px; }
+  .notice-tag{ display:flex; flex-direction:column; align-items:center; gap:4px; min-width:44px; color:var(--amber-deep); }
+  .notice-tag .date{ font-size:10px; color:var(--ink-soft); white-space:nowrap; }
+  .notice-body h4{ font-size:14px; margin-bottom:3px; }
+  .notice-body p{ font-size:12.5px; color:var(--ink-soft); line-height:1.5; }
+
+  .fee-student-summary{ display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:14px; background:var(--paper); border-radius:var(--radius-md); padding:18px 20px; margin-bottom:18px; }
+  .fee-student-who strong{ display:block; font-size:15px; }
+  .fee-student-who span{ font-size:12px; color:var(--ink-soft); }
+  .fee-student-amounts{ display:flex; align-items:center; gap:14px; font-size:13px; color:var(--ink-soft); flex-wrap:wrap; }
+  .fee-student-amounts span:first-child, .fee-student-amounts span:nth-child(2){ font-weight:600; color:var(--ink); }
+
+  .footer{ text-align:center; font-size:12px; color:var(--ink-faint); padding:20px 0 6px; }
+
+  @media (max-width:900px){
+    .sidebar{ position:fixed; left:0; top:0; width:0; padding-left:0; padding-right:0; }
+    .sidebar.expanded{ width:230px; padding-left:0; padding-right:0; }
+    .sidebar.expanded .sidebar-brand, .sidebar.expanded .sidebar-nav{ padding-left:14px; padding-right:14px; }
+    .menu-toggle{ position:fixed; top:16px; left:16px; z-index:50; margin:0; background:var(--navy-900); }
+    .content{ padding:22px 16px 40px; margin-top:-20px; }
+    .dashboard-hero{ padding:70px 20px 40px; }
+    .fee-student-summary{ flex-direction:column; align-items:flex-start; }
+  }
+
+  @media (prefers-reduced-motion: reduce){ *{ animation:none !important; transition:none !important; } }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <aside class="sidebar" id="sidebar">
+    <button class="menu-toggle" id="menuToggle" aria-label="Toggle Menu"><i class="fa-solid fa-bars"></i></button>
+
+    <div class="sidebar-brand">
+      <div class="brand-icon"><i class="fa-solid fa-lightbulb"></i></div>
+      <div class="brand-text"><h1><span class="accent">Home</span></h1><p>Tuition</p></div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="student-dashboard.html" class="nav-link active"><i class="fa-solid fa-house"></i><span class="link-text">Dashboard</span></a>
+      <a href="#result-section" class="nav-link"><i class="fa-solid fa-chart-column"></i><span class="link-text">My Result</span></a>
+      <a href="#attendance-section" class="nav-link"><i class="fa-regular fa-square-check"></i><span class="link-text">Attendance</span></a>
+      <a href="#fees-section" class="nav-link"><i class="fa-solid fa-indian-rupee-sign"></i><span class="link-text">My Fees</span></a>
+      <a href="#notices-section" class="nav-link"><i class="fa-regular fa-bell"></i><span class="link-text">Notices</span></a>
+      <a href="student-login.html" class="nav-link" onclick="studentLogout(); return false;"><i class="fa-solid fa-arrow-right-from-bracket"></i><span class="link-text">Logout</span></a>
+    </nav>
+  </aside>
+
+  <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+  <div class="main">
+    <header class="dashboard-hero">
+      <div class="topbar-left">
+        <h1>Welcome, <span id="dashStudentName">Student</span></h1>
+        <p>Roll Number: <span id="dashStudentRoll">-</span> &nbsp;·&nbsp; Attendance: <span id="dashAttendance">-</span></p>
+      </div>
+      <div class="topbar-right">
+        <div class="admin-profile">
+          <div class="avatar"><i class="fa-solid fa-user-graduate"></i></div>
+          <span id="dashStudentClass">Class -</span>
+        </div>
+      </div>
+    </header>
+
+    <main class="content" id="studentProfileBox">
+
+      <!-- Profile -->
+      <section class="card">
+        <div class="card-title"><i class="fa-solid fa-id-card"></i><h2>My Profile</h2></div>
+        <div class="mini-stats-grid">
+          <div class="mini-stat-card"><div class="mini-stat-icon purple"><i class="fa-solid fa-id-badge"></i></div><div class="mini-stat-info"><div class="mini-stat-number" id="dashStudentRoll2">-</div><div class="mini-stat-label">Roll Number</div></div></div>
+          <div class="mini-stat-card"><div class="mini-stat-icon blue"><i class="fa-solid fa-chalkboard"></i></div><div class="mini-stat-info"><div class="mini-stat-number" id="dashStudentClass2">-</div><div class="mini-stat-label">Class</div></div></div>
+          <div class="mini-stat-card"><div class="mini-stat-icon orange"><i class="fa-solid fa-layer-group"></i></div><div class="mini-stat-info"><div class="mini-stat-number" id="dashStudentSection">-</div><div class="mini-stat-label">Section</div></div></div>
+          <div class="mini-stat-card"><div class="mini-stat-icon purple"><i class="fa-solid fa-venus-mars"></i></div><div class="mini-stat-info"><div class="mini-stat-number" id="dashGender">-</div><div class="mini-stat-label">Gender</div></div></div>
+          <div class="mini-stat-card"><div class="mini-stat-icon blue"><i class="fa-solid fa-cake-candles"></i></div><div class="mini-stat-info"><div class="mini-stat-number" id="dashDob">-</div><div class="mini-stat-label">Date of Birth</div></div></div>
+          <div class="mini-stat-card"><div class="mini-stat-icon orange"><i class="fa-solid fa-calendar-check"></i></div><div class="mini-stat-info"><div class="mini-stat-number" id="dashAdmissionDate">-</div><div class="mini-stat-label">Admission Date</div></div></div>
+          <div class="mini-stat-card full-width"><div class="mini-stat-icon green"><i class="fa-solid fa-user"></i></div><div class="mini-stat-info"><div class="mini-stat-number" id="dashFatherName">-</div><div class="mini-stat-label">Father's Name</div></div></div>
+          <div class="mini-stat-card full-width"><div class="mini-stat-icon pink"><i class="fa-solid fa-user"></i></div><div class="mini-stat-info"><div class="mini-stat-number" id="dashMotherName">-</div><div class="mini-stat-label">Mother's Name</div></div></div>
+        </div>
+      </section>
+
+      <!-- Result -->
+      <section class="card" id="result-section">
+        <div class="card-title"><i class="fa-solid fa-file-lines"></i><h2>My Result</h2></div>
+        <p class="card-note">Apna report card dekhne ke liye month chunein aur button dabayein.</p>
+        <div class="field" style="max-width:260px;margin-bottom:18px;">
+          <label>Select Month</label>
+          <div class="input-wrap select-wrap"><select id="resultMonth"></select><i class="fa-solid fa-chevron-down select-icon"></i></div>
+        </div>
+        <button type="button" class="btn-primary" onclick="viewMyResult()"><i class="fa-solid fa-eye"></i> View My Result</button>
+      </section>
+
+      <!-- Attendance -->
+      <section class="card" id="attendance-section">
+        <div class="card-title"><i class="fa-regular fa-square-check"></i><h2>My Attendance</h2></div>
+        <div class="field" style="max-width:260px;margin-bottom:16px;">
+          <label>Select Month</label>
+          <div class="input-wrap select-wrap"><select id="attendanceMonth"></select><i class="fa-solid fa-chevron-down select-icon"></i></div>
+        </div>
+        <div class="mini-stats-grid" id="attendanceSummaryBox" style="margin-bottom:18px;"></div>
+        <div class="table-wrapper">
+          <table class="classes-table">
+            <thead><tr><th>Date</th><th>Status</th></tr></thead>
+            <tbody id="attendanceTableBody"></tbody>
+          </table>
+        </div>
+        <p id="attendanceEmptyMsg" class="result-empty-msg" style="display:none;"></p>
+      </section>
+
+      <!-- My Fees -->
+      <section class="card" id="fees-section">
+        <div class="card-title"><i class="fa-solid fa-indian-rupee-sign"></i><h2>My Fees</h2></div>
+        <div id="feeSummaryBox"></div>
+        <div class="table-wrapper">
+          <table class="classes-table">
+            <thead><tr><th>Date</th><th>Amount</th><th>Mode</th><th>Note</th></tr></thead>
+            <tbody id="feeTableBody"></tbody>
+          </table>
+        </div>
+        <p id="feeEmptyMsg" class="result-empty-msg" style="display:none;"></p>
+      </section>
+
+      <!-- Notices -->
+      <section class="card" id="notices-section">
+        <div class="card-title"><i class="fa-regular fa-bell"></i><h2>Notice Board</h2></div>
+        <div id="noticesList"></div>
+        <p id="noticesEmptyMsg" class="result-empty-msg" style="display:none;"></p>
+      </section>
+
+      <footer class="footer">Made with care, one student at a time. © 2026 Home Tuition.</footer>
+    </main>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function(){
+    if (!window.matchMedia('(hover:hover)').matches || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    document.querySelectorAll('.mini-stat-card').forEach(card => {
+      card.addEventListener('pointermove', (e) => {
+        const r = card.getBoundingClientRect();
+        const x = (e.clientX - r.left)/r.width - 0.5;
+        const y = (e.clientY - r.top)/r.height - 0.5;
+        card.style.transform = `perspective(600px) rotateY(${x*8}deg) rotateX(${-y*8}deg) translateY(-2px)`;
+      });
+      card.addEventListener('pointerleave', () => { card.style.transform = ''; });
+    });
+  });
+</script>
+
+<script type="module" src="student.js"></script>
+<script>
+  function viewMyResult() {
+    const monthSelect = document.getElementById('resultMonth');
+    const month = monthSelect && monthSelect.value;
+    if (!month) { alert('Pehle month select karein.'); return; }
+    localStorage.setItem('selectedMonth', month);
+    window.location.href = 'result.html';
+  }
+  window.viewMyResult = viewMyResult;
+</script>
+</body>
+</html>
