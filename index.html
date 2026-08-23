@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Home Tuition</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  /* =========================================================
+     TOKENS
+     Theme idea: dusk sky + desk-lamp glow at the top (hero),
+     warm notebook-paper cream below.
+     ✏️ Pull the lamp's cord (bottom-right of the shade) to
+     toggle the whole page between light and dark mode.
+  ========================================================= */
+  :root{
+    --navy-950:#0e1326;
+    --navy-900:#161d3a;
+    --navy-800:#232c56;
+    --cream:#fdf6e8;
+    --cream-dim:#f4e8d0;
+    --amber:#ffb347;
+    --amber-deep:#ff8c42;
+    --amber-shadow:#d9691f;
+    --coral:#ff6f61;
+    --text-onDark:#f3ecd9;
+    --text-onDark-soft:#b7bcdc;
+    --text-onLight:#241f14;
+    --text-onLight-soft:#7a715c;
+    --radius-lg:26px;
+    --radius-md:16px;
+    --ease:cubic-bezier(.16,.84,.44,1);
+
+    /* theme-responsive surfaces — LIGHT (default) */
+    --surface-1:var(--cream);
+    --surface-2:var(--cream-dim);
+    --ink-onSurface:var(--text-onLight);
+    --ink-onSurface-soft:var(--text-onLight-soft);
+    --card-bg:#ffffff;
+    --card-border:rgba(36,31,20,.07);
+    --card-shadow:rgba(120,90,30,.10);
+    --card-shadow-hover:rgba(120,90,30,.16);
+    --chip-bg:#ffffff;
+    --chip-border:rgba(36,31,20,.09);
+  }
+
+  html[data-theme="dark"]{
+    --surface-1:#161d3a;
+    --surface-2:#1c2444;
+    --ink-onSurface:var(--text-onDark);
+    --ink-onSurface-soft:var(--text-onDark-soft);
+    --card-bg:rgba(255,255,255,.05);
+    --card-border:rgba(255,255,255,.10);
+    --card-shadow:rgba(0,0,0,.35);
+    --card-shadow-hover:rgba(0,0,0,.5);
+    --chip-bg:rgba(255,255,255,.07);
+    --chip-border:rgba(255,255,255,.16);
+  }
+
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  body{
+    font-family:'Inter', sans-serif;
+    background:var(--navy-950);
+    color:var(--text-onDark);
+    overflow-x:hidden;
+  }
+  h1,h2,h3{ font-family:'Fraunces', serif; font-weight:600; line-height:1.15; }
+  a{ text-decoration:none; color:inherit; }
+  img,svg{ display:block; }
+  ul{ list-style:none; }
+
+  a:focus-visible, button:focus-visible{
+    outline:2.5px solid var(--amber);
+    outline-offset:3px;
+    border-radius:6px;
+  }
+
+  /* =========================================================
+     HERO — dusk sky, stars, glowing 3D desk lamp
+  ========================================================= */
+  .hero{
+    position:relative;
+    min-height:100svh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:70px 24px 90px;
+    overflow:hidden;
+    background:radial-gradient(ellipse 90% 60% at 50% 0%, var(--navy-800) 0%, var(--navy-950) 65%);
+  }
+
+  .star{
+    position:absolute;
+    width:2px; height:2px;
+    background:#d7dcf5;
+    border-radius:50%;
+    animation:twinkle 3.6s ease-in-out infinite;
+    transition:opacity .5s var(--ease);
+  }
+  html[data-theme="dark"] .star{ opacity:.9; }
+  @keyframes twinkle{ 0%,100%{ opacity:.12; } 50%{ opacity:.85; } }
+
+  /* ---- 3D lamp: outer wrap bobs gently, inner svg tilts with pointer ---- */
+  .lamp-wrap{
+    position:relative;
+    width:200px;
+    margin-bottom:6px;
+    perspective:700px;
+    animation:dropIn .9s var(--ease) both, lampBob 5.5s ease-in-out 1s infinite;
+  }
+  @keyframes dropIn{
+    from{ opacity:0; transform:translateY(-24px); }
+    to{ opacity:1; transform:translateY(0); }
+  }
+  @keyframes lampBob{
+    0%,100%{ transform:translateY(0); }
+    50%{ transform:translateY(-6px); }
+  }
+
+  .lamp-svg{
+    transform-style:preserve-3d;
+    transition:transform .2s ease-out;
+    filter:drop-shadow(0 22px 18px rgba(0,0,0,.38));
+  }
+
+  .lamp-glow{ animation:lampPulse 3.2s ease-in-out infinite; transform-origin:100px 95px; }
+  @keyframes lampPulse{
+    0%,100%{ opacity:.85; transform:scale(1); }
+    50%{ opacity:1; transform:scale(1.06); }
+  }
+
+  .light-cone{
+    animation:coneIn 1.6s .4s var(--ease) both, coneBreathe 3.2s ease-in-out 2s infinite;
+    transition:opacity .5s var(--ease);
+  }
+  @keyframes coneIn{ from{ opacity:0; } to{ opacity:1; } }
+  @keyframes coneBreathe{ 0%,100%{ opacity:.9; } 50%{ opacity:.6; } }
+  html[data-theme="dark"] .light-cone{ opacity:1; }
+
+  /* ---- pull cord — the dark/light switch ---- */
+  .pull-cord{
+    cursor:pointer;
+    transform-box:fill-box;
+    transform-origin:50% 0%;
+    animation:cordSway 3.6s ease-in-out infinite;
+  }
+  .pull-cord.pulled{ animation:pullTug .5s ease-out; }
+  .pull-cord:focus-visible{ outline:2px solid var(--amber); outline-offset:5px; border-radius:8px; }
+  @keyframes cordSway{
+    0%,100%{ transform:rotate(-4deg); }
+    50%{ transform:rotate(4deg); }
+  }
+  @keyframes pullTug{
+    0%{ transform:translateY(0) rotate(0); }
+    35%{ transform:translateY(18px) rotate(2deg); }
+    65%{ transform:translateY(-5px) rotate(-1deg); }
+    100%{ transform:translateY(0) rotate(0); }
+  }
+  .cord-hint{
+    position:absolute;
+    font-size:10px;
+    font-weight:600;
+    letter-spacing:.4px;
+    color:var(--text-onDark-soft);
+    right:-6px;
+    top:78px;
+    opacity:.55;
+    animation:hintFade 4s ease-in-out 2s forwards;
+    pointer-events:none;
+  }
+  @keyframes hintFade{ 0%{opacity:.55;} 80%{opacity:.55;} 100%{opacity:0;} }
+
+  .motes{ position:absolute; inset:0; pointer-events:none; }
+  .mote{
+    position:absolute;
+    bottom:20px;
+    width:4px; height:4px;
+    border-radius:50%;
+    background:var(--amber);
+    opacity:0;
+    animation:moteDrift 5.5s ease-in infinite;
+  }
+  @keyframes moteDrift{
+    0%{ opacity:0; transform:translate(0,0) scale(.6); }
+    15%{ opacity:.8; }
+    85%{ opacity:.3; }
+    100%{ opacity:0; transform:translate(var(--driftX,10px),-160px) scale(1); }
+  }
+
+  .badge{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    background:rgba(255,179,71,.12);
+    border:1px solid rgba(255,179,71,.35);
+    color:var(--amber);
+    font-size:12.5px;
+    font-weight:600;
+    letter-spacing:.3px;
+    padding:7px 16px;
+    border-radius:999px;
+    margin-bottom:22px;
+    box-shadow:0 6px 14px rgba(255,179,71,.1);
+    animation:fadeUp .7s .2s var(--ease) both;
+  }
+
+  .hero-title{
+    font-size:clamp(32px, 7vw, 52px);
+    color:var(--text-onDark);
+    animation:fadeUp .8s .3s var(--ease) both;
+  }
+  .hero-title em{ font-style:italic; color:var(--amber); }
+
+  .hero-tagline{
+    margin-top:14px;
+    font-size:16.5px;
+    color:var(--text-onDark-soft);
+    font-weight:500;
+    animation:fadeUp .8s .4s var(--ease) both;
+  }
+
+  .hero-desc{
+    max-width:480px;
+    margin:18px auto 0;
+    font-size:15px;
+    line-height:1.65;
+    color:var(--text-onDark-soft);
+    animation:fadeUp .8s .5s var(--ease) both;
+  }
+
+  .hero-actions{
+    display:flex;
+    gap:14px;
+    flex-wrap:wrap;
+    justify-content:center;
+    margin-top:34px;
+    animation:fadeUp .8s .6s var(--ease) both;
+  }
+  @keyframes fadeUp{
+    from{ opacity:0; transform:translateY(18px); }
+    to{ opacity:1; transform:translateY(0); }
+  }
+
+  /* Buttons — 3D pressable */
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    padding:14px 28px;
+    border-radius:999px;
+    font-size:14.5px;
+    font-weight:700;
+    font-family:'Inter', sans-serif;
+    cursor:pointer;
+    transition:transform .18s var(--ease), box-shadow .18s var(--ease), filter .18s var(--ease);
+  }
+  .btn-primary{
+    background:linear-gradient(135deg, var(--amber) 0%, var(--coral) 100%);
+    color:#241608;
+    box-shadow:0 4px 0 var(--amber-shadow), 0 14px 28px rgba(255,140,66,.28);
+  }
+  .btn-primary:hover{ transform:translateY(-3px); filter:brightness(1.05); box-shadow:0 7px 0 var(--amber-shadow), 0 18px 34px rgba(255,140,66,.38); }
+  .btn-primary:active{ transform:translateY(2px); box-shadow:0 2px 0 var(--amber-shadow), 0 8px 16px rgba(255,140,66,.3); }
+  .btn-primary.large{ padding:16px 34px; font-size:15.5px; }
+
+  .btn-ghost{
+    background:transparent;
+    color:var(--text-onDark);
+    border:1.5px solid rgba(243,236,217,.3);
+    box-shadow:0 3px 0 rgba(243,236,217,.12);
+  }
+  .btn-ghost:hover{ border-color:var(--amber); color:var(--amber); transform:translateY(-3px); }
+  .btn-ghost:active{ transform:translateY(2px); box-shadow:0 1px 0 rgba(243,236,217,.12); }
+
+  .scroll-cue{
+    position:absolute;
+    bottom:28px;
+    left:50%;
+    transform:translateX(-50%);
+    width:20px; height:32px;
+    border:1.5px solid rgba(243,236,217,.35);
+    border-radius:12px;
+    animation:fadeUp .8s .8s var(--ease) both;
+  }
+  .scroll-cue::before{
+    content:'';
+    position:absolute;
+    top:6px; left:50%;
+    width:3px; height:7px;
+    background:var(--amber);
+    border-radius:2px;
+    transform:translateX(-50%);
+    animation:scrollDot 1.8s ease-in-out infinite;
+  }
+  @keyframes scrollDot{ 0%{ opacity:1; top:6px; } 70%{ opacity:0; top:16px; } 100%{ opacity:0; top:6px; } }
+
+  /* =========================================================
+     SHARED SECTION LAYOUT — theme-responsive
+  ========================================================= */
+  .section{
+    padding:86px 24px;
+    perspective:1000px;
+    transition:background-color .6s var(--ease), color .6s var(--ease);
+  }
+  .section-inner{
+    max-width:920px;
+    margin:0 auto;
+  }
+  .section.on-cream{ background:var(--surface-1); color:var(--ink-onSurface); }
+  .section.on-cream-dim{ background:var(--surface-2); color:var(--ink-onSurface); }
+  .section.on-navy{ background:var(--navy-950); color:var(--text-onDark); }
+
+  .eyebrow{
+    font-size:12.5px;
+    font-weight:700;
+    letter-spacing:1px;
+    text-transform:uppercase;
+    color:var(--amber-deep);
+    margin-bottom:10px;
+  }
+  .section-heading{
+    font-size:clamp(24px, 4.2vw, 34px);
+    max-width:560px;
+  }
+  .section-sub{
+    margin-top:14px;
+    font-size:15px;
+    line-height:1.6;
+    max-width:520px;
+    color:var(--ink-onSurface-soft);
+  }
+  .on-navy .section-sub{ color:var(--text-onDark-soft); }
+
+  /* reveal-on-scroll — tips up in 3D as it enters */
+  .reveal{
+    opacity:0;
+    transform:translateY(28px) rotateX(8deg);
+    transform-origin:top center;
+    transition:opacity .7s var(--ease), transform .7s var(--ease);
+  }
+  .reveal.in-view{ opacity:1; transform:translateY(0) rotateX(0); }
+
+  /* ---- Why cards — 3D tilt on pointer ---- */
+  .card-grid{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:20px;
+    margin-top:42px;
+  }
+  .card{
+    background:var(--card-bg);
+    border:1px solid var(--card-border);
+    border-radius:var(--radius-lg);
+    padding:30px 26px;
+    box-shadow:0 18px 40px var(--card-shadow);
+    transition:transform .15s ease-out, box-shadow .3s var(--ease), background-color .6s var(--ease), border-color .6s var(--ease);
+    transform-style:preserve-3d;
+    will-change:transform;
+  }
+  .card:hover{ transform:translateY(-6px); box-shadow:0 24px 50px var(--card-shadow-hover); }
+  .card-icon{
+    width:46px; height:46px;
+    border-radius:14px;
+    background:rgba(255,140,66,.14);
+    color:var(--amber-deep);
+    display:flex; align-items:center; justify-content:center;
+    margin-bottom:18px;
+    box-shadow:0 6px 14px rgba(255,140,66,.12);
+  }
+  .card h3{ font-size:18px; color:var(--ink-onSurface); margin-bottom:8px; }
+  .card p{ font-size:13.5px; line-height:1.6; color:var(--ink-onSurface-soft); }
+
+  /* ---- Subject chips ---- */
+  .chip-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:12px;
+    margin-top:34px;
+  }
+  .chip{
+    padding:11px 20px;
+    background:var(--chip-bg);
+    border:1.5px solid var(--chip-border);
+    border-radius:999px;
+    font-size:13.5px;
+    font-weight:600;
+    color:var(--ink-onSurface);
+    transition:transform .25s var(--ease), border-color .25s var(--ease), background-color .6s var(--ease);
+  }
+  .chip:hover{ transform:translateY(-3px); border-color:var(--amber-deep); }
+  .chip.dashed{
+    border-style:dashed;
+    color:var(--ink-onSurface-soft);
+    font-weight:500;
+  }
+  .classes-note{
+    margin-top:16px;
+    font-size:13px;
+    color:var(--ink-onSurface-soft);
+  }
+
+  /* ---- Final CTA (navy bookend, unaffected by toggle) ---- */
+  .cta-section{ text-align:center; }
+  .cta-section .section-inner{ display:flex; flex-direction:column; align-items:center; }
+  .cta-section .section-sub{ margin-left:auto; margin-right:auto; }
+  .cta-section .btn{ margin-top:30px; }
+  .wa-line{
+    margin-top:18px;
+    font-size:13px;
+    color:var(--text-onDark-soft);
+  }
+  .wa-line a{ color:var(--amber); font-weight:600; }
+
+  footer{
+    padding:30px 24px 40px;
+    text-align:center;
+    font-size:12.5px;
+    color:var(--text-onDark-soft);
+    background:var(--navy-950);
+  }
+
+  @media (max-width:760px){
+    .card-grid{ grid-template-columns:1fr; }
+    .section{ padding:64px 20px; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation:none !important; transition:none !important; }
+    .reveal{ opacity:1; transform:none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- =========================================================
+     HERO
+========================================================= -->
+<section class="hero">
+
+  <!-- scattered stars -->
+  <div class="star" style="top:12%; left:14%; animation-delay:.2s;"></div>
+  <div class="star" style="top:20%; left:82%; animation-delay:1.1s;"></div>
+  <div class="star" style="top:8%;  left:48%; animation-delay:.6s;"></div>
+  <div class="star" style="top:30%; left:8%;  animation-delay:1.8s;"></div>
+  <div class="star" style="top:16%; left:68%; animation-delay:2.3s;"></div>
+  <div class="star" style="top:34%; left:90%; animation-delay:.9s;"></div>
+  <div class="star" style="top:26%; left:30%; animation-delay:1.5s;"></div>
+
+  <!-- desk lamp illustration (signature element) + pull-cord dark/light switch -->
+  <div class="lamp-wrap" id="lampWrap">
+    <svg class="lamp-svg" viewBox="0 0 200 220" width="160" height="176" aria-hidden="true">
+      <defs>
+        <radialGradient id="glowGrad" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#fff0cf" stop-opacity="0.95"/>
+          <stop offset="55%" stop-color="#ffb347" stop-opacity="0.35"/>
+          <stop offset="100%" stop-color="#ffb347" stop-opacity="0"/>
+        </radialGradient>
+        <linearGradient id="coneGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#ffcf85" stop-opacity="0.28"/>
+          <stop offset="100%" stop-color="#ffcf85" stop-opacity="0"/>
+        </linearGradient>
+        <linearGradient id="shadeGrad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#eccb92"/>
+          <stop offset="55%" stop-color="#caa46a"/>
+          <stop offset="100%" stop-color="#96723f"/>
+        </linearGradient>
+        <linearGradient id="poleGrad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#4d3f28"/>
+          <stop offset="50%" stop-color="#3a2f1e"/>
+          <stop offset="100%" stop-color="#241d11"/>
+        </linearGradient>
+        <linearGradient id="baseGrad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#3c311e"/>
+          <stop offset="50%" stop-color="#2c2416"/>
+          <stop offset="100%" stop-color="#18130a"/>
+        </linearGradient>
+      </defs>
+
+      <!-- light cone falling onto the page below -->
+      <path class="light-cone" d="M55 108 L145 108 L188 210 L12 210 Z" fill="url(#coneGrad)"/>
+
+      <!-- warm glow behind the shade -->
+      <ellipse class="lamp-glow" cx="100" cy="92" rx="62" ry="62" fill="url(#glowGrad)"/>
+
+      <!-- base -->
+      <rect x="70" y="200" width="60" height="12" rx="6" fill="url(#baseGrad)"/>
+      <!-- pole -->
+      <rect x="96" y="108" width="8" height="96" rx="4" fill="url(#poleGrad)"/>
+      <!-- shade (shaded for volume) -->
+      <path d="M76 50 L124 50 L146 108 L54 108 Z" fill="url(#shadeGrad)"/>
+      <path d="M76 50 L124 50 L118 60 L82 60 Z" fill="#f3dcae"/>
+      <!-- bulb -->
+      <circle cx="100" cy="82" r="7" fill="#fff3d6"/>
+
+      <!-- pull-cord: click / tap / Enter to toggle light & dark mode -->
+      <g class="pull-cord" id="pullCord" tabindex="0" role="button" aria-label="Toggle light and dark mode">
+        <line x1="119" y1="68" x2="119" y2="132" stroke="#d8c9a3" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="119" cy="138" r="6.5" fill="#e8c46a" stroke="#a9803a" stroke-width="1.4"/>
+      </g>
+    </svg>
+
+    <span class="cord-hint" id="cordHint">pull me</span>
+
+    <div class="motes">
+      <div class="mote" style="left:38%; --driftX:-14px; animation-delay:.3s;"></div>
+      <div class="mote" style="left:50%; --driftX:10px;  animation-delay:1.4s;"></div>
+      <div class="mote" style="left:60%; --driftX:-8px;  animation-delay:2.5s;"></div>
+      <div class="mote" style="left:45%; --driftX:16px;  animation-delay:3.4s;"></div>
+      <div class="mote" style="left:55%; --driftX:-12px; animation-delay:.9s;"></div>
+    </div>
+  </div>
+
+  <!-- ✏️ EDIT: agar tuition ka naam soch liya ho, badge text yahan change kar dena -->
+  <div class="badge" id="badgeText">🏮 Home Tuition</div>
+
+  <h1 class="hero-title">Where Learning<br>Feels Like <em>Home</em></h1>
+  <p class="hero-tagline">जहाँ हर बच्चे को मिले पूरा ध्यान</p>
+
+  <p class="hero-desc">
+    Small batches, personal attention, and steady progress — right from home.
+    Every student gets their own login to track marks, attendance, and results anytime.
+  </p>
+
+  <div class="hero-actions">
+    <!-- ✏️ EDIT: agar login page ka filename "login.html" nahi hai, yahan badal dena -->
+    <a href="login.html" class="btn btn-primary">Student Login</a>
+    <a href="#why" class="btn btn-ghost">Why Home Tuition</a>
+  </div>
+
+  <div class="scroll-cue"></div>
+</section>
+
+<!-- =========================================================
+     WHY HOME TUITION
+========================================================= -->
+<section class="section on-cream" id="why">
+  <div class="section-inner reveal">
+    <p class="eyebrow">Why Home Tuition</p>
+    <h2 class="section-heading">Small Batches. Undivided Attention.</h2>
+    <p class="section-sub">No crowded classrooms — just a handful of students, each one taught in a way that actually fits how they learn.</p>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+        </div>
+        <h3>One-on-One Focus</h3>
+        <p>No child gets lost in the crowd — lessons move at your child's pace, not the classroom's.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>
+        </div>
+        <h3>Flexible Timing</h3>
+        <p>Sessions scheduled around school hours and family routine — not the other way round.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V9M11 19V4M18 19v-7"/></svg>
+        </div>
+        <h3>Real Progress Tracking</h3>
+        <p>Every test and result logged and visible on your child's own dashboard, anytime.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     SUBJECTS
+========================================================= -->
+<section class="section on-cream-dim" id="subjects">
+  <div class="section-inner reveal">
+    <p class="eyebrow">What We Teach</p>
+    <h2 class="section-heading">Subjects Covered</h2>
+
+    <!-- ✏️ EDIT: apne subjects/classes ke hisaab se chips badal dena -->
+    <div class="chip-row">
+      <span class="chip">Mathematics</span>
+      <span class="chip">Science</span>
+      <span class="chip">English</span>
+      <span class="chip">Hindi</span>
+      <span class="chip">Social Studies</span>
+      <span class="chip dashed">+ more on request</span>
+    </div>
+    <p class="classes-note">Currently teaching Classes 1–10.</p>
+  </div>
+</section>
+
+<!-- =========================================================
+     FINAL CTA — bookend back to the dusk/lamp navy
+========================================================= -->
+<section class="section on-navy cta-section" id="login">
+  <div class="section-inner reveal">
+    <p class="eyebrow">Already a Student?</p>
+    <h2 class="section-heading">Ready to Check Today's Result?</h2>
+    <p class="section-sub">Log in with your own account to see attendance, marks, and results — updated by your teacher.</p>
+
+    <!-- ✏️ EDIT: yahan bhi login.html ko apne actual filename se badal dena -->
+    <a href="login.html" class="btn btn-primary large">Go to Student Login</a>
+
+    <!-- ✏️ EDIT: apna WhatsApp number daal ke link ready kar sakte ho -->
+    <p class="wa-line">New here? Message on <a href="https://wa.me/91XXXXXXXXXX" target="_blank" rel="noopener">WhatsApp</a> for admissions.</p>
+  </div>
+</section>
+
+<footer>
+  <p>Made with care, one student at a time. &copy; <span id="year"></span></p>
+</footer>
+
+<script>
+  // footer year
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  // reveal sections on scroll
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in-view');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15 });
+  revealEls.forEach(el => io.observe(el));
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------------------------------------------------------
+     PULL-CORD → light / dark mode toggle
+  --------------------------------------------------------- */
+  const html = document.documentElement;
+  const cord = document.getElementById('pullCord');
+  const badge = document.getElementById('badgeText');
+  const cordHint = document.getElementById('cordHint');
+
+  function applyBadge(theme){
+    badge.textContent = theme === 'dark' ? '🏮 Home Tuition' : '☀️ Home Tuition';
+  }
+  applyBadge(html.getAttribute('data-theme'));
+
+  function toggleTheme(){
+    const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    applyBadge(next);
+    if (cordHint) cordHint.style.display = 'none';
+    if (!reduceMotion){
+      cord.classList.remove('pulled');
+      void cord.offsetWidth; // restart animation
+      cord.classList.add('pulled');
+    }
+  }
+  cord.addEventListener('click', toggleTheme);
+  cord.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' '){
+      e.preventDefault();
+      toggleTheme();
+    }
+  });
+
+  /* ---------------------------------------------------------
+     3D pointer-tilt — lamp
+  --------------------------------------------------------- */
+  if (!reduceMotion && window.matchMedia('(hover:hover)').matches){
+    const lampWrap = document.getElementById('lampWrap');
+    const lampSvg = lampWrap.querySelector('.lamp-svg');
+    window.addEventListener('pointermove', (e) => {
+      const rect = lampWrap.getBoundingClientRect();
+      const cx = rect.left + rect.width/2;
+      const cy = rect.top + rect.height/2;
+      const dx = (e.clientX - cx) / window.innerWidth;
+      const dy = (e.clientY - cy) / window.innerHeight;
+      lampSvg.style.transform = `rotateY(${dx*20}deg) rotateX(${-dy*16}deg)`;
+    });
+
+    /* 3D pointer-tilt — cards */
+    document.querySelectorAll('.card').forEach(card => {
+      card.addEventListener('pointermove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width - 0.5;
+        const y = (e.clientY - rect.top) / rect.height - 0.5;
+        card.style.transform = `perspective(700px) rotateY(${x*10}deg) rotateX(${-y*10}deg) translateY(-6px)`;
+      });
+      card.addEventListener('pointerleave', () => { card.style.transform = ''; });
+    });
+  }
+</script>
+
+</body>
+</html>
