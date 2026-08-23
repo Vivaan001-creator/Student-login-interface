@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Teacher Dashboard - Home Tuition</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --navy-950:#0e1326; --navy-900:#161d3a; --navy-800:#232c56;
+    --cream:#fdf6e8; --cream-dim:#f4e8d0; --paper:#f7f2e4;
+    --amber:#ffb347; --amber-deep:#ff8c42; --amber-shadow:#d9691f; --coral:#ff6f61;
+    --ink:#241f14; --ink-soft:#7a715c; --ink-faint:#a89d84;
+    --green:#2fb87f; --green-bg:#e4f7ee;
+    --red:#e5584a; --red-bg:#fdeceb;
+    --blue:#4a7fd6; --blue-bg:#e9f0fd;
+    --purple:#8a6fe8; --purple-bg:#f0ecfd;
+    --teal:#22b8a4; --teal-bg:#e3f8f5;
+    --pink:#e2649e; --pink-bg:#fceaf3;
+    --radius-lg:24px; --radius-md:16px; --radius-sm:12px;
+    --ease:cubic-bezier(.16,.84,.44,1);
+  }
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  body{
+    font-family:'Inter', sans-serif;
+    background:var(--paper);
+    color:var(--ink);
+  }
+  h1,h2,h3{ font-family:'Fraunces', serif; font-weight:600; }
+  a{ text-decoration:none; color:inherit; }
+  ::-webkit-scrollbar{ width:8px; height:8px; }
+  ::-webkit-scrollbar-thumb{ background:rgba(36,31,20,.15); border-radius:8px; }
+
+  .app{ display:flex; min-height:100vh; }
+
+  /* ============ SIDEBAR ============ */
+  .sidebar{
+    width:78px;
+    background:linear-gradient(180deg, var(--navy-900) 0%, var(--navy-950) 100%);
+    color:#f3ecd9;
+    display:flex; flex-direction:column;
+    padding:20px 0;
+    position:sticky; top:0; height:100vh;
+    transition:width .3s var(--ease);
+    z-index:40;
+    overflow:hidden;
+  }
+  .sidebar.expanded{ width:230px; }
+  .menu-toggle{
+    background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); color:#f3ecd9;
+    width:36px; height:36px; border-radius:10px; cursor:pointer; font-size:14px;
+    margin:0 auto 22px; display:flex; align-items:center; justify-content:center;
+    transition:background .2s var(--ease);
+  }
+  .menu-toggle:hover{ background:rgba(255,255,255,.12); }
+
+  .sidebar-brand{ display:flex; align-items:center; gap:12px; padding:0 20px; margin-bottom:30px; }
+  .brand-icon{
+    min-width:38px; height:38px; border-radius:11px;
+    background:linear-gradient(135deg, var(--amber) 0%, var(--coral) 100%);
+    display:flex; align-items:center; justify-content:center; color:#241608; font-size:16px;
+    box-shadow:0 6px 14px rgba(255,140,66,.3);
+  }
+  .brand-text{ white-space:nowrap; opacity:0; transition:opacity .25s var(--ease) .1s; }
+  .sidebar.expanded .brand-text{ opacity:1; }
+  .brand-text h1{ font-size:16px; line-height:1; }
+  .brand-text h1 .accent{ color:var(--amber); }
+  .brand-text p{ font-size:10.5px; color:#b7bcdc; letter-spacing:.4px; text-transform:uppercase; margin-top:2px; }
+
+  .sidebar-nav{ display:flex; flex-direction:column; gap:4px; padding:0 14px; flex:1; }
+  .nav-link{
+    display:flex; align-items:center; gap:14px;
+    padding:12px 12px; border-radius:12px; color:#c7cbe0; font-size:13.5px; font-weight:500;
+    white-space:nowrap; transition:background .2s var(--ease), color .2s var(--ease);
+  }
+  .nav-link i{ width:18px; text-align:center; font-size:15px; }
+  .nav-link:hover{ background:rgba(255,255,255,.06); color:#fff; }
+  .nav-link.active{ background:rgba(255,179,71,.14); color:var(--amber); }
+  .link-text{ opacity:0; transition:opacity .2s var(--ease); }
+  .sidebar.expanded .link-text{ opacity:1; }
+
+  .logout-link{
+    display:flex; align-items:center; gap:14px; margin:10px 14px 4px; padding:12px;
+    border-radius:12px; color:#e5584a; font-size:13.5px; font-weight:500;
+    transition:background .2s var(--ease);
+  }
+  .logout-link i{ width:18px; text-align:center; }
+  .logout-link:hover{ background:rgba(229,88,74,.12); }
+
+  .sidebar-backdrop{ display:none; position:fixed; inset:0; background:rgba(14,19,38,.5); z-index:30; }
+  .sidebar-backdrop.active{ display:block; }
+
+  /* ============ MAIN ============ */
+  .main{ flex:1; min-width:0; }
+
+  .dashboard-hero{
+    position:relative; overflow:hidden;
+    background:radial-gradient(ellipse 120% 100% at 100% 0%, var(--navy-800) 0%, var(--navy-950) 70%);
+    color:#f3ecd9;
+    padding:34px 30px 46px;
+    display:flex; align-items:flex-start; justify-content:space-between; gap:20px; flex-wrap:wrap;
+  }
+  .dashboard-hero::before{
+    content:''; position:absolute; top:-40px; right:60px; width:220px; height:220px;
+    background:radial-gradient(circle, rgba(255,179,71,.28) 0%, transparent 70%);
+    filter:blur(4px);
+  }
+  .topbar-left, .topbar-right{ position:relative; z-index:1; }
+  .topbar-left h1{ font-size:clamp(22px,3.5vw,28px); }
+  .topbar-left h1 span{ color:var(--amber); }
+  .topbar-left p{ font-size:13px; color:#b7bcdc; margin-top:6px; }
+  .admin-profile{ display:flex; align-items:center; gap:10px; background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.1); padding:8px 16px 8px 8px; border-radius:999px; }
+  .avatar{ width:32px; height:32px; border-radius:50%; background:linear-gradient(135deg, var(--amber), var(--coral)); display:flex; align-items:center; justify-content:center; color:#241608; font-size:13px; }
+  .admin-profile span{ font-size:12.5px; font-weight:600; }
+
+  .content{ padding:30px 30px 50px; max-width:1100px; margin:0 auto; margin-top:-26px; position:relative; z-index:2; }
+
+  .card{
+    background:#ffffff;
+    border:1px solid rgba(36,31,20,.06);
+    border-radius:var(--radius-lg);
+    padding:26px 24px;
+    margin-bottom:22px;
+    box-shadow:0 16px 36px rgba(36,31,20,.07);
+  }
+  .card-title{ display:flex; align-items:center; gap:10px; margin-bottom:20px; }
+  .card-title i{ color:var(--amber-deep); font-size:16px; }
+  .card-title h2{ font-size:17px; }
+
+  .mini-stats-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(150px,1fr)); gap:14px; }
+  .mini-stat-card{
+    display:flex; align-items:center; gap:12px;
+    background:var(--paper); border:1px solid rgba(36,31,20,.05);
+    border-radius:var(--radius-md); padding:14px 16px;
+    transition:transform .15s ease-out, box-shadow .2s var(--ease);
+    transform-style:preserve-3d; will-change:transform;
+  }
+  .mini-stat-card:hover{ box-shadow:0 12px 24px rgba(36,31,20,.1); }
+  .mini-stat-icon{ min-width:40px; height:40px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:15px; }
+  .mini-stat-icon.purple{ background:var(--purple-bg); color:var(--purple); }
+  .mini-stat-icon.blue{ background:var(--blue-bg); color:var(--blue); }
+  .mini-stat-icon.green{ background:var(--green-bg); color:var(--green); }
+  .mini-stat-icon.orange{ background:#fdf0e3; color:var(--amber-deep); }
+  .mini-stat-icon.teal{ background:var(--teal-bg); color:var(--teal); }
+  .mini-stat-icon.pink{ background:var(--pink-bg); color:var(--pink); }
+  .mini-stat-number{ font-size:15px; font-weight:700; }
+  .mini-stat-label{ font-size:11px; color:var(--ink-soft); margin-top:1px; }
+
+  .no-class-msg{ font-size:13.5px; color:var(--ink-soft); padding:6px 0; }
+  .my-class-card{
+    display:flex; align-items:center; gap:14px; background:var(--paper);
+    border-radius:var(--radius-md); padding:16px 18px; margin-bottom:10px;
+  }
+  .my-class-icon{ width:42px; height:42px; border-radius:12px; background:linear-gradient(135deg, var(--amber), var(--coral)); color:#241608; display:flex; align-items:center; justify-content:center; font-size:16px; }
+  .my-class-card strong{ display:block; font-size:14.5px; }
+  .my-class-card span{ font-size:12px; color:var(--ink-soft); }
+
+  .actions-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(230px,1fr)); gap:14px; }
+  .action-item{
+    position:relative; display:flex; align-items:center; gap:14px;
+    background:var(--paper); border:1px solid rgba(36,31,20,.05);
+    border-radius:var(--radius-md); padding:16px 18px;
+    transition:transform .18s var(--ease), box-shadow .18s var(--ease), background .18s var(--ease);
+  }
+  .action-item:hover{ transform:translateY(-4px); box-shadow:0 16px 30px rgba(36,31,20,.1); background:#fff; }
+  .action-icon{ min-width:42px; height:42px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:16px; }
+  .action-icon.blue{ background:var(--blue-bg); color:var(--blue); }
+  .action-icon.purple{ background:var(--purple-bg); color:var(--purple); }
+  .action-icon.teal{ background:var(--teal-bg); color:var(--teal); }
+  .action-icon.pink{ background:var(--pink-bg); color:var(--pink); }
+  .action-text h3{ font-size:14px; margin-bottom:2px; }
+  .action-text p{ font-size:12px; color:var(--ink-soft); }
+  .arrow{ margin-left:auto; color:var(--ink-faint); font-size:12px; transition:transform .18s var(--ease); }
+  .action-item:hover .arrow{ transform:translateX(4px); color:var(--amber-deep); }
+  .coming-soon-card{ opacity:.75; cursor:default; }
+  .coming-soon-card:hover{ transform:none; box-shadow:none; background:var(--paper); }
+  .soon-tag{ position:absolute; top:10px; right:12px; font-size:9.5px; font-weight:700; letter-spacing:.4px; text-transform:uppercase; background:var(--amber); color:#241608; padding:3px 8px; border-radius:999px; }
+
+  .footer{ text-align:center; font-size:12px; color:var(--ink-faint); padding:20px 0 6px; }
+
+  @media (max-width:900px){
+    .sidebar{ position:fixed; left:0; top:0; width:0; padding-left:0; padding-right:0; }
+    .sidebar.expanded{ width:230px; padding-left:0; padding-right:0; }
+    .sidebar.expanded .sidebar-brand, .sidebar.expanded .sidebar-nav, .sidebar.expanded .logout-link{ padding-left:14px; padding-right:14px; }
+    .menu-toggle{ position:fixed; top:16px; left:16px; z-index:50; margin:0; background:var(--navy-900); }
+    .content{ padding:22px 16px 40px; margin-top:-20px; }
+    .dashboard-hero{ padding:70px 20px 40px; }
+  }
+
+  @media (prefers-reduced-motion: reduce){ *{ animation:none !important; transition:none !important; } }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <aside class="sidebar" id="sidebar">
+    <button class="menu-toggle" id="menuToggle" aria-label="Toggle Menu"><i class="fa-solid fa-bars"></i></button>
+
+    <div class="sidebar-brand">
+      <div class="brand-icon"><i class="fa-solid fa-lightbulb"></i></div>
+      <div class="brand-text">
+        <h1><span class="accent">Home</span></h1>
+        <p>Tuition</p>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="teacher-dashboard.html" class="nav-link active"><i class="fa-solid fa-house"></i><span class="link-text">Dashboard</span></a>
+      <a href="#my-class" class="nav-link"><i class="fa-solid fa-chalkboard"></i><span class="link-text">My Class</span></a>
+      <a href="teacher-attendance.html" class="nav-link"><i class="fa-regular fa-square-check"></i><span class="link-text">Attendance</span></a>
+      <a href="teacher-homework.html" class="nav-link"><i class="fa-solid fa-file-lines"></i><span class="link-text">Homework</span></a>
+      <a href="#" class="nav-link" onclick="teacherChangePassword(); return false;"><i class="fa-solid fa-key"></i><span class="link-text">Change Password</span></a>
+    </nav>
+
+    <a href="teacher-login.html" onclick="teacherLogout(); return false;" class="logout-link">
+      <i class="fa-solid fa-arrow-right-from-bracket"></i><span class="link-text">Logout</span>
+    </a>
+  </aside>
+
+  <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+  <div class="main">
+    <header class="dashboard-hero">
+      <div class="topbar-left">
+        <h1>Welcome, <span id="topbarTeacherName">Teacher</span></h1>
+        <p id="teacherSubjectLine">Subject Teacher</p>
+      </div>
+      <div class="topbar-right">
+        <div class="admin-profile">
+          <div class="avatar"><i class="fa-solid fa-chalkboard-user"></i></div>
+          <span>Teacher</span>
+        </div>
+      </div>
+    </header>
+
+    <main class="content">
+
+      <!-- Quick stats -->
+      <section class="card">
+        <div class="card-title"><i class="fa-solid fa-gauge-high"></i><h2>Quick Stats</h2></div>
+        <div class="mini-stats-grid">
+          <div class="mini-stat-card">
+            <div class="mini-stat-icon blue"><i class="fa-solid fa-user-graduate"></i></div>
+            <div class="mini-stat-info"><div class="mini-stat-number" id="dashStudentCount">-</div><div class="mini-stat-label">My Students</div></div>
+          </div>
+          <div class="mini-stat-card">
+            <div class="mini-stat-icon teal"><i class="fa-solid fa-file-lines"></i></div>
+            <div class="mini-stat-info"><div class="mini-stat-number" id="dashHomeworkCount">-</div><div class="mini-stat-label">Homework Posted</div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Profile -->
+      <section class="card">
+        <div class="card-title"><i class="fa-solid fa-id-card"></i><h2>My Profile</h2></div>
+        <div class="mini-stats-grid">
+          <div class="mini-stat-card"><div class="mini-stat-icon purple"><i class="fa-solid fa-book"></i></div><div class="mini-stat-info"><div class="mini-stat-number" id="teacherSubjectText">-</div><div class="mini-stat-label">Subject</div></div></div>
+          <div class="mini-stat-card"><div class="mini-stat-icon blue"><i class="fa-solid fa-graduation-cap"></i></div><div class="mini-stat-info"><div class="mini-stat-number" id="teacherQualificationText">-</div><div class="mini-stat-label">Qualification</div></div></div>
+          <div class="mini-stat-card"><div class="mini-stat-icon green"><i class="fa-solid fa-briefcase"></i></div><div class="mini-stat-info"><div class="mini-stat-number" id="teacherExperienceText">-</div><div class="mini-stat-label">Experience</div></div></div>
+          <div class="mini-stat-card"><div class="mini-stat-icon orange"><i class="fa-solid fa-phone"></i></div><div class="mini-stat-info"><div class="mini-stat-number" id="teacherPhoneText">-</div><div class="mini-stat-label">Phone</div></div></div>
+        </div>
+      </section>
+
+      <!-- My Class -->
+      <section class="card" id="my-class">
+        <div class="card-title"><i class="fa-solid fa-chalkboard"></i><h2>My Class</h2></div>
+        <div id="teacherClassBox"><p class="no-class-msg">Loading...</p></div>
+      </section>
+
+      <!-- Quick actions -->
+      <section class="card">
+        <div class="card-title"><i class="fa-solid fa-layer-group"></i><h2>Quick Actions</h2></div>
+        <div class="actions-grid">
+          <a href="teacher-attendance.html" class="action-item">
+            <div class="action-icon blue"><i class="fa-regular fa-square-check"></i></div>
+            <div class="action-text"><h3>Take Attendance</h3><p>Mark daily attendance for your class</p></div>
+            <i class="fa-solid fa-chevron-right arrow"></i>
+          </a>
+          <a href="teacher-marks.html" class="action-item">
+            <div class="action-icon purple"><i class="fa-solid fa-pen-to-square"></i></div>
+            <div class="action-text"><h3>Add Marks</h3><p>Enter monthly subject-wise marks</p></div>
+            <i class="fa-solid fa-chevron-right arrow"></i>
+          </a>
+          <a href="teacher-homework.html" class="action-item">
+            <div class="action-icon teal"><i class="fa-solid fa-file-lines"></i></div>
+            <div class="action-text"><h3>Upload Homework</h3><p>Share homework with your class</p></div>
+            <i class="fa-solid fa-chevron-right arrow"></i>
+          </a>
+          <a href="#" class="action-item coming-soon-card">
+            <span class="soon-tag">Soon</span>
+            <div class="action-icon pink"><i class="fa-regular fa-bell"></i></div>
+            <div class="action-text"><h3>Notices</h3><p>Notices &amp; circulars</p></div>
+          </a>
+        </div>
+      </section>
+
+      <footer class="footer">Made with care, one student at a time. © 2026 Home Tuition.</footer>
+    </main>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function(){
+    if (!window.matchMedia('(hover:hover)').matches || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    document.querySelectorAll('.mini-stat-card').forEach(card => {
+      card.addEventListener('pointermove', (e) => {
+        const r = card.getBoundingClientRect();
+        const x = (e.clientX - r.left)/r.width - 0.5;
+        const y = (e.clientY - r.top)/r.height - 0.5;
+        card.style.transform = `perspective(600px) rotateY(${x*8}deg) rotateX(${-y*8}deg) translateY(-2px)`;
+      });
+      card.addEventListener('pointerleave', () => { card.style.transform = ''; });
+    });
+  });
+</script>
+
+<script type="module" src="teacher.js"></script>
+</body>
+</html>
