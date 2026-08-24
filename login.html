@@ -1,83 +1,222 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="hi" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Modern International School - Login</title>
+<title>Login - Home Tuition</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="admin.css">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --navy-950:#0e1326; --navy-900:#161d3a; --navy-800:#232c56;
+    --cream:#fdf6e8;
+    --amber:#ffb347; --amber-deep:#ff8c42; --amber-shadow:#d9691f; --coral:#ff6f61;
+    --text-onDark:#f3ecd9; --text-onDark-soft:#b7bcdc;
+    --text-onLight:#241f14; --text-onLight-soft:#7a715c;
+    --purple:#8a6fe8; --blue:#4a7fd6; --teal:#22b8a4;
+    --radius-lg:26px; --radius-md:16px;
+    --ease:cubic-bezier(.16,.84,.44,1);
+
+    --page-bg:radial-gradient(ellipse 90% 60% at 50% 0%, var(--navy-800) 0%, var(--navy-950) 65%);
+    --ink:var(--text-onDark); --ink-soft:var(--text-onDark-soft);
+    --card-bg:rgba(255,255,255,.045); --card-border:rgba(255,255,255,.12);
+    --star-op:.9;
+  }
+  html[data-theme="light"]{
+    --page-bg:radial-gradient(ellipse 90% 60% at 50% 0%, #fff2da 0%, var(--cream) 65%);
+    --ink:var(--text-onLight); --ink-soft:var(--text-onLight-soft);
+    --card-bg:#ffffff; --card-border:rgba(36,31,20,.08);
+    --star-op:0;
+  }
+
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  body{ font-family:'Inter', sans-serif; background:var(--page-bg); color:var(--ink); min-height:100svh;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; padding:60px 22px;
+    overflow-x:hidden; transition:background .6s var(--ease), color .6s var(--ease); position:relative; }
+  h1,h2{ font-family:'Fraunces', serif; font-weight:600; }
+  a{ text-decoration:none; color:inherit; }
+
+  .star{ position:absolute; width:2px; height:2px; background:#d7dcf5; border-radius:50%;
+    opacity:var(--star-op); animation:twinkle 3.6s ease-in-out infinite; transition:opacity .5s var(--ease); }
+  @keyframes twinkle{ 0%,100%{opacity:calc(var(--star-op)*.15);} 50%{opacity:var(--star-op);} }
+
+  .back-link{ position:absolute; top:26px; left:26px; display:inline-flex; align-items:center; gap:7px;
+    font-size:12.5px; font-weight:600; color:var(--ink-soft); transition:color .2s var(--ease); z-index:2; }
+  .back-link:hover{ color:var(--amber); }
+
+  .lamp-wrap{ position:relative; width:150px; perspective:600px;
+    animation:dropIn .8s var(--ease) both, lampBob 5.5s ease-in-out 1s infinite; margin-bottom:4px; }
+  @keyframes dropIn{ from{opacity:0; transform:translateY(-20px);} to{opacity:1; transform:translateY(0);} }
+  @keyframes lampBob{ 0%,100%{transform:translateY(0);} 50%{transform:translateY(-5px);} }
+  .lamp-svg{ transform-style:preserve-3d; transition:transform .2s ease-out; filter:drop-shadow(0 16px 14px rgba(0,0,0,.4)); }
+  .lamp-glow{ animation:lampPulse 3.2s ease-in-out infinite; transform-origin:100px 95px; }
+  @keyframes lampPulse{ 0%,100%{opacity:.85; transform:scale(1);} 50%{opacity:1; transform:scale(1.06);} }
+  .pull-cord{ cursor:pointer; transform-box:fill-box; transform-origin:50% 0%; animation:cordSway 3.6s ease-in-out infinite; }
+  .pull-cord.pulled{ animation:pullTug .5s ease-out; }
+  .pull-cord:focus-visible{ outline:2px solid var(--amber); outline-offset:5px; border-radius:8px; }
+  @keyframes cordSway{ 0%,100%{transform:rotate(-4deg);} 50%{transform:rotate(4deg);} }
+  @keyframes pullTug{ 0%{transform:translateY(0) rotate(0);} 35%{transform:translateY(16px) rotate(2deg);} 65%{transform:translateY(-4px) rotate(-1deg);} 100%{transform:translateY(0) rotate(0);} }
+
+  .brand-title{ font-size:clamp(26px, 6vw, 34px); text-align:center; line-height:1.15; margin-top:6px; animation:fadeUp .7s .2s var(--ease) both; }
+  .brand-title span{ color:var(--amber); }
+  @keyframes fadeUp{ from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:translateY(0);} }
+
+  .subtitle-divider{ display:flex; align-items:center; gap:10px; margin:16px 0 34px; animation:fadeUp .7s .3s var(--ease) both; }
+  .subtitle-divider .line{ width:26px; height:1px; background:rgba(255,255,255,.25); }
+  .subtitle-divider .dot{ width:4px; height:4px; border-radius:50%; background:var(--amber); }
+  .subtitle-divider .subtitle-text{ font-size:12px; font-weight:600; letter-spacing:1.2px; text-transform:uppercase; color:var(--ink-soft); }
+
+  .role-grid{ display:grid; grid-template-columns:1fr 1fr; gap:16px; width:100%; max-width:520px; animation:fadeUp .8s .4s var(--ease) both; }
+  .role-card{
+    position:relative; display:flex; flex-direction:column; gap:10px; text-align:left;
+    background:var(--card-bg); border:1px solid var(--card-border);
+    backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
+    border-radius:var(--radius-lg); padding:22px 20px;
+    transition:transform .15s ease-out, background-color .6s var(--ease), border-color .6s var(--ease), box-shadow .2s var(--ease);
+    transform-style:preserve-3d; will-change:transform;
+    box-shadow:0 16px 34px rgba(0,0,0,.25);
+  }
+  .role-card:hover{ box-shadow:0 22px 44px rgba(0,0,0,.32); }
+  .role-card-icon{ width:44px; height:44px; border-radius:13px; display:flex; align-items:center; justify-content:center; font-size:17px; }
+  .role-card-icon.purple{ background:rgba(138,111,232,.16); color:var(--purple); }
+  .role-card-icon.blue{ background:rgba(74,127,214,.16); color:var(--blue); }
+  .role-card-icon.amber{ background:rgba(255,179,71,.16); color:var(--amber); }
+  .role-card-icon.teal{ background:rgba(34,184,164,.16); color:var(--teal); }
+  .role-card h3{ font-size:15px; color:var(--ink); font-family:'Inter', sans-serif; font-weight:700; }
+  .role-card p{ font-size:12px; color:var(--ink-soft); line-height:1.5; }
+  .role-card-go{ position:absolute; top:20px; right:18px; width:26px; height:26px; border-radius:50%;
+    background:rgba(255,179,71,.14); color:var(--amber); display:flex; align-items:center; justify-content:center;
+    font-size:11px; transition:transform .2s var(--ease), background .2s var(--ease); }
+  .role-card:hover .role-card-go{ transform:translateX(3px); background:var(--amber); color:#241608; }
+
+  .role-note{ display:flex; align-items:flex-start; gap:10px; max-width:480px; margin-top:26px;
+    font-size:12px; color:var(--ink-soft); line-height:1.6; text-align:left; animation:fadeUp .8s .5s var(--ease) both; }
+  .role-note i{ color:var(--amber); margin-top:2px; flex-shrink:0; }
+
+  @media (max-width:480px){ .role-grid{ grid-template-columns:1fr; } }
+  @media (prefers-reduced-motion: reduce){ *{ animation:none !important; transition:none !important; } }
+</style>
 </head>
 <body>
 
-<!-- Decorative background (same as student-login.html, for brand consistency) -->
-<div class="bg-blob-top-left"></div>
-<div class="bg-dots bg-dots-top-right"></div>
-<div class="bg-dots bg-dots-bottom-left"></div>
-<div class="bg-ring bg-ring-mid-right"></div>
-<div class="bg-dot bg-dot-mid-left"></div>
-<div class="bg-arc bg-arc-bottom-right"></div>
+<a href="index.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Homepage</a>
 
-<div class="page role-select-page">
+<div class="star" style="top:10%; left:12%; animation-delay:.2s;"></div>
+<div class="star" style="top:16%; left:85%; animation-delay:1.1s;"></div>
+<div class="star" style="top:7%;  left:50%; animation-delay:.6s;"></div>
+<div class="star" style="top:26%; left:6%;  animation-delay:1.8s;"></div>
+<div class="star" style="top:20%; left:70%; animation-delay:2.3s;"></div>
 
-  <a href="index.html" class="role-back-link">
-    <i class="fa-solid fa-arrow-left"></i> Homepage
+<div class="lamp-wrap" id="lampWrap">
+  <svg class="lamp-svg" viewBox="0 0 200 220" width="130" height="143" aria-hidden="true">
+    <defs>
+      <radialGradient id="glowGrad" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#fff0cf" stop-opacity="0.95"/>
+        <stop offset="55%" stop-color="#ffb347" stop-opacity="0.35"/>
+        <stop offset="100%" stop-color="#ffb347" stop-opacity="0"/>
+      </radialGradient>
+      <linearGradient id="shadeGrad" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="#eccb92"/><stop offset="55%" stop-color="#caa46a"/><stop offset="100%" stop-color="#96723f"/>
+      </linearGradient>
+      <linearGradient id="poleGrad" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="#4d3f28"/><stop offset="50%" stop-color="#3a2f1e"/><stop offset="100%" stop-color="#241d11"/>
+      </linearGradient>
+      <linearGradient id="baseGrad" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="#3c311e"/><stop offset="50%" stop-color="#2c2416"/><stop offset="100%" stop-color="#18130a"/>
+      </linearGradient>
+    </defs>
+    <ellipse class="lamp-glow" cx="100" cy="92" rx="62" ry="62" fill="url(#glowGrad)"/>
+    <rect x="70" y="200" width="60" height="12" rx="6" fill="url(#baseGrad)"/>
+    <rect x="96" y="108" width="8" height="96" rx="4" fill="url(#poleGrad)"/>
+    <path d="M76 50 L124 50 L146 108 L54 108 Z" fill="url(#shadeGrad)"/>
+    <path d="M76 50 L124 50 L118 60 L82 60 Z" fill="#f3dcae"/>
+    <circle cx="100" cy="82" r="7" fill="#fff3d6"/>
+    <g class="pull-cord" id="pullCord" tabindex="0" role="button" aria-label="Toggle light and dark mode">
+      <line x1="119" y1="68" x2="119" y2="132" stroke="#d8c9a3" stroke-width="2" stroke-linecap="round"/>
+      <circle cx="119" cy="138" r="6.5" fill="#e8c46a" stroke="#a9803a" stroke-width="1.4"/>
+    </g>
+  </svg>
+</div>
+
+<h1 class="brand-title">Home <span>Tuition</span></h1>
+
+<div class="subtitle-divider">
+  <span class="line"></span><span class="dot"></span>
+  <span class="subtitle-text">Choose how you'd like to sign in</span>
+  <span class="dot"></span><span class="line"></span>
+</div>
+
+<div class="role-grid">
+
+  <a href="student-login.html" class="role-card">
+    <div class="role-card-icon purple"><i class="fa-solid fa-user-graduate"></i></div>
+    <h3>Student &amp; Parent</h3>
+    <p>View results, attendance and notices</p>
+    <span class="role-card-go"><i class="fa-solid fa-arrow-right"></i></span>
   </a>
 
-  <div class="role-select-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+  <a href="teacher-login.html" class="role-card">
+    <div class="role-card-icon blue"><i class="fa-solid fa-chalkboard-user"></i></div>
+    <h3>Teacher Login</h3>
+    <p>Class info, attendance &amp; marks</p>
+    <span class="role-card-go"><i class="fa-solid fa-arrow-right"></i></span>
+  </a>
 
-  <h1 class="school-title">
-    Modern International<br>
-    <span>School</span>
-  </h1>
+  <a href="admin.html" class="role-card">
+    <div class="role-card-icon amber"><i class="fa-solid fa-user-tie"></i></div>
+    <h3>Admin Login</h3>
+    <p>Manage students, classes &amp; records</p>
+    <span class="role-card-go"><i class="fa-solid fa-arrow-right"></i></span>
+  </a>
 
-  <div class="subtitle-divider">
-    <span class="line"></span>
-    <span class="dot"></span>
-    <span class="subtitle-text">Choose how you'd like to sign in</span>
-    <span class="dot"></span>
-    <span class="line"></span>
-  </div>
-
-  <div class="role-select-grid">
-
-    <a href="student-login.html" class="role-card">
-      <div class="role-card-icon purple"><i class="fa-solid fa-user-graduate"></i></div>
-      <h3>Student &amp; Parent</h3>
-      <p>View results, attendance and school notices</p>
-      <span class="role-card-go"><i class="fa-solid fa-arrow-right"></i></span>
-    </a>
-
-    <a href="teacher-login.html" class="role-card">
-      <div class="role-card-icon blue"><i class="fa-solid fa-chalkboard-user"></i></div>
-      <h3>Teacher Login</h3>
-      <p>Class info, and soon: attendance &amp; marks</p>
-      <span class="role-card-go"><i class="fa-solid fa-arrow-right"></i></span>
-    </a>
-
-    <a href="admin.html" class="role-card">
-      <div class="role-card-icon navy"><i class="fa-solid fa-user-tie"></i></div>
-      <h3>Admin Login</h3>
-      <p>Manage students, classes &amp; records</p>
-      <span class="role-card-go"><i class="fa-solid fa-arrow-right"></i></span>
-    </a>
-
-    <a href="parent-login.html" class="role-card">
-      <div class="role-card-icon teal"><i class="fa-solid fa-people-roof"></i></div>
-      <h3>Parent Portal</h3>
-      <p>Track every child's result, attendance, notices &amp; fees in one place</p>
-      <span class="role-card-go"><i class="fa-solid fa-arrow-right"></i></span>
-    </a>
-
-  </div>
-
-  <p class="role-select-note">
-    <i class="fa-solid fa-circle-info"></i>
-    <span>Teacher login tabhi kaam karega jab Admin unhe add/update kare — tabhi unke email par password-setup link jaata hai.</span>
-  </p>
+  <a href="parent-login.html" class="role-card">
+    <div class="role-card-icon teal"><i class="fa-solid fa-people-roof"></i></div>
+    <h3>Parent Portal</h3>
+    <p>Track every child's result, attendance &amp; fees</p>
+    <span class="role-card-go"><i class="fa-solid fa-arrow-right"></i></span>
+  </a>
 
 </div>
+
+<p class="role-note">
+  <i class="fa-solid fa-circle-info"></i>
+  <span>Teacher login tabhi kaam karega jab Admin unhe add/update kare — tabhi unke email par password-setup link jaata hai.</span>
+</p>
+
+<script>
+  const html = document.documentElement;
+  const cord = document.getElementById('pullCord');
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function toggleTheme(){
+    const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    if (!reduceMotion){ cord.classList.remove('pulled'); void cord.offsetWidth; cord.classList.add('pulled'); }
+  }
+  cord.addEventListener('click', toggleTheme);
+  cord.addEventListener('keydown', (e) => { if(e.key==='Enter'||e.key===' '){ e.preventDefault(); toggleTheme(); } });
+
+  if (!reduceMotion && window.matchMedia('(hover:hover)').matches){
+    const lampWrap = document.getElementById('lampWrap');
+    const lampSvg = lampWrap.querySelector('.lamp-svg');
+    window.addEventListener('pointermove', (e) => {
+      const r = lampWrap.getBoundingClientRect();
+      const dx = (e.clientX - (r.left+r.width/2)) / window.innerWidth;
+      const dy = (e.clientY - (r.top+r.height/2)) / window.innerHeight;
+      lampSvg.style.transform = `rotateY(${dx*20}deg) rotateX(${-dy*16}deg)`;
+    });
+    document.querySelectorAll('.role-card').forEach(card => {
+      card.addEventListener('pointermove', (e) => {
+        const r = card.getBoundingClientRect();
+        const x = (e.clientX - r.left)/r.width - 0.5;
+        const y = (e.clientY - r.top)/r.height - 0.5;
+        card.style.transform = `perspective(700px) rotateY(${x*8}deg) rotateX(${-y*8}deg) translateY(-4px)`;
+      });
+      card.addEventListener('pointerleave', () => { card.style.transform = ''; });
+    });
+  }
+</script>
 
 </body>
 </html>
