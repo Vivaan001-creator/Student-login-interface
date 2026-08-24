@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Home Tuition - Assessment Result</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Dancing+Script:wght@600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --paper:#f7f2e4; --cream:#fdf6e8; --ink:#241f14; --ink-soft:#7a715c; --ink-faint:#a89d84;
+    --amber:#ffb347; --amber-deep:#ff8c42; --amber-shadow:#d9691f; --coral:#ff6f61;
+    --navy-900:#161d3a; --navy-950:#0e1326;
+    --green:#2fb87f; --green-bg:#e4f7ee; --red:#e5584a; --red-bg:#fdeceb;
+    --radius-lg:24px; --radius-md:14px;
+    --ease:cubic-bezier(.16,.84,.44,1);
+  }
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  body{ font-family:'Inter', sans-serif; background:var(--paper); color:var(--ink); }
+  h1,h2{ font-family:'Fraunces', serif; font-weight:600; }
+
+  .result-page{ max-width:820px; margin:0 auto; padding:26px 20px 60px; }
+
+  .result-header{ display:flex; align-items:flex-start; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-bottom:22px; }
+  .result-header-text h1{ font-size:clamp(22px,4vw,28px); }
+  .result-header-text p{ font-size:13px; color:var(--ink-soft); margin-top:4px; }
+  .result-header-actions{ display:flex; gap:8px; flex-wrap:wrap; }
+  .result-header-actions button{
+    display:inline-flex; align-items:center; gap:7px; border:none; cursor:pointer; font-family:inherit;
+    font-size:12.5px; font-weight:600; padding:10px 16px; border-radius:999px; background:#fff;
+    border:1.5px solid rgba(36,31,20,.09); color:var(--ink); transition:transform .15s var(--ease), border-color .15s var(--ease);
+  }
+  .result-header-actions button:hover{ transform:translateY(-2px); border-color:var(--amber-deep); color:var(--amber-deep); }
+  .result-header-actions button.danger{ color:var(--red); border-color:rgba(229,88,74,.25); }
+  .result-header-actions button.danger:hover{ background:var(--red-bg); border-color:var(--red); }
+
+  .result-card{ background:#fff; border:1px solid rgba(36,31,20,.06); border-radius:var(--radius-lg); box-shadow:0 20px 50px rgba(36,31,20,.09); padding:32px 28px; animation:cardIn .5s var(--ease) both; }
+  @keyframes cardIn{ from{opacity:0; transform:translateY(16px);} to{opacity:1; transform:translateY(0);} }
+
+  .profile-row{ display:flex; align-items:flex-start; gap:18px; padding-bottom:22px; border-bottom:1px solid rgba(36,31,20,.07); margin-bottom:24px; flex-wrap:wrap; }
+  .profile-avatar{ width:60px; height:60px; border-radius:50%; background:linear-gradient(135deg, var(--amber) 0%, var(--coral) 100%); color:#241608; display:flex; align-items:center; justify-content:center; font-size:24px; flex-shrink:0; box-shadow:0 10px 22px rgba(255,140,66,.28); }
+  .profile-info{ display:grid; grid-template-columns:1fr 1fr; gap:6px 26px; flex:1; min-width:240px; }
+  .profile-info p{ font-size:13px; color:var(--ink-soft); }
+  .profile-info strong{ color:var(--ink); font-weight:600; }
+  .month-select{ border:1.5px solid rgba(36,31,20,.1); border-radius:8px; padding:4px 10px; font-size:12.5px; font-family:inherit; background:var(--paper); color:var(--ink); }
+
+  .section-title{ font-size:16px; margin-bottom:14px; }
+
+  .table-wrap{ overflow-x:auto; border-radius:var(--radius-md); border:1px solid rgba(36,31,20,.07); margin-bottom:22px; }
+  table.marks-table{ width:100%; border-collapse:collapse; font-size:13px; }
+  table.marks-table th{ text-align:left; background:var(--paper); color:var(--ink-soft); font-weight:600; font-size:11px; text-transform:uppercase; letter-spacing:.3px; padding:12px 16px; }
+  table.marks-table td{ padding:12px 16px; border-top:1px solid rgba(36,31,20,.05); }
+  .empty-row{ text-align:center; color:var(--ink-soft); padding:20px !important; }
+  .status-pass{ background:var(--green-bg); color:var(--green); font-size:11px; font-weight:700; padding:4px 12px; border-radius:999px; }
+  .status-fail{ background:var(--red-bg); color:var(--red); font-size:11px; font-weight:700; padding:4px 12px; border-radius:999px; }
+
+  .summary-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(120px,1fr)); gap:14px; margin-bottom:26px; }
+  .summary-card{ display:flex; flex-direction:column; align-items:center; gap:4px; background:var(--paper); border-radius:var(--radius-md); padding:16px 10px; text-align:center; }
+  .summary-label{ font-size:11px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.4px; }
+  .summary-value{ font-size:19px; font-weight:700; font-family:'Fraunces', serif; color:var(--amber-shadow); }
+
+  .comment-box{ background:var(--paper); border-radius:var(--radius-md); padding:16px 18px; font-size:13.5px; line-height:1.6; color:var(--ink); margin-bottom:26px; }
+
+  .signature-row{ text-align:right; padding-top:10px; }
+  .signature-mark{ font-family:'Dancing Script', cursive; font-size:26px; color:var(--navy-900); }
+  .signature-row p{ font-size:11.5px; color:var(--ink-soft); border-top:1px solid rgba(36,31,20,.12); display:inline-block; padding-top:4px; margin-top:2px; }
+
+  .result-footer{ text-align:center; font-size:12.5px; color:var(--ink-faint); margin-top:24px; }
+
+  @media print{
+    body{ background:#fff; }
+    .result-header-actions{ display:none; }
+    .result-card{ box-shadow:none; border:none; }
+  }
+  @media (max-width:640px){
+    .profile-info{ grid-template-columns:1fr; }
+    .result-card{ padding:24px 18px; }
+  }
+  @media (prefers-reduced-motion: reduce){ *{ animation:none !important; transition:none !important; } }
+</style>
+</head>
+<body>
+
+<div class="result-page" id="resultPage">
+
+  <header class="result-header">
+    <div class="result-header-text">
+      <h1>Assessment Result</h1>
+      <p>Quarterly Examination Result</p>
+    </div>
+    <div class="result-header-actions">
+      <button onclick="goToDashboard()"><i class="fa-solid fa-arrow-left"></i><span> Back to Dashboard</span></button>
+      <button onclick="printResult()"><i class="fa-solid fa-print"></i><span> Print</span></button>
+      <button onclick="downloadPDF()"><i class="fa-solid fa-download"></i><span> Download PDF</span></button>
+      <button onclick="logoutStudent()" class="danger"><i class="fa-solid fa-right-from-bracket"></i><span> Logout</span></button>
+    </div>
+  </header>
+
+  <main class="result-card">
+    <div class="profile-row">
+      <div class="profile-avatar"><i class="fa-solid fa-user-graduate"></i></div>
+      <div class="profile-info">
+        <p><strong>Student Name:</strong> <span id="studentName">-</span></p>
+        <p><strong>Class:</strong> <span id="studentClass">-</span></p>
+        <p><strong>Roll No:</strong> <span id="studentRoll">-</span></p>
+        <p><strong>Father's Name:</strong> <span id="fatherName">-</span></p>
+        <p><strong>Section:</strong> <span id="studentSection">-</span></p>
+        <p><strong>Month:</strong> <select id="monthSelect" class="month-select"></select></p>
+      </div>
+    </div>
+
+    <h2 class="section-title">Academic Performance</h2>
+    <div class="table-wrap">
+      <table class="marks-table">
+        <thead><tr><th>Subject</th><th>Max</th><th>Pass</th><th>Marks</th><th>Status</th></tr></thead>
+        <tbody id="marksTableBody"><tr><td colspan="5" class="empty-row">Loading...</td></tr></tbody>
+      </table>
+    </div>
+
+    <div class="summary-grid">
+      <div class="summary-card"><span class="summary-label">Total</span><span class="summary-value" id="totalMarks">-</span></div>
+      <div class="summary-card"><span class="summary-label">Percentage</span><span class="summary-value" id="percentage">-</span></div>
+      <div class="summary-card"><span class="summary-label">Grade</span><span class="summary-value" id="grade">-</span></div>
+      <div class="summary-card"><span class="summary-label">Attendance</span><span class="summary-value" id="attendance">-</span></div>
+    </div>
+
+    <h2 class="section-title">Teacher's Comment</h2>
+    <p class="comment-box" id="comment">-</p>
+
+    <div class="signature-row">
+      <div class="signature-mark">Vivaan Kumar</div>
+      <p>Class Teacher Signature</p>
+    </div>
+  </main>
+
+  <p class="result-footer">Keep Learning, Keep Growing, Keep Succeeding!</p>
+</div>
+
+<script type="module" src="result.js"></script>
+</body>
+</html>
