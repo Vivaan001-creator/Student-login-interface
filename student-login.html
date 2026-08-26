@@ -133,6 +133,16 @@
   .back-link:hover{ color:var(--amber); }
 
   @media (prefers-reduced-motion: reduce){ *{ animation:none !important; transition:none !important; } }
+
+  /* ---- cross-page transition into student-register.html ---- */
+  @view-transition{ navigation:auto; }
+  .lamp-wrap{ view-transition-name:auth-lamp; }
+  .login-card{ view-transition-name:auth-card; }
+  .brand-title{ view-transition-name:auth-title; }
+  ::view-transition-old(auth-card), ::view-transition-new(auth-card){ animation-duration:.45s; }
+  .signup-line{ margin-top:18px; font-size:12.5px; color:var(--ink-soft); text-align:center; animation:fadeUp .7s .45s var(--ease) both; }
+  .signup-line a{ color:var(--amber); font-weight:700; }
+  .signup-line a:hover{ text-decoration:underline; }
 </style>
 </head>
 <body>
@@ -210,6 +220,8 @@
     <div class="secure-login"><span class="line"></span><i class="fa-solid fa-shield-halved"></i><span>Secure Login</span><span class="line"></span></div>
   </form>
 </div>
+
+<p class="signup-line">Didn't have any account? <a href="student-register.html">Sign Up!!</a></p>
 
 <a href="admin.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Staff Login par jaayein</a>
 
