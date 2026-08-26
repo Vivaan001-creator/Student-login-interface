@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="appearance.js"></script>
 <title>Home Tuition - Assessment Result</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,7 +17,14 @@
     --green:#2fb87f; --green-bg:#e4f7ee; --red:#e5584a; --red-bg:#fdeceb;
     --radius-lg:24px; --radius-md:14px;
     --ease:cubic-bezier(.16,.84,.44,1);
+    --surface-card:#ffffff; --surface-card-border:rgba(36,31,20,.06); --surface-card-shadow:rgba(36,31,20,.09);
   }
+  html[data-theme="dark"]{
+    --paper:#161d3a; --cream:#1c2444; --ink:#f3ecd9; --ink-soft:#b7bcdc; --ink-faint:#7c84a8;
+    --green-bg:#173a2c; --red-bg:#3a1e1c;
+    --surface-card:rgba(255,255,255,.045); --surface-card-border:rgba(255,255,255,.1); --surface-card-shadow:rgba(0,0,0,.35);
+  }
+  body{ transition:background-color .5s ease, color .5s ease; }
   *{ margin:0; padding:0; box-sizing:border-box; }
   body{ font-family:'Inter', sans-serif; background:var(--paper); color:var(--ink); }
   h1,h2{ font-family:'Fraunces', serif; font-weight:600; }
@@ -36,7 +44,7 @@
   .result-header-actions button.danger{ color:var(--red); border-color:rgba(229,88,74,.25); }
   .result-header-actions button.danger:hover{ background:var(--red-bg); border-color:var(--red); }
 
-  .result-card{ background:#fff; border:1px solid rgba(36,31,20,.06); border-radius:var(--radius-lg); box-shadow:0 20px 50px rgba(36,31,20,.09); padding:32px 28px; animation:cardIn .5s var(--ease) both; }
+  .result-card{ background:var(--surface-card); border:1px solid var(--surface-card-border); border-radius:var(--radius-lg); box-shadow:0 20px 50px var(--surface-card-shadow); padding:32px 28px; animation:cardIn .5s var(--ease) both; }
   @keyframes cardIn{ from{opacity:0; transform:translateY(16px);} to{opacity:1; transform:translateY(0);} }
 
   .profile-row{ display:flex; align-items:flex-start; gap:18px; padding-bottom:22px; border-bottom:1px solid rgba(36,31,20,.07); margin-bottom:24px; flex-wrap:wrap; }
@@ -82,6 +90,8 @@
 </style>
 </head>
 <body>
+
+<div id="appearanceMount"></div>
 
 <div class="result-page" id="resultPage">
 
@@ -137,6 +147,10 @@
 
   <p class="result-footer">Keep Learning, Keep Growing, Keep Succeeding!</p>
 </div>
+
+<script>
+  Appearance.renderMenu(document.getElementById('appearanceMount'), { variant: 'corner' });
+</script>
 
 <script type="module" src="result.js"></script>
 </body>
