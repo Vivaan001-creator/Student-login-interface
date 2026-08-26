@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="appearance.js"></script>
 <title>Fee Management - Home Tuition</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -21,8 +22,20 @@
     --teal:#22b8a4; --teal-bg:#e3f8f5;
     --pink:#e2649e; --pink-bg:#fceaf3;
     --radius-lg:24px; --radius-md:16px; --radius-sm:12px;
+    --surface-card:#ffffff; --surface-card-border:rgba(36,31,20,.06);
+    --surface-card-shadow:rgba(36,31,20,.07); --surface-hover:#eee3cc;
     --ease:cubic-bezier(.16,.84,.44,1);
   }
+
+  html[data-theme="dark"]{
+    --cream:#1c2444; --cream-dim:#232c56; --paper:#161d3a;
+    --ink:#f3ecd9; --ink-soft:#b7bcdc; --ink-faint:#7c84a8;
+    --green-bg:#173a2c; --red-bg:#3a1e1c; --blue-bg:#1c2c4a;
+    --purple-bg:#2a2456; --teal-bg:#173a38; --pink-bg:#3a2038;
+    --surface-card:rgba(255,255,255,.045); --surface-card-border:rgba(255,255,255,.1);
+    --surface-card-shadow:rgba(0,0,0,.35); --surface-hover:rgba(255,255,255,.07);
+  }
+
   *{ margin:0; padding:0; box-sizing:border-box; }
   body{ font-family:'Inter', sans-serif; background:var(--paper); color:var(--ink); }
   h1,h2,h3{ font-family:'Fraunces', serif; font-weight:600; }
@@ -100,7 +113,7 @@
   .btn-add-class:hover{ transform:translateY(-2px); box-shadow:0 6px 0 var(--amber-shadow), 0 14px 26px rgba(255,140,66,.34); }
   .btn-add-class:active{ transform:translateY(2px); box-shadow:0 2px 0 var(--amber-shadow), 0 6px 14px rgba(255,140,66,.3); }
 
-  .classes-card{ background:#fff; border:1px solid rgba(36,31,20,.06); border-radius:var(--radius-lg); padding:24px; box-shadow:0 16px 36px rgba(36,31,20,.07); margin-bottom:20px; }
+  .classes-card{ background:var(--surface-card); border:1px solid rgba(36,31,20,.06); border-radius:var(--radius-lg); padding:24px; box-shadow:0 16px 36px rgba(36,31,20,.07); margin-bottom:20px; }
   .classes-card-toolbar{ margin-bottom:18px; }
   .search-box-wrap{ position:relative; max-width:420px; }
   .search-box-wrap i{ position:absolute; left:16px; top:50%; transform:translateY(-50%); color:var(--ink-soft); font-size:13px; }
@@ -147,7 +160,7 @@
   /* ===== Modal ===== */
   .modal-backdrop{ display:none; position:fixed; inset:0; background:rgba(14,19,38,.55); z-index:60; align-items:center; justify-content:center; padding:20px; }
   .modal-backdrop.open{ display:flex; }
-  .modal-card{ background:#fff; border-radius:var(--radius-lg); padding:26px 24px; width:100%; max-width:480px; max-height:88vh; overflow-y:auto; box-shadow:0 30px 70px rgba(0,0,0,.3); animation:modalIn .3s var(--ease) both; }
+  .modal-card{ background:var(--surface-card); border-radius:var(--radius-lg); padding:26px 24px; width:100%; max-width:480px; max-height:88vh; overflow-y:auto; box-shadow:0 30px 70px rgba(0,0,0,.3); animation:modalIn .3s var(--ease) both; }
   @keyframes modalIn{ from{opacity:0; transform:translateY(16px) scale(.97);} to{opacity:1; transform:translateY(0) scale(1);} }
   .modal-header{ display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; }
   .modal-header h2{ font-size:17px; }
@@ -199,7 +212,7 @@
   @media (max-width:760px){
     table.classes-table thead{ display:none; }
     table.classes-table, table.classes-table tbody, table.classes-table tr, table.classes-table td{ display:block; width:100%; }
-    table.classes-table tr{ margin:10px; border:1px solid rgba(36,31,20,.08); border-radius:14px; padding:6px 14px; background:#fff; }
+    table.classes-table tr{ margin:10px; border:1px solid rgba(36,31,20,.08); border-radius:14px; padding:6px 14px; background:var(--surface-card); }
     table.classes-table td{ display:flex; justify-content:space-between; align-items:center; gap:12px; padding:9px 0; border:none; border-bottom:1px solid rgba(36,31,20,.05); text-align:right; }
     table.classes-table td:last-child{ border-bottom:none; }
     table.classes-table td::before{ content:attr(data-label); font-weight:600; color:var(--ink-soft); font-size:11px; text-align:left; }
@@ -252,6 +265,7 @@
     </nav>
 
     <a href="#" onclick="adminLogout()" class="logout-link"><i class="fa-solid fa-arrow-right-from-bracket"></i><span class="link-text">Logout</span></a>
+    <div style="display:flex; justify-content:center; margin:6px 0 4px;" id="appearanceMount"></div>
   </aside>
 
   <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
@@ -343,6 +357,10 @@
     </form>
   </div>
 </div>
+
+<script>
+  Appearance.renderMenu(document.getElementById('appearanceMount'), { variant: 'inline' });
+</script>
 
 <script>
   document.addEventListener('DOMContentLoaded', function(){
