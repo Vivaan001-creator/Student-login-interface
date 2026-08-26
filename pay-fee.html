@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="appearance.js"></script>
 <title>Fee Payment - Home Tuition</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -15,9 +16,14 @@
     --navy-900:#161d3a; --navy-950:#0e1326;
     --radius-lg:24px; --radius-md:14px;
     --ease:cubic-bezier(.16,.84,.44,1);
+    --surface-card:#ffffff; --surface-card-border:rgba(36,31,20,.06); --surface-card-shadow:rgba(36,31,20,.1);
+  }
+  html[data-theme="dark"]{
+    --paper:#161d3a; --ink:#f3ecd9; --ink-soft:#b7bcdc; --ink-faint:#7c84a8;
+    --surface-card:rgba(255,255,255,.045); --surface-card-border:rgba(255,255,255,.1); --surface-card-shadow:rgba(0,0,0,.35);
   }
   *{ margin:0; padding:0; box-sizing:border-box; }
-  body{ font-family:'Inter', sans-serif; background:var(--paper); color:var(--ink); min-height:100vh; }
+  body{ font-family:'Inter', sans-serif; background:var(--paper); color:var(--ink); min-height:100vh; transition:background-color .5s ease, color .5s ease; }
   h1,h2{ font-family:'Fraunces', serif; font-weight:600; }
   a{ text-decoration:none; }
 
@@ -28,7 +34,7 @@
   .pay-back{ display:inline-flex; align-items:center; gap:8px; color:var(--amber-shadow); font-size:13px; font-weight:700; margin-bottom:18px; transition:gap .2s var(--ease); }
   .pay-back:hover{ gap:11px; }
 
-  .pay-card{ background:#fff; border:1px solid rgba(36,31,20,.06); border-radius:var(--radius-lg); box-shadow:0 20px 50px rgba(36,31,20,.1); padding:32px 26px; text-align:center; animation:slideUpFade .5s var(--ease) both; }
+  .pay-card{ background:var(--surface-card); border:1px solid var(--surface-card-border); border-radius:var(--radius-lg); box-shadow:0 20px 50px var(--surface-card-shadow); padding:32px 26px; text-align:center; animation:slideUpFade .5s var(--ease) both; }
   .pay-icon{ width:64px; height:64px; border-radius:50%; background:linear-gradient(135deg, var(--amber) 0%, var(--coral) 100%); color:#241608; display:flex; align-items:center; justify-content:center; font-size:26px; margin:0 auto 18px; box-shadow:0 10px 22px rgba(255,140,66,.3); }
   .pay-who{ font-size:13px; color:var(--ink-soft); margin-bottom:2px; }
   .pay-period{ font-size:17px; font-weight:700; margin-bottom:20px; }
@@ -73,6 +79,8 @@
 </head>
 <body>
 
+<div id="appearanceMount"></div>
+
 <div class="pay-page">
   <a href="parent-dashboard.html" class="pay-back"><i class="fa-solid fa-arrow-left"></i> Dashboard par vaapas jaayein</a>
 
@@ -80,6 +88,10 @@
     <div class="pay-state-msg"><i class="fa-solid fa-spinner fa-spin"></i> Loading...</div>
   </div>
 </div>
+
+<script>
+  Appearance.renderMenu(document.getElementById('appearanceMount'), { variant: 'corner' });
+</script>
 
 <script type="module" src="pay-fee.js?v=2"></script>
 </body>
