@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="appearance.js"></script>
 <title>Edit Teacher - Home Tuition</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -21,8 +22,20 @@
     --teal:#22b8a4; --teal-bg:#e3f8f5;
     --pink:#e2649e; --pink-bg:#fceaf3;
     --radius-lg:24px; --radius-md:16px;
+    --surface-card:#ffffff; --surface-card-border:rgba(36,31,20,.06);
+    --surface-card-shadow:rgba(36,31,20,.07); --surface-hover:#eee3cc;
     --ease:cubic-bezier(.16,.84,.44,1);
   }
+
+  html[data-theme="dark"]{
+    --cream:#1c2444; --cream-dim:#232c56; --paper:#161d3a;
+    --ink:#f3ecd9; --ink-soft:#b7bcdc; --ink-faint:#7c84a8;
+    --green-bg:#173a2c; --red-bg:#3a1e1c; --blue-bg:#1c2c4a;
+    --purple-bg:#2a2456; --teal-bg:#173a38; --pink-bg:#3a2038;
+    --surface-card:rgba(255,255,255,.045); --surface-card-border:rgba(255,255,255,.1);
+    --surface-card-shadow:rgba(0,0,0,.35); --surface-hover:rgba(255,255,255,.07);
+  }
+
   *{ margin:0; padding:0; box-sizing:border-box; }
   body{ font-family:'Inter', sans-serif; background:var(--paper); color:var(--ink); }
   h1,h2,h3{ font-family:'Fraunces', serif; font-weight:600; }
@@ -68,7 +81,7 @@
 
   /* ===== Main ===== */
   .main-area{ flex:1; min-width:0; }
-  .topbar{ display:flex; align-items:center; justify-content:space-between; gap:16px; padding:22px 30px; background:#fff; border-bottom:1px solid rgba(36,31,20,.06); flex-wrap:wrap; }
+  .topbar{ display:flex; align-items:center; justify-content:space-between; gap:16px; padding:22px 30px; background:var(--surface-card); border-bottom:1px solid rgba(36,31,20,.06); flex-wrap:wrap; }
   .topbar-left a{ display:inline-flex; align-items:center; gap:6px; font-size:12.5px; font-weight:600; color:var(--ink-soft); margin-bottom:4px; transition:color .2s var(--ease); }
   .topbar-left a:hover{ color:var(--amber-deep); }
   .topbar-title{ font-size:20px; }
@@ -90,7 +103,7 @@
   .avatar-upload-wrap{ position:relative; flex-shrink:0; }
   .profile-avatar-lg{ width:88px; height:88px; border-radius:50%; background:linear-gradient(135deg, var(--amber), var(--coral)); display:flex; align-items:center; justify-content:center; font-size:32px; color:#241608; overflow:hidden; box-shadow:0 12px 26px rgba(255,140,66,.3); }
   .profile-avatar-lg img{ width:100%; height:100%; object-fit:cover; border-radius:50%; }
-  .avatar-camera-btn{ position:absolute; bottom:0; right:0; width:30px; height:30px; border-radius:50%; background:#fff; border:2px solid var(--navy-950); color:var(--ink); cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:11px; }
+  .avatar-camera-btn{ position:absolute; bottom:0; right:0; width:30px; height:30px; border-radius:50%; background:#ffffff; border:2px solid var(--navy-950); color:#241f14; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:11px; }
   .profile-hero-main{ flex:1; min-width:200px; }
   .profile-hero-main h2{ font-size:22px; margin-bottom:4px; }
   .profile-role-line{ font-size:12.5px; color:#b7bcdc; margin-bottom:10px; }
@@ -108,7 +121,7 @@
 
   /* ===== Stat cards ===== */
   .profile-stats-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(140px,1fr)); gap:14px; margin-bottom:22px; }
-  .mini-stat-card{ display:flex; align-items:center; gap:12px; background:#fff; border:1px solid rgba(36,31,20,.05); border-radius:var(--radius-md); padding:14px 16px; box-shadow:0 12px 26px rgba(36,31,20,.06); transition:transform .15s ease-out, box-shadow .2s var(--ease); transform-style:preserve-3d; will-change:transform; }
+  .mini-stat-card{ display:flex; align-items:center; gap:12px; background:var(--surface-card); border:1px solid rgba(36,31,20,.05); border-radius:var(--radius-md); padding:14px 16px; box-shadow:0 12px 26px rgba(36,31,20,.06); transition:transform .15s ease-out, box-shadow .2s var(--ease); transform-style:preserve-3d; will-change:transform; }
   .mini-stat-card:hover{ box-shadow:0 16px 32px rgba(36,31,20,.1); }
   .mini-stat-icon{ min-width:40px; height:40px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:15px; }
   .mini-stat-icon.purple{ background:var(--purple-bg); color:var(--purple); }
@@ -120,7 +133,7 @@
   .mini-stat-label{ font-size:11px; color:var(--ink-soft); margin-top:1px; }
 
   /* ===== Cards ===== */
-  .form-card{ background:#fff; border:1px solid rgba(36,31,20,.06); border-radius:var(--radius-lg); padding:24px; margin-bottom:20px; box-shadow:0 14px 32px rgba(36,31,20,.06); }
+  .form-card{ background:var(--surface-card); border:1px solid rgba(36,31,20,.06); border-radius:var(--radius-lg); padding:24px; margin-bottom:20px; box-shadow:0 14px 32px rgba(36,31,20,.06); }
   .section-title{ font-size:15.5px; margin-bottom:16px; }
   .info-cards-row{ display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:20px; }
   .info-list{ display:flex; flex-direction:column; gap:14px; }
@@ -155,7 +168,7 @@
   .view-value.multiline{ line-height:1.6; white-space:pre-line; }
   .view-list{ display:flex; flex-direction:column; gap:8px; }
   .view-list-row{ display:flex; align-items:center; gap:12px; background:var(--paper); border-radius:10px; padding:10px 14px; font-size:13px; }
-  .list-bullet{ min-width:22px; height:22px; border-radius:50%; background:#fff; color:var(--amber-deep); font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center; }
+  .list-bullet{ min-width:22px; height:22px; border-radius:50%; background:var(--surface-card); color:var(--amber-deep); font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center; }
 
   /* ===== Edit form fields ===== */
   .field{ display:flex; flex-direction:column; gap:6px; }
@@ -220,6 +233,7 @@
       <a href="change-password.html" class="nav-link"><i class="fa-solid fa-gear"></i><span class="link-text">Settings</span></a>
     </nav>
     <a href="#" onclick="adminLogout()" class="logout-link"><i class="fa-solid fa-arrow-right-from-bracket"></i><span class="link-text">Logout</span></a>
+    <div style="display:flex; justify-content:center; margin:6px 0 4px;" id="appearanceMount"></div>
   </aside>
 
   <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
@@ -340,6 +354,10 @@
     </main>
   </div>
 </div>
+
+<script>
+  Appearance.renderMenu(document.getElementById('appearanceMount'), { variant: 'inline' });
+</script>
 
 <script>
   document.addEventListener('DOMContentLoaded', function(){
