@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script src="appearance.js"></script>
+<script src="month-picker.js"></script>
 <title>Home Tuition - Assessment Result</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -150,6 +151,7 @@
 
 <script>
   Appearance.renderMenu(document.getElementById('appearanceMount'), { variant: 'corner' });
+  MonthPicker.enhance(document.getElementById('monthSelect'));
 </script>
 
 <script type="module" src="result.js"></script>
