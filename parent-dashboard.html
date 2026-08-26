@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="appearance.js"></script>
 <title>Parent Dashboard - Home Tuition</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -21,8 +22,20 @@
     --teal:#22b8a4; --teal-bg:#e3f8f5;
     --pink:#e2649e; --pink-bg:#fceaf3;
     --radius-lg:24px; --radius-md:16px; --radius-sm:12px;
+    --surface-card:#ffffff; --surface-card-border:rgba(36,31,20,.06);
+    --surface-card-shadow:rgba(36,31,20,.07); --surface-hover:#eee3cc;
     --ease:cubic-bezier(.16,.84,.44,1);
   }
+
+  html[data-theme="dark"]{
+    --cream:#1c2444; --cream-dim:#232c56; --paper:#161d3a;
+    --ink:#f3ecd9; --ink-soft:#b7bcdc; --ink-faint:#7c84a8;
+    --green-bg:#173a2c; --red-bg:#3a1e1c; --blue-bg:#1c2c4a;
+    --purple-bg:#2a2456; --teal-bg:#173a38; --pink-bg:#3a2038;
+    --surface-card:rgba(255,255,255,.045); --surface-card-border:rgba(255,255,255,.1);
+    --surface-card-shadow:rgba(0,0,0,.35); --surface-hover:rgba(255,255,255,.07);
+  }
+
   *{ margin:0; padding:0; box-sizing:border-box; }
   body{ font-family:'Inter', sans-serif; background:var(--paper); color:var(--ink); }
   h1,h2,h3,h4{ font-family:'Fraunces', serif; font-weight:600; }
@@ -83,7 +96,7 @@
 
   .content{ padding:30px 30px 50px; max-width:1100px; margin:0 auto; margin-top:-26px; position:relative; z-index:2; }
 
-  .card{ background:#ffffff; border:1px solid rgba(36,31,20,.06); border-radius:var(--radius-lg); padding:26px 24px; margin-bottom:22px; box-shadow:0 16px 36px rgba(36,31,20,.07); }
+  .card{ background:var(--surface-card); border:1px solid rgba(36,31,20,.06); border-radius:var(--radius-lg); padding:26px 24px; margin-bottom:22px; box-shadow:0 16px 36px rgba(36,31,20,.07); }
   .card-title{ display:flex; align-items:center; gap:10px; margin-bottom:20px; }
   .card-title i{ color:var(--amber-deep); font-size:16px; }
   .card-title h2{ font-size:17px; }
@@ -204,6 +217,7 @@
       <a href="#notices-section" class="nav-link"><i class="fa-regular fa-bell"></i><span class="link-text">Notices</span></a>
       <a href="parent-login.html" class="nav-link" onclick="parentLogout(); return false;"><i class="fa-solid fa-arrow-right-from-bracket"></i><span class="link-text">Logout</span></a>
     </nav>
+    <div style="display:flex; justify-content:center; margin:6px 0 4px;" id="appearanceMount"></div>
   </aside>
 
   <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
@@ -300,6 +314,10 @@
     </main>
   </div>
 </div>
+
+<script>
+  Appearance.renderMenu(document.getElementById('appearanceMount'), { variant: 'inline' });
+</script>
 
 <script>
   document.addEventListener('DOMContentLoaded', function(){
