@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script src="appearance.js"></script>
+<script src="month-picker.js"></script>
 <title>My Dashboard - Home Tuition</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -236,7 +237,7 @@
         <p class="card-note">Apna report card dekhne ke liye month chunein aur button dabayein.</p>
         <div class="field" style="max-width:260px;margin-bottom:18px;">
           <label>Select Month</label>
-          <div class="input-wrap select-wrap"><select id="resultMonth"></select><i class="fa-solid fa-chevron-down select-icon"></i></div>
+          <div class="input-wrap select-wrap"><select id="resultMonth"></select></div>
         </div>
         <button type="button" class="btn-primary" onclick="viewMyResult()"><i class="fa-solid fa-eye"></i> View My Result</button>
       </section>
@@ -246,7 +247,7 @@
         <div class="card-title"><i class="fa-regular fa-square-check"></i><h2>My Attendance</h2></div>
         <div class="field" style="max-width:260px;margin-bottom:16px;">
           <label>Select Month</label>
-          <div class="input-wrap select-wrap"><select id="attendanceMonth"></select><i class="fa-solid fa-chevron-down select-icon"></i></div>
+          <div class="input-wrap select-wrap"><select id="attendanceMonth"></select></div>
         </div>
         <div class="mini-stats-grid" id="attendanceSummaryBox" style="margin-bottom:18px;"></div>
         <div class="table-wrapper">
@@ -300,6 +301,11 @@
       card.addEventListener('pointerleave', () => { card.style.transform = ''; });
     });
   });
+</script>
+
+<script>
+  MonthPicker.enhance(document.getElementById('resultMonth'));
+  MonthPicker.enhance(document.getElementById('attendanceMonth'));
 </script>
 
 <script type="module" src="student.js"></script>
