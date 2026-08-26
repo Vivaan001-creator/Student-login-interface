@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="appearance.js"></script>
 <title>Dashboard - Home Tuition</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -21,8 +22,20 @@
     --teal:#22b8a4; --teal-bg:#e3f8f5;
     --pink:#e2649e; --pink-bg:#fceaf3;
     --radius-lg:24px; --radius-md:16px; --radius-sm:12px;
+    --surface-card:#ffffff; --surface-card-border:rgba(36,31,20,.06);
+    --surface-card-shadow:rgba(36,31,20,.07); --surface-hover:#eee3cc;
     --ease:cubic-bezier(.16,.84,.44,1);
   }
+
+  html[data-theme="dark"]{
+    --cream:#1c2444; --cream-dim:#232c56; --paper:#161d3a;
+    --ink:#f3ecd9; --ink-soft:#b7bcdc; --ink-faint:#7c84a8;
+    --green-bg:#173a2c; --red-bg:#3a1e1c; --blue-bg:#1c2c4a;
+    --purple-bg:#2a2456; --teal-bg:#173a38; --pink-bg:#3a2038;
+    --surface-card:rgba(255,255,255,.045); --surface-card-border:rgba(255,255,255,.1);
+    --surface-card-shadow:rgba(0,0,0,.35); --surface-hover:rgba(255,255,255,.07);
+  }
+
   *{ margin:0; padding:0; box-sizing:border-box; }
   body{ font-family:'Inter', sans-serif; background:var(--paper); color:var(--ink); }
   h1,h2,h3{ font-family:'Fraunces', serif; font-weight:600; }
@@ -105,7 +118,7 @@
 
   .dashboard-content{ padding:30px 0 40px; max-width:1100px; margin:0 auto; position:relative; z-index:2; }
   .stats-grid-lg{ display:grid; grid-template-columns:repeat(auto-fit, minmax(180px,1fr)); gap:16px; margin-bottom:24px; }
-  .stat-card-lg{ background:#fff; border:1px solid rgba(36,31,20,.06); border-radius:var(--radius-lg); padding:22px; box-shadow:0 16px 36px rgba(36,31,20,.08); display:flex; align-items:center; gap:16px; transition:transform .15s ease-out, box-shadow .2s var(--ease); transform-style:preserve-3d; will-change:transform; }
+  .stat-card-lg{ background:var(--surface-card); border:1px solid rgba(36,31,20,.06); border-radius:var(--radius-lg); padding:22px; box-shadow:0 16px 36px rgba(36,31,20,.08); display:flex; align-items:center; gap:16px; transition:transform .15s ease-out, box-shadow .2s var(--ease); transform-style:preserve-3d; will-change:transform; }
   .stat-card-lg:hover{ box-shadow:0 22px 44px rgba(36,31,20,.12); }
   .stat-icon-lg{ min-width:52px; height:52px; border-radius:16px; display:flex; align-items:center; justify-content:center; font-size:20px; }
   .stat-icon-lg.purple{ background:var(--purple-bg); color:var(--purple); }
@@ -119,12 +132,7 @@
   .clock-card i{ color:var(--amber); margin-right:8px; }
   #liveDateTime{ font-size:13px; color:#c7cbe0; line-height:1.5; }
   #dashboardClock{ font-size:12px; color:var(--ink-faint); }
-    display:inline-flex; align-items:center; gap:8px; border:none; cursor:pointer;
-    background:linear-gradient(135deg, var(--amber) 0%, var(--coral) 100%); color:#241608;
-    font-weight:700; font-size:13.5px; font-family:inherit; padding:12px 22px; border-radius:999px;
-    box-shadow:0 4px 0 var(--amber-shadow), 0 10px 22px rgba(255,140,66,.28);
-    transition:transform .15s var(--ease), box-shadow .15s var(--ease);
-  }
+
   .btn-add-class{
     display:inline-flex; align-items:center; gap:8px; border:none; cursor:pointer;
     background:linear-gradient(135deg, var(--amber) 0%, var(--coral) 100%); color:#241608;
@@ -135,7 +143,7 @@
   .btn-add-class:hover{ transform:translateY(-2px); box-shadow:0 6px 0 var(--amber-shadow), 0 14px 26px rgba(255,140,66,.34); }
   .btn-add-class:active{ transform:translateY(2px); box-shadow:0 2px 0 var(--amber-shadow), 0 6px 14px rgba(255,140,66,.3); }
 
-  .classes-card{ background:#fff; border:1px solid rgba(36,31,20,.06); border-radius:var(--radius-lg); padding:24px; box-shadow:0 16px 36px rgba(36,31,20,.07); margin-bottom:20px; }
+  .classes-card{ background:var(--surface-card); border:1px solid rgba(36,31,20,.06); border-radius:var(--radius-lg); padding:24px; box-shadow:0 16px 36px rgba(36,31,20,.07); margin-bottom:20px; }
   .classes-card-toolbar{ margin-bottom:18px; }
   .search-box-wrap{ position:relative; max-width:420px; }
   .search-box-wrap i{ position:absolute; left:16px; top:50%; transform:translateY(-50%); color:var(--ink-soft); font-size:13px; }
@@ -191,7 +199,7 @@
   @media (max-width:760px){
     table.classes-table thead{ display:none; }
     table.classes-table, table.classes-table tbody, table.classes-table tr, table.classes-table td{ display:block; width:100%; }
-    table.classes-table tr{ margin:10px; border:1px solid rgba(36,31,20,.08); border-radius:14px; padding:6px 14px; background:#fff; }
+    table.classes-table tr{ margin:10px; border:1px solid rgba(36,31,20,.08); border-radius:14px; padding:6px 14px; background:var(--surface-card); }
     table.classes-table td{ display:flex; justify-content:space-between; align-items:center; gap:12px; padding:9px 0; border:none; border-bottom:1px solid rgba(36,31,20,.05); text-align:right; }
     table.classes-table td:last-child{ border-bottom:none; }
     table.classes-table td::before{ content:attr(data-label); font-weight:600; color:var(--ink-soft); font-size:11px; text-align:left; }
@@ -216,7 +224,7 @@
 
   .dashboard-content{ padding:30px 0 40px; max-width:1100px; margin:0 auto; position:relative; z-index:2; }
   .stats-grid-lg{ display:grid; grid-template-columns:repeat(auto-fit, minmax(180px,1fr)); gap:16px; margin-bottom:24px; }
-  .stat-card-lg{ background:#fff; border:1px solid rgba(36,31,20,.06); border-radius:var(--radius-lg); padding:22px; box-shadow:0 16px 36px rgba(36,31,20,.08); display:flex; align-items:center; gap:16px; transition:transform .15s ease-out, box-shadow .2s var(--ease); transform-style:preserve-3d; will-change:transform; }
+  .stat-card-lg{ background:var(--surface-card); border:1px solid rgba(36,31,20,.06); border-radius:var(--radius-lg); padding:22px; box-shadow:0 16px 36px rgba(36,31,20,.08); display:flex; align-items:center; gap:16px; transition:transform .15s ease-out, box-shadow .2s var(--ease); transform-style:preserve-3d; will-change:transform; }
   .stat-card-lg:hover{ box-shadow:0 22px 44px rgba(36,31,20,.12); }
   .stat-icon-lg{ min-width:52px; height:52px; border-radius:16px; display:flex; align-items:center; justify-content:center; font-size:20px; }
   .stat-icon-lg.purple{ background:var(--purple-bg); color:var(--purple); }
@@ -232,7 +240,7 @@
   #dashboardClock{ font-size:12px; color:var(--ink-faint); }
 
   .actions-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(220px,1fr)); gap:14px; margin-bottom:22px; }
-  .action-item{ position:relative; display:flex; align-items:center; gap:14px; background:#fff; border:1px solid rgba(36,31,20,.06); border-radius:var(--radius-md); padding:16px 18px; box-shadow:0 12px 26px rgba(36,31,20,.06); transition:transform .18s var(--ease), box-shadow .18s var(--ease); }
+  .action-item{ position:relative; display:flex; align-items:center; gap:14px; background:var(--surface-card); border:1px solid rgba(36,31,20,.06); border-radius:var(--radius-md); padding:16px 18px; box-shadow:0 12px 26px rgba(36,31,20,.06); transition:transform .18s var(--ease), box-shadow .18s var(--ease); }
   .action-item:hover{ transform:translateY(-4px); box-shadow:0 18px 34px rgba(36,31,20,.1); }
   .action-icon{ min-width:42px; height:42px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:16px; }
   .action-icon.blue{ background:var(--blue-bg); color:var(--blue); }
@@ -295,6 +303,7 @@
     </nav>
 
     <a href="#" onclick="adminLogout()" class="logout-link"><i class="fa-solid fa-arrow-right-from-bracket"></i><span class="link-text">Logout</span></a>
+    <div style="display:flex; justify-content:center; margin:6px 0 4px;" id="appearanceMount"></div>
   </aside>
 
   <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
@@ -379,6 +388,10 @@
     </main>
   </div>
 </div>
+
+<script>
+  Appearance.renderMenu(document.getElementById('appearanceMount'), { variant: 'inline' });
+</script>
 
 <script>
   document.addEventListener('DOMContentLoaded', function(){
