@@ -65,48 +65,43 @@ const classSubjects = {
     ],
   
     "1": [
-        "English",
-        "Math",
+        "Science",
+        "Social Studies",
         "Hindi",
-        "Computer",
-        "E.V.S",
-        "G.K"
+        "English",
+        "Math"
     ],
 
     "2": [
-        "English",
-        "Math",
+        "Science",
+        "Social Studies",
         "Hindi",
-        "Computer",
-        "E.V.S",
-        "G.K"
+        "English",
+        "Math"
     ],
 
     "3": [
-        "English",
-        "Math",
+        "Science",
+        "Social Studies",
         "Hindi",
-        "Computer",
-        "E.V.S",
-        "G.K"
+        "English",
+        "Math"
     ],
 
     "4": [
-        "English",
-        "Math",
+        "Science",
+        "Social Studies",
         "Hindi",
-        "Computer",
-        "E.V.S",
-        "G.K"
+        "English",
+        "Math"
     ],
 
     "5": [
-        "English",
-        "Math",
+        "Science",
+        "Social Studies",
         "Hindi",
-        "Computer",
-        "E.V.S",
-        "G.K"
+        "English",
+        "Math"
     ],
 
     "6": [
@@ -156,7 +151,7 @@ const classSubjects = {
 
 };
 
-const lowerClassKeys = ["nursery", "l.k.g", "u.k.g", "1", "2", "3", "4", "5"];
+const lowerClassKeys = ["nursery", "l.k.g", "u.k.g"];
 
 function isLowerClass(classValue) {
   const key = (classValue || "").toLowerCase().replace(/^class\s*/, "").trim();
