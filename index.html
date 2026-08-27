@@ -3,11 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="appearance.js"></script>
 <title>Home Tuition</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
 <style>
   /* =========================================================
@@ -210,6 +212,18 @@
     100%{ opacity:0; transform:translate(var(--driftX,10px),-160px) scale(1); }
   }
 
+  .hero-grid{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    text-align:center;
+    width:100%;
+    max-width:1100px;
+    position:relative;
+    z-index:1;
+  }
+  .hero-visual, .hero-content{ display:flex; flex-direction:column; align-items:center; }
+
   .badge{
     display:inline-flex;
     align-items:center;
@@ -260,6 +274,22 @@
     margin-top:34px;
     animation:fadeUp .8s .6s var(--ease) both;
   }
+  .hero-trust-strip{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:16px;
+    flex-wrap:wrap;
+    margin-top:38px;
+    padding-top:26px;
+    border-top:1px solid rgba(243,236,217,.1);
+    max-width:520px;
+    animation:fadeUp .8s .7s var(--ease) both;
+  }
+  .trust-item{ display:flex; align-items:center; gap:8px; font-size:12.5px; color:var(--text-onDark-soft); white-space:nowrap; }
+  .trust-item i{ color:var(--amber); font-size:13px; }
+  .trust-sep{ width:4px; height:4px; border-radius:50%; background:rgba(243,236,217,.2); }
+  @media (max-width:480px){ .hero-trust-strip{ gap:12px 18px; } .trust-sep{ display:none; } }
   @keyframes fadeUp{
     from{ opacity:0; transform:translateY(18px); }
     to{ opacity:1; transform:translateY(0); }
@@ -449,6 +479,33 @@
     .section{ padding:64px 20px; }
   }
 
+  /* ---- desktop: side-by-side hero instead of a centered stack ---- */
+  @media (min-width:900px){
+    .hero{
+      background:
+        radial-gradient(ellipse 90% 60% at 50% 0%, var(--navy-800) 0%, var(--navy-950) 65%),
+        linear-gradient(rgba(243,236,217,.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(243,236,217,.025) 1px, transparent 1px);
+      background-size:auto, 44px 44px, 44px 44px;
+    }
+    .hero-grid{
+      flex-direction:row;
+      align-items:center;
+      justify-content:center;
+      text-align:left;
+      gap:70px;
+      padding:0 20px;
+    }
+    .hero-visual, .hero-content{ align-items:flex-start; }
+    .hero-visual{ flex-shrink:0; }
+    .lamp-wrap{ width:210px; }
+    .lamp-svg{ width:210px !important; height:231px !important; }
+    .hero-content{ max-width:480px; }
+    .hero-desc{ margin-left:0; }
+    .hero-actions{ justify-content:flex-start; }
+    .hero-trust-strip{ justify-content:flex-start; max-width:none; }
+  }
+
   @media (prefers-reduced-motion: reduce){
     *{ animation:none !important; transition:none !important; }
     .reveal{ opacity:1; transform:none; }
@@ -456,6 +513,8 @@
 </style>
 </head>
 <body>
+
+<div id="appearanceMount"></div>
 
 <!-- =========================================================
      HERO
@@ -475,85 +534,99 @@
   <div class="star" style="top:34%; left:90%; animation-delay:.9s;"></div>
   <div class="star" style="top:26%; left:30%; animation-delay:1.5s;"></div>
 
-  <!-- desk lamp illustration (signature element, always lit) + pull-cord accent-color cycler -->
-  <div class="lamp-wrap" id="lampWrap">
-    <svg class="lamp-svg" viewBox="0 0 200 220" width="160" height="176" aria-hidden="true">
-      <defs>
-        <radialGradient id="glowGrad" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stop-color="#fff0cf" stop-opacity="0.95"/>
-          <stop offset="55%" style="stop-color:var(--amber); stop-opacity:0.35"/>
-          <stop offset="100%" style="stop-color:var(--amber); stop-opacity:0"/>
-        </radialGradient>
-        <linearGradient id="coneGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" style="stop-color:var(--amber); stop-opacity:0.28"/>
-          <stop offset="100%" style="stop-color:var(--amber); stop-opacity:0"/>
-        </linearGradient>
-        <linearGradient id="shadeGrad" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stop-color="#eccb92"/>
-          <stop offset="55%" stop-color="#caa46a"/>
-          <stop offset="100%" stop-color="#96723f"/>
-        </linearGradient>
-        <linearGradient id="poleGrad" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stop-color="#4d3f28"/>
-          <stop offset="50%" stop-color="#3a2f1e"/>
-          <stop offset="100%" stop-color="#241d11"/>
-        </linearGradient>
-        <linearGradient id="baseGrad" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stop-color="#3c311e"/>
-          <stop offset="50%" stop-color="#2c2416"/>
-          <stop offset="100%" stop-color="#18130a"/>
-        </linearGradient>
-      </defs>
+  <div class="hero-grid">
+    <div class="hero-visual">
+      <!-- desk lamp illustration (signature element, always lit) + pull-cord accent-color cycler -->
+      <div class="lamp-wrap" id="lampWrap">
+        <svg class="lamp-svg" viewBox="0 0 200 220" width="160" height="176" aria-hidden="true">
+          <defs>
+            <radialGradient id="glowGrad" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#fff0cf" stop-opacity="0.95"/>
+              <stop offset="55%" style="stop-color:var(--amber); stop-opacity:0.35"/>
+              <stop offset="100%" style="stop-color:var(--amber); stop-opacity:0"/>
+            </radialGradient>
+            <linearGradient id="coneGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" style="stop-color:var(--amber); stop-opacity:0.28"/>
+              <stop offset="100%" style="stop-color:var(--amber); stop-opacity:0"/>
+            </linearGradient>
+            <linearGradient id="shadeGrad" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#eccb92"/>
+              <stop offset="55%" stop-color="#caa46a"/>
+              <stop offset="100%" stop-color="#96723f"/>
+            </linearGradient>
+            <linearGradient id="poleGrad" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#4d3f28"/>
+              <stop offset="50%" stop-color="#3a2f1e"/>
+              <stop offset="100%" stop-color="#241d11"/>
+            </linearGradient>
+            <linearGradient id="baseGrad" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#3c311e"/>
+              <stop offset="50%" stop-color="#2c2416"/>
+              <stop offset="100%" stop-color="#18130a"/>
+            </linearGradient>
+          </defs>
 
-      <!-- light cone falling onto the page below -->
-      <path class="light-cone" d="M55 108 L145 108 L188 210 L12 210 Z" fill="url(#coneGrad)"/>
+          <!-- light cone falling onto the page below -->
+          <path class="light-cone" d="M55 108 L145 108 L188 210 L12 210 Z" fill="url(#coneGrad)"/>
 
-      <!-- warm glow behind the shade -->
-      <ellipse class="lamp-glow" cx="100" cy="92" rx="62" ry="62" fill="url(#glowGrad)"/>
+          <!-- warm glow behind the shade -->
+          <ellipse class="lamp-glow" cx="100" cy="92" rx="62" ry="62" fill="url(#glowGrad)"/>
 
-      <!-- base -->
-      <rect x="70" y="200" width="60" height="12" rx="6" fill="url(#baseGrad)"/>
-      <!-- pole -->
-      <rect x="96" y="108" width="8" height="96" rx="4" fill="url(#poleGrad)"/>
-      <!-- shade (shaded for volume) -->
-      <path d="M76 50 L124 50 L146 108 L54 108 Z" fill="url(#shadeGrad)"/>
-      <path d="M76 50 L124 50 L118 60 L82 60 Z" fill="#f3dcae"/>
-      <!-- bulb -->
-      <circle cx="100" cy="82" r="7" fill="#fff3d6"/>
+          <!-- base -->
+          <rect x="70" y="200" width="60" height="12" rx="6" fill="url(#baseGrad)"/>
+          <!-- pole -->
+          <rect x="96" y="108" width="8" height="96" rx="4" fill="url(#poleGrad)"/>
+          <!-- shade (shaded for volume) -->
+          <path d="M76 50 L124 50 L146 108 L54 108 Z" fill="url(#shadeGrad)"/>
+          <path d="M76 50 L124 50 L118 60 L82 60 Z" fill="#f3dcae"/>
+          <!-- bulb -->
+          <circle cx="100" cy="82" r="7" fill="#fff3d6"/>
 
-      <!-- pull-cord: drag it (or tap it) to cycle the ambient light color -->
-      <g class="pull-cord" id="pullCord" tabindex="0" role="button" aria-label="Pull to change the ambient light color">
-        <line id="cordLine" x1="119" y1="68" x2="119" y2="132" stroke="#d8c9a3" stroke-width="2" stroke-linecap="round"/>
-        <circle id="cordKnob" cx="119" cy="138" r="6.5" fill="#e8c46a" stroke="#a9803a" stroke-width="1.4"/>
-      </g>
-    </svg>
+          <!-- pull-cord: drag it (or tap it) to cycle the ambient light color -->
+          <g class="pull-cord" id="pullCord" tabindex="0" role="button" aria-label="Pull to change the ambient light color">
+            <line id="cordLine" x1="119" y1="68" x2="119" y2="132" stroke="#d8c9a3" stroke-width="2" stroke-linecap="round"/>
+            <circle id="cordKnob" cx="119" cy="138" r="6.5" fill="#e8c46a" stroke="#a9803a" stroke-width="1.4"/>
+          </g>
+        </svg>
 
-    <span class="cord-hint" id="cordHint">pull the cord</span>
+        <span class="cord-hint" id="cordHint">pull the cord</span>
 
-    <div class="motes">
-      <div class="mote" style="left:38%; --driftX:-14px; animation-delay:.3s;"></div>
-      <div class="mote" style="left:50%; --driftX:10px;  animation-delay:1.4s;"></div>
-      <div class="mote" style="left:60%; --driftX:-8px;  animation-delay:2.5s;"></div>
-      <div class="mote" style="left:45%; --driftX:16px;  animation-delay:3.4s;"></div>
-      <div class="mote" style="left:55%; --driftX:-12px; animation-delay:.9s;"></div>
+        <div class="motes">
+          <div class="mote" style="left:38%; --driftX:-14px; animation-delay:.3s;"></div>
+          <div class="mote" style="left:50%; --driftX:10px;  animation-delay:1.4s;"></div>
+          <div class="mote" style="left:60%; --driftX:-8px;  animation-delay:2.5s;"></div>
+          <div class="mote" style="left:45%; --driftX:16px;  animation-delay:3.4s;"></div>
+          <div class="mote" style="left:55%; --driftX:-12px; animation-delay:.9s;"></div>
+        </div>
+      </div>
     </div>
-  </div>
 
-  <!-- ✏️ EDIT: agar tuition ka naam soch liya ho, badge text yahan change kar dena -->
-  <div class="badge" id="badgeText">🏮 Home Tuition</div>
+    <div class="hero-content">
+      <!-- ✏️ EDIT: agar tuition ka naam soch liya ho, badge text yahan change kar dena -->
+      <div class="badge" id="badgeText">🏮 Home Tuition</div>
 
-  <h1 class="hero-title">Where Learning<br>Feels Like <em>Home</em></h1>
-  <p class="hero-tagline">जहाँ हर बच्चे को मिले पूरा ध्यान</p>
+      <h1 class="hero-title">Where Learning<br>Feels Like <em>Home</em></h1>
+      <p class="hero-tagline">जहाँ हर बच्चे को मिले पूरा ध्यान</p>
 
-  <p class="hero-desc">
-    Small batches, personal attention, and steady progress — right from home.
-    Every student gets their own login to track marks, attendance, and results anytime.
-  </p>
+      <p class="hero-desc">
+        Small batches, personal attention, and steady progress — right from home.
+        Every student gets their own login to track marks, attendance, and results anytime.
+      </p>
 
-  <div class="hero-actions">
-    <!-- ✏️ EDIT: agar login page ka filename "login.html" nahi hai, yahan badal dena -->
-    <a href="login.html" class="btn btn-primary">Student Login</a>
-    <a href="#why" class="btn btn-ghost">Why Home Tuition</a>
+      <div class="hero-actions">
+        <!-- ✏️ EDIT: agar login page ka filename "login.html" nahi hai, yahan badal dena -->
+        <a href="login.html" class="btn btn-primary">Student Login</a>
+        <a href="#why" class="btn btn-ghost">See How It Works</a>
+      </div>
+
+      <div class="hero-trust-strip">
+        <div class="trust-item"><i class="fa-solid fa-book-open"></i><span>5 Core Subjects</span></div>
+        <span class="trust-sep"></span>
+        <div class="trust-item"><i class="fa-solid fa-user-check"></i><span>Small Batches</span></div>
+        <span class="trust-sep"></span>
+        <div class="trust-item"><i class="fa-solid fa-chart-line"></i><span>Live Result Tracking</span></div>
+      </div>
+    </div>
   </div>
 
   <div class="scroll-cue"></div>
@@ -630,7 +703,7 @@
     <a href="login.html" class="btn btn-primary large">Go to Student Login</a>
 
     <!-- ✏️ EDIT: apna WhatsApp number daal ke link ready kar sakte ho -->
-    <p class="wa-line">New here? Message on <a href="https://wa.me/917970500551" target="_blank" rel="noopener">WhatsApp</a> for admissions.</p>
+    <p class="wa-line">New here? Message on <a href="https://wa.me/91XXXXXXXXXX" target="_blank" rel="noopener">WhatsApp</a> for admissions.</p>
   </div>
 </section>
 
@@ -639,6 +712,9 @@
 </footer>
 
 <script>
+  // Appearance menu (System / Light / Dark) — persists across the whole site
+  try { Appearance.renderMenu(document.getElementById('appearanceMount'), { variant: 'corner' }); } catch(e) {}
+
   // footer year
   document.getElementById('year').textContent = new Date().getFullYear();
 
