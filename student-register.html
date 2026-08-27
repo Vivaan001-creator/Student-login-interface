@@ -159,26 +159,26 @@
 
 <div class="subtitle-divider">
   <span class="line"></span><span class="dot"></span>
-  <span class="subtitle-text">New Admission — Sign Up</span>
+  <span class="subtitle-text">New Admission — Register</span>
   <span class="dot"></span><span class="line"></span>
 </div>
 
 <div class="login-card" id="loginCard">
   <div class="avatar-circle"><i class="fa-solid fa-user-plus"></i></div>
   <h2 class="welcome-title">Let's get started!</h2>
-  <p class="welcome-subtitle">Yeh details bharein — hum WhatsApp par confirm kar denge aur aapka roll number bhej denge</p>
+  <p class="welcome-subtitle">Fill in these details — we will confirm on WhatsApp and send your roll number.</p>
 
   <form id="studentRegisterForm" novalidate>
     <label class="field-label" for="regChildName">Child's Full Name</label>
     <div class="input-wrap">
       <i class="fa-solid fa-user-graduate input-icon"></i>
-      <input type="text" id="regChildName" placeholder="Bachche ka poora naam" required>
+      <input type="text" id="regChildName" placeholder="Full name of the child" required>
     </div>
 
     <label class="field-label" for="regParentName">Parent's Name</label>
     <div class="input-wrap">
       <i class="fa-solid fa-user input-icon"></i>
-      <input type="text" id="regParentName" placeholder="Parent/Guardian ka naam" required>
+      <input type="text" id="regParentName" placeholder="Name of Parent/Guardian" required>
     </div>
 
     <label class="field-label" for="regClass">Class Interested In</label>
@@ -199,7 +199,7 @@
       <input type="tel" id="regContact" placeholder="WhatsApp/mobile number" required>
     </div>
 
-    <p class="form-hint">Yeh ek admission request hai — account turant nahi banta. Hum aapke diye number par WhatsApp karke roll number aur login details confirm karenge.</p>
+    <p class="form-hint">This is an admission request — the account is not created immediately. We will contact you on WhatsApp using the provided number to confirm your roll number and login details.</p>
 
     <button type="submit" class="login-btn"><i class="fa-brands fa-whatsapp"></i><span>Send Request via WhatsApp</span></button>
   </form>
@@ -207,7 +207,7 @@
   <p class="signup-line" style="margin-top:20px;">Already have an account? <a href="student-login.html">Login</a></p>
 </div>
 
-<a href="login.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Sabhi Login Options par jaayein</a>
+<a href="login.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Go to all login options</a>
 
 <script>
   Appearance.renderMenu(document.getElementById('appearanceMount'), { variant: 'corner' });
@@ -297,11 +297,11 @@
     const contact = document.getElementById('regContact').value.trim();
 
     if (!childName || !parentName || !cls || !contact){
-      alert('Kripya saari details bharein.');
+      alert('Please fill in all the details.');
       return;
     }
 
-    const message = `Naya Admission Request:\nChild: ${childName}\nParent: ${parentName}\nClass: ${cls}\nContact: ${contact}`;
+    const message = `New Admission Request:\nChild: ${childName}\nParent: ${parentName}\nClass: ${cls}\nContact: ${contact}`;
     const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
     window.open(url, '_blank');
   });
