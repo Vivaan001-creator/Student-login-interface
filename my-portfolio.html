@@ -22,7 +22,7 @@
   h1,h2,h3{font-family:'Playfair Display', serif; line-height:1.2;}
   a{color:inherit; text-decoration:none;}
 
-  /* Animated background blobs (behind everything) */
+  /* Animated background blobs */
   .bg-blobs{position:fixed; inset:0; z-index:0; overflow:hidden; pointer-events:none;}
   .blob{position:absolute; border-radius:50%; filter:blur(90px);}
   .blob1{width:420px; height:420px; background:var(--primary); opacity:.28; top:-120px; left:-100px; animation:float1 22s ease-in-out infinite alternate;}
@@ -32,14 +32,12 @@
   @keyframes float2{0%{transform:translate(0,0) scale(1);}100%{transform:translate(-60px,-70px) scale(1.1);}}
   @keyframes float3{0%{transform:translate(0,0);}100%{transform:translate(-50px,60px);}}
 
-  /* Cursor glow */
   .cursor-glow{
     position:fixed; width:280px; height:280px; border-radius:50%; z-index:2; pointer-events:none;
     background:radial-gradient(circle, color-mix(in srgb, var(--accent) 32%, transparent) 0%, transparent 70%);
     transform:translate(-50%,-50%); opacity:0; transition:opacity .3s ease; filter:blur(6px);
   }
 
-  /* Scroll progress bar */
   #progress{position:fixed; top:0; left:0; height:3px; z-index:100; width:0%;
     background:linear-gradient(90deg, var(--primary), var(--accent));}
 
@@ -52,10 +50,15 @@
     backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
     border-right:1px solid var(--border); display:flex; flex-direction:column;
   }
+
+  /* Load-in entrance animation */
+  .load-anim{opacity:0; transform:translateY(14px); animation:sidebarIn .6s ease forwards;}
+  @keyframes sidebarIn{to{opacity:1; transform:translateY(0);}}
+
   .avatar-ring{
     width:86px; height:86px; border-radius:50%; padding:3px; margin-bottom:18px;
     background:conic-gradient(from 0deg, var(--primary), var(--accent), var(--primary));
-    animation:spin 6s linear infinite;
+    animation:spin 6s linear infinite, sidebarIn .6s ease forwards;
   }
   @keyframes spin{to{transform:rotate(360deg);}}
   .avatar{
@@ -63,18 +66,31 @@
     display:flex; align-items:center; justify-content:center;
     font-family:'Playfair Display', serif; font-size:2rem; font-weight:700; color:var(--primary);
   }
-  aside.sidebar h1{font-size:1.5rem; margin-bottom:6px;}
-  .role{font-size:.9rem; color:var(--text-soft); font-weight:500; margin-bottom:22px; min-height:20px;}
+
+  aside.sidebar h1{
+    font-size:1.5rem; margin-bottom:6px;
+    background:linear-gradient(90deg, var(--primary), var(--accent), var(--primary));
+    background-size:200% auto; -webkit-background-clip:text; background-clip:text; color:transparent;
+    opacity:0; transform:translateY(14px);
+    animation:sidebarIn .6s ease forwards .12s, shine 4s linear infinite 1s;
+  }
+  @keyframes shine{to{background-position:200% center;}}
+
+  .role{font-size:.9rem; color:var(--text-soft); font-weight:500; margin-bottom:22px; min-height:20px;
+    width:175px; white-space:nowrap; overflow:hidden;}
   .caret{animation:blink 1s step-start infinite;}
   @keyframes blink{50%{opacity:0;}}
   .rule{width:32px; height:2px; background:var(--accent); margin-bottom:26px;}
+
   nav.side-nav{display:flex; flex-direction:column; gap:4px;}
   nav.side-nav a{
     font-size:.92rem; font-weight:500; padding:9px 12px; border-radius:6px; color:var(--text-soft);
     border-left:2px solid transparent; transition:all .2s ease;
   }
   nav.side-nav a:hover{color:var(--text); border-left-color:var(--accent); background:var(--primary-soft); transform:translateX(3px);}
+  nav.side-nav a.active{color:var(--text); border-left-color:var(--primary); background:var(--primary-soft); font-weight:600;}
   .sidebar-spacer{flex:1;}
+
   .social-row{display:flex; gap:10px; margin-bottom:18px;}
   .social-row a{
     width:36px; height:36px; border-radius:8px; border:1px solid var(--border);
@@ -84,6 +100,7 @@
   .social-row a:hover{border-color:var(--primary); color:var(--primary); transform:translateY(-3px); box-shadow:0 8px 16px rgba(0,0,0,.1);}
   .social-row a.disabled{opacity:.45; cursor:default;}
   .social-row a.disabled:hover{border-color:var(--border); color:var(--text-soft); transform:none; box-shadow:none;}
+
   #theme-toggle{
     width:100%; padding:10px; border-radius:8px; border:1px solid var(--border); background:var(--bg);
     color:var(--text); font-size:.85rem; font-weight:500; cursor:pointer; display:flex; align-items:center;
@@ -114,10 +131,12 @@
   .skill-row{display:flex; flex-wrap:wrap; gap:8px;}
   .skill{
     font-size:.87rem; border:1px solid var(--border); border-radius:6px; padding:7px 14px; color:var(--text);
-    background:color-mix(in srgb, var(--surface) 50%, transparent);
+    background:color-mix(in srgb, var(--surface) 50%, transparent); display:inline-flex; align-items:center; gap:7px;
     transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease, color .2s ease;
   }
+  .skill i{color:var(--accent); font-size:.95rem;}
   .skill:hover{transform:translateY(-3px); box-shadow:0 8px 16px rgba(0,0,0,.1); border-color:var(--accent); color:var(--accent);}
+  .skill:hover i{color:inherit;}
 
   .proj-entry{
     display:flex; gap:18px; padding:22px; border:1px solid var(--border); border-radius:14px;
@@ -147,6 +166,8 @@
   .btn.solid:hover{opacity:.92; color:#fff;}
   .btn.disabled{opacity:.5; cursor:default; border-style:dashed;}
   .btn.disabled:hover{transform:none; border-color:var(--border); color:var(--text);}
+  .ripple{position:absolute; border-radius:50%; pointer-events:none; background:rgba(255,255,255,.5); transform:scale(0); animation:rippleAnim .6s ease-out;}
+  @keyframes rippleAnim{to{transform:scale(2.4); opacity:0;}}
   .tag-soon{font-size:.6rem; font-family:'Roboto Mono', monospace; background:var(--primary-soft); color:var(--primary); padding:2px 6px; border-radius:5px; margin-left:6px;}
   .contact-row{display:flex; flex-wrap:wrap; gap:12px; margin-top:20px;}
   .contact-row p{color:var(--text-soft); font-size:1rem; line-height:1.7;}
@@ -158,7 +179,20 @@
   .reveal .skill, .reveal .proj-entry{opacity:0; transform:translateY(14px);}
   .reveal.in .skill, .reveal.in .proj-entry{opacity:1; transform:translateY(0);}
 
-  @media (prefers-reduced-motion: reduce){ *{animation:none !important; transition:none !important;} }
+  /* Back to top */
+  #toTop{
+    position:fixed; bottom:26px; right:26px; width:46px; height:46px; border-radius:50%;
+    border:1px solid var(--border); background:var(--primary); color:#fff; display:flex; align-items:center;
+    justify-content:center; box-shadow:0 8px 20px rgba(0,0,0,.18); opacity:0; transform:translateY(12px) scale(.8);
+    pointer-events:none; transition:opacity .3s ease, transform .3s ease; z-index:60; cursor:pointer; font-size:1rem;
+  }
+  #toTop.show{opacity:1; transform:translateY(0) scale(1); pointer-events:auto;}
+  #toTop:hover{transform:translateY(-3px) scale(1.05);}
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important; transition:none !important;}
+    .load-anim, aside.sidebar h1, .avatar-ring{opacity:1 !important; transform:none !important; background-position:0% center;}
+  }
 
   @media (max-width:900px){
     .layout{grid-template-columns:1fr;}
@@ -193,22 +227,22 @@
   <aside class="sidebar">
     <div class="avatar-ring"><div class="avatar">V</div></div>
     <h1>Vivaan</h1>
-    <div class="role"><span id="roleText"></span><span class="caret">|</span></div>
-    <div class="rule"></div>
-    <nav class="side-nav" id="sideNav">
+    <div class="role load-anim" style="animation-delay:.2s"><span id="roleText"></span><span class="caret">|</span></div>
+    <div class="rule load-anim" style="animation-delay:.3s"></div>
+    <nav class="side-nav load-anim" id="sideNav" style="animation-delay:.38s">
       <a href="#about">About</a>
       <a href="#skills">Skills</a>
       <a href="#projects">Projects</a>
       <a href="#contact">Contact</a>
     </nav>
     <div class="sidebar-spacer"></div>
-    <div class="social-row">
+    <div class="social-row load-anim" style="animation-delay:.5s">
       <a href="https://github.com/Vivaan001-creator" target="_blank" rel="noopener" aria-label="GitHub"><i class="fa-brands fa-github"></i></a>
       <a href="mailto:vivaan510399@gmail.com" aria-label="Email"><i class="fa-regular fa-envelope"></i></a>
       <!-- 📸 EDIT HERE: add Instagram link, then remove class="disabled" -->
       <a href="#" class="disabled" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
     </div>
-    <button id="theme-toggle"><i class="fa-solid fa-moon"></i> Dark mode</button>
+    <button id="theme-toggle" class="load-anim" style="animation-delay:.58s"><i class="fa-solid fa-moon"></i> Dark mode</button>
     <button id="menu-toggle" aria-label="Toggle menu"><i class="fa-solid fa-bars"></i></button>
   </aside>
 
@@ -230,18 +264,25 @@
       <div class="skill-group">
         <h3>Languages</h3>
         <div class="skill-row">
-          <span class="skill">HTML &amp; CSS</span><span class="skill">JavaScript</span>
-          <span class="skill">Python</span><span class="skill">C++</span>
+          <span class="skill"><i class="fa-brands fa-html5"></i>HTML &amp; CSS</span>
+          <span class="skill"><i class="fa-brands fa-js"></i>JavaScript</span>
+          <span class="skill"><i class="fa-brands fa-python"></i>Python</span>
+          <span class="skill"><i class="fa-solid fa-code"></i>C++</span>
         </div>
       </div>
       <div class="skill-group">
         <h3>Tools</h3>
-        <div class="skill-row"><span class="skill">Git &amp; GitHub</span><span class="skill">VS Code</span></div>
+        <div class="skill-row">
+          <span class="skill"><i class="fa-brands fa-git-alt"></i>Git &amp; GitHub</span>
+          <span class="skill"><i class="fa-solid fa-laptop-code"></i>VS Code</span>
+        </div>
       </div>
       <div class="skill-group">
         <h3>Strengths</h3>
         <div class="skill-row">
-          <span class="skill">Problem Solving</span><span class="skill">Data Structures</span><span class="skill">Quick Learner</span>
+          <span class="skill"><i class="fa-solid fa-lightbulb"></i>Problem Solving</span>
+          <span class="skill"><i class="fa-solid fa-sitemap"></i>Data Structures</span>
+          <span class="skill"><i class="fa-solid fa-bolt"></i>Quick Learner</span>
         </div>
       </div>
     </section>
@@ -295,17 +336,26 @@
   </main>
 </div>
 
+<button id="toTop" aria-label="Back to top"><i class="fa-solid fa-arrow-up"></i></button>
+
 <script>
   const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const finePointer = window.matchMedia('(pointer: fine)').matches;
-
-  // Theme toggle
   const root = document.documentElement;
+
+  // Theme toggle (with View Transition crossfade when supported)
   const themeBtn = document.getElementById('theme-toggle');
-  themeBtn.addEventListener('click', () => {
+  function applyTheme(){
     const isDark = root.getAttribute('data-theme') === 'dark';
     root.setAttribute('data-theme', isDark ? 'light' : 'dark');
     themeBtn.innerHTML = isDark ? '<i class="fa-solid fa-moon"></i> Dark mode' : '<i class="fa-solid fa-sun"></i> Light mode';
+  }
+  themeBtn.addEventListener('click', () => {
+    if (document.startViewTransition && !prefersReduced) {
+      document.startViewTransition(applyTheme);
+    } else {
+      applyTheme();
+    }
     themeBtn.classList.remove('spinning'); void themeBtn.offsetWidth; themeBtn.classList.add('spinning');
   });
 
@@ -337,12 +387,28 @@
     revealEls.forEach(el => io.observe(el));
   }
 
-  // Scroll progress bar
+  // Scrollspy — highlight active nav link
+  const navLinks = sideNav.querySelectorAll('a');
+  const spyObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting){
+        navLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#'+entry.target.id));
+      }
+    });
+  }, { rootMargin: '-40% 0px -50% 0px' });
+  document.querySelectorAll('main section[id]').forEach(sec => spyObserver.observe(sec));
+
+  // Scroll progress bar + back-to-top visibility
   const progress = document.getElementById('progress');
+  const toTop = document.getElementById('toTop');
   window.addEventListener('scroll', () => {
     const h = document.documentElement;
     const scrolled = (h.scrollTop) / (h.scrollHeight - h.clientHeight) * 100;
     progress.style.width = scrolled + '%';
+    toTop.classList.toggle('show', h.scrollTop > 400);
+  });
+  toTop.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: prefersReduced ? 'auto' : 'smooth' });
   });
 
   // Typewriter role text
@@ -366,7 +432,7 @@
     tick();
   }
 
-  // Tilt effect on project cards
+  // Tilt effect + cursor glow (fine pointer only)
   if (finePointer && !prefersReduced){
     document.querySelectorAll('.proj-entry').forEach(card => {
       card.addEventListener('mousemove', e => {
@@ -379,7 +445,6 @@
       card.addEventListener('mouseleave', () => { card.style.transform = ''; });
     });
 
-    // Cursor glow
     const glow = document.getElementById('cursorGlow');
     document.addEventListener('mousemove', e => {
       glow.style.opacity = '1';
@@ -388,6 +453,22 @@
     });
     document.addEventListener('mouseleave', () => { glow.style.opacity = '0'; });
   }
+
+  // Button ripple effect
+  document.querySelectorAll('.btn').forEach(btn => {
+    btn.addEventListener('click', function(e){
+      if (this.classList.contains('disabled') || prefersReduced) return;
+      const rect = this.getBoundingClientRect();
+      const size = Math.max(rect.width, rect.height);
+      const ripple = document.createElement('span');
+      ripple.className = 'ripple';
+      ripple.style.width = ripple.style.height = size + 'px';
+      ripple.style.left = (e.clientX - rect.left - size/2) + 'px';
+      ripple.style.top = (e.clientY - rect.top - size/2) + 'px';
+      this.appendChild(ripple);
+      setTimeout(() => ripple.remove(), 650);
+    });
+  });
 </script>
 
 </body>
