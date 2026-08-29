@@ -205,6 +205,7 @@
       <div class="topbar-left">
         <h1>Welcome, <span id="dashStudentName">Student</span></h1>
         <p>Roll Number: <span id="dashStudentRoll">-</span> &nbsp;·&nbsp; Attendance: <span id="dashAttendance">-</span></p>
+        <p style="font-size:12px; color:#8991b8; margin-top:4px;"><i class="fa-solid fa-right-to-bracket"></i> Last login: <span id="dashLastLogin">-</span></p>
       </div>
       <div class="topbar-right">
         <div class="admin-profile">
@@ -234,7 +235,7 @@
       <!-- Result -->
       <section class="card" id="result-section">
         <div class="card-title"><i class="fa-solid fa-file-lines"></i><h2>My Result</h2></div>
-        <p class="card-note">Select the month and press the button to view your report card.</p>
+        <p class="card-note">Select a month and tap the button to view your report card.</p>
         <div class="field" style="max-width:260px;margin-bottom:18px;">
           <label>Select Month</label>
           <div class="input-wrap select-wrap"><select id="resultMonth"></select></div>
@@ -285,7 +286,7 @@
 </div>
 
 <script>
-  Appearance.renderMenu(document.getElementById('appearanceMount'), { variant: 'inline' });
+  try { Appearance.renderMenu(document.getElementById('appearanceMount'), { variant: 'inline' }); } catch(e) {}
 </script>
 
 <script>
@@ -304,8 +305,8 @@
 </script>
 
 <script>
-  MonthPicker.enhance(document.getElementById('resultMonth'));
-  MonthPicker.enhance(document.getElementById('attendanceMonth'));
+  try { MonthPicker.enhance(document.getElementById('resultMonth')); } catch(e) {}
+  try { MonthPicker.enhance(document.getElementById('attendanceMonth')); } catch(e) {}
 </script>
 
 <script type="module" src="student.js"></script>
@@ -313,7 +314,7 @@
   function viewMyResult() {
     const monthSelect = document.getElementById('resultMonth');
     const month = monthSelect && monthSelect.value;
-    if (!month) { alert('Pehle month select karein.'); return; }
+    if (!month) { alert('Please select a month first.'); return; }
     localStorage.setItem('selectedMonth', month);
     window.location.href = 'result.html';
   }
