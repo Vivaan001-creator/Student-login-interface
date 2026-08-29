@@ -159,26 +159,26 @@
 
 <div class="subtitle-divider">
   <span class="line"></span><span class="dot"></span>
-  <span class="subtitle-text">New Admission — Register</span>
+  <span class="subtitle-text">New Admission — Sign Up</span>
   <span class="dot"></span><span class="line"></span>
 </div>
 
 <div class="login-card" id="loginCard">
   <div class="avatar-circle"><i class="fa-solid fa-user-plus"></i></div>
   <h2 class="welcome-title">Let's get started!</h2>
-  <p class="welcome-subtitle">Fill in these details — we will confirm on WhatsApp and send your roll number.</p>
+  <p class="welcome-subtitle">Fill in these details — we'll confirm over WhatsApp and send you your roll number</p>
 
   <form id="studentRegisterForm" novalidate>
     <label class="field-label" for="regChildName">Child's Full Name</label>
     <div class="input-wrap">
       <i class="fa-solid fa-user-graduate input-icon"></i>
-      <input type="text" id="regChildName" placeholder="Full name of the child" required>
+      <input type="text" id="regChildName" placeholder="Child's full name" required>
     </div>
 
     <label class="field-label" for="regParentName">Parent's Name</label>
     <div class="input-wrap">
       <i class="fa-solid fa-user input-icon"></i>
-      <input type="text" id="regParentName" placeholder="Name of Parent/Guardian" required>
+      <input type="text" id="regParentName" placeholder="Parent/Guardian's name" required>
     </div>
 
     <label class="field-label" for="regClass">Class Interested In</label>
@@ -199,7 +199,7 @@
       <input type="tel" id="regContact" placeholder="WhatsApp/mobile number" required>
     </div>
 
-    <p class="form-hint">This is an admission request — the account is not created immediately. We will contact you on WhatsApp using the provided number to confirm your roll number and login details.</p>
+    <p class="form-hint">This is an admission request — an account isn't created instantly. We'll WhatsApp you on the number provided to confirm the roll number and login details.</p>
 
     <button type="submit" class="login-btn"><i class="fa-brands fa-whatsapp"></i><span>Send Request via WhatsApp</span></button>
   </form>
@@ -207,10 +207,10 @@
   <p class="signup-line" style="margin-top:20px;">Already have an account? <a href="student-login.html">Login</a></p>
 </div>
 
-<a href="login.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Go to all login options</a>
+<a href="login.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Go to All Login Options</a>
 
 <script>
-  Appearance.renderMenu(document.getElementById('appearanceMount'), { variant: 'corner' });
+  try { Appearance.renderMenu(document.getElementById('appearanceMount'), { variant: 'corner' }); } catch(e) {}
 
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const cord = document.getElementById('pullCord');
@@ -286,7 +286,7 @@
     card.addEventListener('pointerleave', () => { card.style.transform = ''; });
   }
 
-  // ✏️ EDIT: apna WhatsApp number yahan daalein (country code ke saath, bina + ya spaces)
+  // ✏️ EDIT: add your WhatsApp number here (with country code, no + or spaces)
   const WHATSAPP_NUMBER = '917970500551';
 
   document.getElementById('studentRegisterForm').addEventListener('submit', function(e){
