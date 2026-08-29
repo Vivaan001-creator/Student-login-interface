@@ -158,13 +158,13 @@
 <div class="login-card" id="loginCard">
   <div class="avatar-circle"><i class="fa-solid fa-people-roof"></i></div>
   <h2 class="welcome-title">Welcome, Parent!</h2>
-  <p class="welcome-subtitle">Apne bachche (ya bachchon) ki details dekhne ke liye login karein</p>
+  <p class="welcome-subtitle">Log in to view your child's (or children's) details</p>
 
   <form id="parentLoginForm" novalidate>
     <label class="field-label" for="parentRoll">Child's Roll Number</label>
     <div class="input-wrap">
       <i class="fa-solid fa-id-badge input-icon"></i>
-      <input type="text" id="parentRoll" name="parentRoll" placeholder="Bachche ka Roll Number enter karein" autocomplete="username">
+      <input type="text" id="parentRoll" name="parentRoll" placeholder="Enter your child's Roll Number" autocomplete="username">
     </div>
 
     <label class="field-label" for="parentContact">Registered Mobile Number</label>
@@ -173,7 +173,7 @@
       <input type="tel" id="parentContact" name="parentContact" placeholder="Admission form wala mobile number" autocomplete="off">
     </div>
 
-    <p class="dob-hint">Wahi mobile number enter karein jo admission ke waqt contact number ke roop mein diya gaya tha. Ek hi number se jude sabhi bachche automatically dikhenge.</p>
+    <p class="dob-hint">Enter the same mobile number given as the contact number at admission. All children linked to that number will show automatically.</p>
 
     <button type="submit" class="login-btn"><i class="fa-solid fa-people-roof"></i><span>View Parent Dashboard</span></button>
 
@@ -181,7 +181,7 @@
   </form>
 </div>
 
-<a href="login.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Sabhi Login Options par jaayein</a>
+<a href="login.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Go to All Login Options</a>
 
 <script>
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -241,7 +241,7 @@
   cord.addEventListener('keydown', (e) => { if(e.key==='Enter'||e.key===' '){ e.preventDefault(); cycleNeon(); } });
 
   // Appearance menu (System / Light / Dark) — persists across the whole site
-  Appearance.renderMenu(document.getElementById('appearanceMount'), { variant: 'corner' });
+  try { Appearance.renderMenu(document.getElementById('appearanceMount'), { variant: 'corner' }); } catch(e) {}
 
   if (!reduceMotion && window.matchMedia('(hover:hover)').matches){
     const lampWrap = document.getElementById('lampWrap');
