@@ -17,7 +17,8 @@ import {
   where,
   orderBy,
   getDocs,
-  serverTimestamp
+  serverTimestamp,
+  increment
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 // ==========================
@@ -103,6 +104,25 @@ async function teacherLogin() {
     }
 
     const teacherDoc = snap.docs[0];
+
+    // Login tracking — same as the student side: a record admin can review,
+    // plus this account's own last-login shown on the teacher's dashboard.
+    try {
+      const teacherData = teacherDoc.data();
+      await addDoc(collection(db, "loginLogs"), {
+        role: "teacher",
+        refId: teacherDoc.id,
+        name: teacherData.name || teacherData.teacherName || email,
+        subject: teacherData.subject || "",
+        timestamp: serverTimestamp()
+      });
+      await setDoc(doc(db, "teachers", teacherDoc.id), {
+        lastLogin: serverTimestamp(),
+        loginCount: increment(1)
+      }, { merge: true });
+    } catch (logErr) {
+      console.error("Login tracking failed:", logErr);
+    }
 
     sessionStorage.setItem("teacherLoggedIn", "true");
     sessionStorage.setItem("teacherDocId", teacherDoc.id);
@@ -203,6 +223,13 @@ async function loadTeacherDashboard() {
     setText("teacherSubjectLine", t.subject ? `${t.subject} Teacher` : "Teacher");
     setText("teacherSubjectText", t.subject);
     setText("teacherEmailText", t.email);
+
+    if (t.lastLogin) {
+      const dt = t.lastLogin.toDate ? t.lastLogin.toDate() : new Date(t.lastLogin);
+      setText("dashLastLogin", dt.toLocaleString("en-IN", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }));
+    } else {
+      setText("dashLastLogin", "First login");
+    }
     setText("teacherPhoneText", t.phone);
     setText("teacherQualificationText", t.qualification);
     setText("teacherExperienceText", t.experience ? `${t.experience} yrs` : "-");
