@@ -765,16 +765,46 @@
 
 </div>
 
-<script>
+<script type="module">
+  // ===== Firebase (reuses your existing project setup) =====
+  // Assumes this file sits in the same folder as your Firebase.js
+  // (the one admin.js already imports db/storage/auth from).
+  // If coming-soon.html lives in a different folder, adjust the path below.
+  import { db } from "./Firebase.js";
+  import { collection, addDoc, serverTimestamp }
+    from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
   document.getElementById('yearNow').textContent = new Date().getFullYear();
 
-  document.getElementById('notifyForm').addEventListener('submit', function(e){
+  const form = document.getElementById('notifyForm');
+  const note = document.getElementById('formNote');
+  const emailInput = document.getElementById('notifyEmail');
+  const submitBtn = form.querySelector('button');
+
+  form.addEventListener('submit', async function(e){
     e.preventDefault();
-    var email = document.getElementById('notifyEmail').value;
-    var note = document.getElementById('formNote');
-    if(email){
+    const email = emailInput.value.trim();
+    if(!email) return;
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Sending...';
+
+    try{
+      await addDoc(collection(db, 'subscribers'), {
+        email: email,
+        createdAt: serverTimestamp(),
+        source: 'coming-soon-page'
+      });
       note.textContent = "Thanks! We'll notify " + email + " when we launch.";
-      document.getElementById('notifyEmail').value = '';
+      note.style.color = '#8de8cb';
+      emailInput.value = '';
+    }catch(err){
+      console.error(err);
+      note.textContent = "Something went wrong. Please try again.";
+      note.style.color = '#ff9a9a';
+    }finally{
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Notify Me';
     }
   });
 </script>
