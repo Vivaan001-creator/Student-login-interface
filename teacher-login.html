@@ -190,23 +190,23 @@
 <div class="login-card" id="loginCard">
   <div class="avatar-circle"><i class="fa-solid fa-chalkboard-user"></i></div>
   <h2 class="welcome-title">Welcome, Teacher!</h2>
-  <p class="welcome-subtitle">Apni class, attendance aur students dekhne ke liye login karein</p>
+  <p class="welcome-subtitle">Log in to view your class, attendance, and students</p>
 
   <form id="teacherLoginForm" novalidate>
     <label class="field-label" for="teacherEmail">Email</label>
     <div class="input-wrap">
       <i class="fa-regular fa-envelope input-icon"></i>
-      <input type="email" id="teacherEmail" name="teacherEmail" placeholder="Apna email enter karein" autocomplete="username">
+      <input type="email" id="teacherEmail" name="teacherEmail" placeholder="Enter your email" autocomplete="username">
     </div>
 
     <label class="field-label" for="teacherPassword">Password</label>
     <div class="input-wrap">
       <i class="fa-solid fa-lock input-icon"></i>
-      <input type="password" id="teacherPassword" name="teacherPassword" placeholder="Apna password enter karein" autocomplete="current-password">
+      <input type="password" id="teacherPassword" name="teacherPassword" placeholder="Enter your password" autocomplete="current-password">
       <button type="button" class="pw-toggle" id="pwToggle" aria-label="Show password"><i class="fa-regular fa-eye"></i></button>
     </div>
 
-    <p class="dob-hint">Naye teachers ko unke email par ek password-setup link milta hai jab Admin unhe add karta hai.</p>
+    <p class="dob-hint">New teachers receive a password-setup link on their email when the Admin adds them.</p>
 
     <button type="submit" class="login-btn"><i class="fa-solid fa-chalkboard-user"></i><span>Login</span></button>
 
@@ -214,7 +214,7 @@
   </form>
 </div>
 
-<a href="login.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Login Selection par jaayein</a>
+<a href="login.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Go to Login Selection</a>
 
 <script>
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -274,7 +274,7 @@
   cord.addEventListener('keydown', (e) => { if(e.key==='Enter'||e.key===' '){ e.preventDefault(); cycleNeon(); } });
 
   // Appearance menu (System / Light / Dark) — persists across the whole site
-  Appearance.renderMenu(document.getElementById('appearanceMount'), { variant: 'corner' });
+  try { Appearance.renderMenu(document.getElementById('appearanceMount'), { variant: 'corner' }); } catch(e) {}
 
   if (!reduceMotion && window.matchMedia('(hover:hover)').matches){
     const lampWrap = document.getElementById('lampWrap');
