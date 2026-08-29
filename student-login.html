@@ -197,7 +197,7 @@
 <div class="login-card" id="loginCard">
   <div class="avatar-circle"><i class="fa-solid fa-user-graduate"></i></div>
   <h2 class="welcome-title">Welcome, Student!</h2>
-  <p class="welcome-subtitle">Login to view your result, attendance and notices</p>
+  <p class="welcome-subtitle">Log in to view your result, attendance, and notices</p>
 
   <form id="studentLoginForm" novalidate>
     <label class="field-label" for="studentRoll">Roll Number</label>
@@ -213,7 +213,7 @@
              onfocus="(this.type='date')" onblur="(this.type='text')">
     </div>
 
-    <p class="dob-hint">Enter the same date of birth that was provided in the admission form. .</p>
+    <p class="dob-hint">Enter the same Date of Birth given on the admission form.</p>
 
     <button type="submit" class="login-btn"><i class="fa-solid fa-graduation-cap"></i><span>View Dashboard</span></button>
 
@@ -221,9 +221,9 @@
   </form>
 </div>
 
-<p class="signup-line">Didn't have any account? <a href="student-register.html">Register!!</a></p>
+<p class="signup-line">Didn't have any account? <a href="student-register.html">Sign Up!!</a></p>
 
-<a href="login.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Back </a>
+<a href="admin.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Go to Staff Login</a>
 
 <script>
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -283,7 +283,7 @@
   cord.addEventListener('keydown', (e) => { if(e.key==='Enter'||e.key===' '){ e.preventDefault(); cycleNeon(); } });
 
   // Appearance menu (System / Light / Dark) — persists across the whole site
-  Appearance.renderMenu(document.getElementById('appearanceMount'), { variant: 'corner' });
+  try { Appearance.renderMenu(document.getElementById('appearanceMount'), { variant: 'corner' }); } catch(e) {}
 
   if (!reduceMotion && window.matchMedia('(hover:hover)').matches){
     const lampWrap = document.getElementById('lampWrap');
