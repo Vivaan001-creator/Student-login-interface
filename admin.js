@@ -20,7 +20,9 @@ import {
   orderBy,
   where,
   limit,
-  Timestamp
+  Timestamp,
+  serverTimestamp,
+  increment
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 import {
@@ -103,6 +105,24 @@ async function adminLogin() {
     try {
 
         await signInWithEmailAndPassword(auth, email, password);
+
+        // Login tracking — same record admin can review on the Login Activity
+        // page, plus this account's own last-login (no per-admin Firestore
+        // doc exists, so a small singleton doc holds it).
+        try {
+            await addDoc(collection(db, "loginLogs"), {
+                role: "admin",
+                refId: "admin",
+                name: "Admin",
+                timestamp: serverTimestamp()
+            });
+            await setDoc(doc(db, "appMeta", "adminLogin"), {
+                lastLogin: serverTimestamp(),
+                loginCount: increment(1)
+            }, { merge: true });
+        } catch (logErr) {
+            console.error("Login tracking failed:", logErr);
+        }
 
         sessionStorage.setItem("adminLoggedIn","true");
 
@@ -952,6 +972,93 @@ async function loadDashboardStats() {
 }
 
 loadDashboardStats();
+
+// ==========================
+// Admin's own last login (dashboard.html)
+// ==========================
+async function loadAdminLastLogin() {
+    const box = document.getElementById("dashLastLogin");
+    if (!box) return;
+    try {
+        const snap = await getDoc(doc(db, "appMeta", "adminLogin"));
+        if (!snap.exists() || !snap.data().lastLogin) {
+            box.textContent = "First login";
+            return;
+        }
+        const d = snap.data();
+        const dt = d.lastLogin.toDate ? d.lastLogin.toDate() : new Date(d.lastLogin);
+        box.textContent = dt.toLocaleString("en-IN", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" });
+    } catch (error) {
+        console.error("Could not load admin last login:", error);
+    }
+}
+loadAdminLastLogin();
+
+// ==========================
+// Login Activity (login-activity.html) — every student, teacher
+// and admin login, newest first. Also a small per-role summary.
+// ==========================
+async function loadLoginActivity() {
+    const tableBody = document.getElementById("loginActivityTable");
+    if (!tableBody) return;
+
+    tableBody.innerHTML = `<tr><td colspan="4">Loading login activity...</td></tr>`;
+
+    try {
+        const q = query(collection(db, "loginLogs"), orderBy("timestamp", "desc"), limit(200));
+        const snap = await getDocs(q);
+
+        const totalBox = document.getElementById("totalLogins");
+        const studentBox = document.getElementById("studentLoginCount");
+        const teacherBox = document.getElementById("teacherLoginCount");
+        const adminBox = document.getElementById("adminLoginCount");
+        let studentCount = 0, teacherCount = 0, adminCount = 0;
+
+        if (snap.empty) {
+            tableBody.innerHTML = `<tr><td colspan="4">No login activity recorded yet.</td></tr>`;
+            if (totalBox) totalBox.textContent = "0";
+            if (studentBox) studentBox.textContent = "0";
+            if (teacherBox) teacherBox.textContent = "0";
+            if (adminBox) adminBox.textContent = "0";
+            return;
+        }
+
+        tableBody.innerHTML = "";
+
+        snap.forEach((docSnap) => {
+            const log = docSnap.data();
+            if (log.role === "student") studentCount++;
+            else if (log.role === "teacher") teacherCount++;
+            else if (log.role === "admin") adminCount++;
+
+            const dt = log.timestamp && log.timestamp.toDate ? log.timestamp.toDate() : null;
+            const dtLabel = dt
+                ? dt.toLocaleString("en-IN", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" })
+                : "Just now";
+
+            const roleBadgeClass = log.role === "student" ? "status-active" : log.role === "teacher" ? "status-pending" : "status-admin";
+
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td data-label="Role"><span class="${roleBadgeClass}">${escapeHtmlAdmin(log.role || "-")}</span></td>
+                <td data-label="Name">${escapeHtmlAdmin(log.name || log.refId || "-")}</td>
+                <td data-label="Details">${escapeHtmlAdmin(log.class ? "Class " + log.class : (log.subject || "-"))}</td>
+                <td data-label="Date &amp; Time">${dtLabel}</td>
+            `;
+            tableBody.appendChild(row);
+        });
+
+        if (totalBox) totalBox.textContent = String(snap.size);
+        if (studentBox) studentBox.textContent = String(studentCount);
+        if (teacherBox) teacherBox.textContent = String(teacherCount);
+        if (adminBox) adminBox.textContent = String(adminCount);
+
+    } catch (error) {
+        console.error("Could not load login activity:", error);
+        tableBody.innerHTML = `<tr><td colspan="4">Could not load login activity.</td></tr>`;
+    }
+}
+loadLoginActivity();
 
 // ==========================
 // Dashboard Clock
@@ -2189,6 +2296,17 @@ if (btn) {
 
         if (!email) {
             alert("Enter Email");
+            return;
+        }
+
+        // SECURITY: this page is the ADMIN's forgot-password flow only.
+        // Only the registered admin email may receive a reset link — otherwise
+        // anyone could type in any teacher's (or a guessed) email here and
+        // trigger a password-reset email against that account. Reject before
+        // ever calling Firebase.
+        const ADMIN_EMAIL = "vivaan510399@gmail.com";
+        if (email.toLowerCase() !== ADMIN_EMAIL.toLowerCase()) {
+            alert("Invalid email. Password reset is only available for the registered admin account.");
             return;
         }
 
