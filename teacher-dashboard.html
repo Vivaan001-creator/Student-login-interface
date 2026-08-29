@@ -241,6 +241,7 @@
       <div class="topbar-left">
         <h1>Welcome, <span id="topbarTeacherName">Teacher</span></h1>
         <p id="teacherSubjectLine">Subject Teacher</p>
+        <p style="font-size:12px; color:#8991b8; margin-top:4px;"><i class="fa-solid fa-right-to-bracket"></i> Last login: <span id="dashLastLogin">-</span></p>
       </div>
       <div class="topbar-right">
         <div class="admin-profile">
@@ -317,7 +318,7 @@
 </div>
 
 <script>
-  Appearance.renderMenu(document.getElementById('appearanceMount'), { variant: 'inline' });
+  try { Appearance.renderMenu(document.getElementById('appearanceMount'), { variant: 'inline' }); } catch(e) {}
 </script>
 
 <script>
