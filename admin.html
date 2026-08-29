@@ -159,19 +159,19 @@
 <div class="login-card" id="loginCard">
   <div class="avatar-circle"><i class="fa-solid fa-user-shield"></i></div>
   <h2 class="welcome-title">Welcome, Admin!</h2>
-  <p class="welcome-subtitle">Apna tuition dashboard manage karne ke liye login karein</p>
+  <p class="welcome-subtitle">Log in to manage your tuition dashboard</p>
 
   <form id="loginForm" novalidate>
     <label class="field-label" for="username">Email</label>
     <div class="input-wrap">
       <i class="fa-regular fa-envelope input-icon"></i>
-      <input type="email" id="username" name="username" placeholder="Apna email enter karein" autocomplete="username">
+      <input type="email" id="username" name="username" placeholder="Enter your email" autocomplete="username">
     </div>
 
     <label class="field-label" for="password">Password</label>
     <div class="input-wrap">
       <i class="fa-solid fa-lock input-icon"></i>
-      <input type="password" id="password" name="password" placeholder="Apna password enter karein" autocomplete="current-password">
+      <input type="password" id="password" name="password" placeholder="Enter your password" autocomplete="current-password">
       <button type="button" class="pw-toggle" id="pwToggle" aria-label="Show password"><i class="fa-regular fa-eye"></i></button>
     </div>
 
@@ -183,7 +183,7 @@
   </form>
 </div>
 
-<a href="student-login.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Student Login par jaayein</a>
+<a href="student-login.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Go to Student Login</a>
 
 <script>
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -243,7 +243,7 @@
   cord.addEventListener('keydown', (e) => { if(e.key==='Enter'||e.key===' '){ e.preventDefault(); cycleNeon(); } });
 
   // Appearance menu (System / Light / Dark) — persists across the whole site
-  Appearance.renderMenu(document.getElementById('appearanceMount'), { variant: 'corner' });
+  try { Appearance.renderMenu(document.getElementById('appearanceMount'), { variant: 'corner' }); } catch(e) {}
 
   if (!reduceMotion && window.matchMedia('(hover:hover)').matches){
     const lampWrap = document.getElementById('lampWrap');
