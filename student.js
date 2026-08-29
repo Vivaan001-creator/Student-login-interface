@@ -6,7 +6,11 @@ import {
   collection,
   query,
   orderBy,
-  limit
+  limit,
+  addDoc,
+  updateDoc,
+  serverTimestamp,
+  increment
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 // ==========================================================
@@ -88,6 +92,25 @@ async function studentLogin() {
     if (!storedDob || storedDob !== enteredDob) {
       alert("Date of Birth match nahi hui. Kripya dobara try karein.");
       return;
+    }
+
+    // Login tracking — a record admin can review, plus this account's own
+    // last-login shown on the student's dashboard. Never blocks the login
+    // itself if tracking happens to fail (e.g. a rules/network hiccup).
+    try {
+      await addDoc(collection(db, "loginLogs"), {
+        role: "student",
+        refId: roll,
+        name: student.name || student.studentName || roll,
+        class: student.class || "",
+        timestamp: serverTimestamp()
+      });
+      await updateDoc(doc(db, "students", roll), {
+        lastLogin: serverTimestamp(),
+        loginCount: increment(1)
+      });
+    } catch (logErr) {
+      console.error("Login tracking failed:", logErr);
     }
 
     sessionStorage.setItem("studentLoggedIn", "true");
@@ -258,6 +281,13 @@ async function loadStudentDashboard() {
   setText("dashFatherName", student.father || "-");
   setText("dashMotherName", student.mother || "-");
   setText("dashAttendance", (student.attendance || "0") + "%");
+
+  if (student.lastLogin) {
+    const dt = student.lastLogin.toDate ? student.lastLogin.toDate() : new Date(student.lastLogin);
+    setText("dashLastLogin", dt.toLocaleString("en-IN", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }));
+  } else {
+    setText("dashLastLogin", "First login");
+  }
 
   const monthSelect = document.getElementById("resultMonth");
   if (monthSelect) {
