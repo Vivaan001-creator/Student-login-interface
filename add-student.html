@@ -149,6 +149,7 @@
       <a href="notices.html" class="nav-link"><i class="fa-regular fa-bell"></i><span class="link-text">Notice Board</span></a>
       <a href="gallery-management.html" class="nav-link"><i class="fa-solid fa-images"></i><span class="link-text">Gallery</span></a>
       <a href="school-profile.html" class="nav-link"><i class="fa-solid fa-building-columns"></i><span class="link-text">Tuition Profile</span></a>
+      <a href="login-activity.html" class="nav-link"><i class="fa-solid fa-clock-rotate-left"></i><span class="link-text">Login Activity</span></a>
       <a href="change-password.html" class="nav-link"><i class="fa-solid fa-gear"></i><span class="link-text">Settings</span></a>
     </nav>
     <a href="#" onclick="adminLogout()" class="logout-link"><i class="fa-solid fa-arrow-right-from-bracket"></i><span class="link-text">Logout</span></a>
@@ -161,7 +162,7 @@
     <a href="students.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Back to All Students</a>
     <div class="page-topbar">
       <h1>Add New Student</h1>
-      <p>Fill the details given below. * marked fields are important.</p>
+      <p>Naye student ki details bharein. * se marked fields zaroori hain.</p>
     </div>
 
     <form id="studentForm" class="form-card">
@@ -212,7 +213,7 @@
 </div>
 
 <script>
-  Appearance.renderMenu(document.getElementById('appearanceMount'), { variant: 'inline' });
+  try { Appearance.renderMenu(document.getElementById('appearanceMount'), { variant: 'inline' }); } catch(e) {}
 </script>
 
 <script type="module" src="admin.js"></script>
