@@ -48,23 +48,23 @@
   /* Nav */
   header.nav{
     position:sticky; top:0; z-index:50; display:flex; align-items:center; justify-content:space-between;
-    padding:22px 8vw; background:color-mix(in srgb, var(--bg) 85%, transparent); backdrop-filter:blur(10px);
+    padding:22px 8vw; background:color-mix(in srgb, var(--bg) 85%, transparent); backdrop-filter:blur(10px); gap:16px;
   }
-  .logo{font-family:'Fraunces', serif; font-size:1.3rem; font-weight:700;}
+  .logo{font-family:'Fraunces', serif; font-size:1.3rem; font-weight:700; flex-shrink:0;}
   .logo span{color:var(--primary);}
-  .nav-links{display:flex; align-items:center; gap:30px; font-weight:500; font-size:.95rem;}
+  .nav-links{display:flex; align-items:center; gap:26px; font-weight:500; font-size:.95rem; flex-wrap:wrap;}
   .nav-links a{color:var(--text-soft); transition:color .2s ease;}
   .nav-links a:hover{color:var(--text);}
-  #menu-toggle{display:none;}
+  .nav-right{display:flex; align-items:center; gap:12px; flex-shrink:0;}
 
-  /* Floating theme toggle (fixed, matches reference style) */
   #theme-toggle{
-    position:fixed; top:22px; right:8vw; z-index:60; width:52px; height:52px; border-radius:50%;
+    width:42px; height:42px; border-radius:50%;
     background:var(--surface); border:1.5px solid var(--border); box-shadow:var(--shadow);
-    display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:1.2rem; color:var(--text);
+    display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:1.05rem; color:var(--text);
     transition:transform .2s ease;
   }
   #theme-toggle:hover{transform:scale(1.08);}
+  #menu-toggle{display:none;}
 
   /* Hero */
   .hero{padding-top:130px; padding-bottom:60px;}
@@ -151,7 +151,6 @@
 
   @media (max-width:900px){
     .card-grid, .project-grid{grid-template-columns:1fr;}
-    #theme-toggle{top:16px; right:6vw; width:44px; height:44px; font-size:1rem;}
   }
   @media (max-width:700px){
     .nav-links{
@@ -177,10 +176,11 @@
     <a href="#projects">Projects</a>
     <a href="#contact">Contact</a>
   </nav>
-  <button id="menu-toggle" aria-label="Toggle menu"><i class="fa-solid fa-bars"></i></button>
+  <div class="nav-right">
+    <button id="theme-toggle" aria-label="Toggle theme"><i class="fa-solid fa-circle-half-stroke"></i></button>
+    <button id="menu-toggle" aria-label="Toggle menu"><i class="fa-solid fa-bars"></i></button>
+  </div>
 </header>
-
-<button id="theme-toggle" aria-label="Toggle theme"><i class="fa-solid fa-circle-half-stroke"></i></button>
 
 <main>
   <!-- HERO -->
