@@ -299,6 +299,7 @@
       <a href="gallery-management.html" class="nav-link"><i class="fa-solid fa-images"></i><span class="link-text">Gallery</span></a>
       <a href="#" class="nav-link"><i class="fa-regular fa-envelope"></i><span class="link-text">Messages</span></a>
       <a href="school-profile.html" class="nav-link"><i class="fa-solid fa-building-columns"></i><span class="link-text">Tuition Profile</span></a>
+      <a href="login-activity.html" class="nav-link"><i class="fa-solid fa-clock-rotate-left"></i><span class="link-text">Login Activity</span></a>
       <a href="change-password.html" class="nav-link"><i class="fa-solid fa-gear"></i><span class="link-text">Settings</span></a>
     </nav>
 
@@ -312,7 +313,7 @@
     <header class="dashboard-hero">
       <div class="topbar-left">
         <h1>Welcome, <span>Admin</span></h1>
-        <p>Yahan se apni poori tuition manage karein — students, teachers, results, sab kuch ek jagah.</p>
+        <p>Manage your whole tuition from here — students, teachers, results, all in one place.</p>
       </div>
       <div class="topbar-right">
         <div class="admin-profile">
@@ -327,6 +328,11 @@
       <div class="clock-card">
         <div><i class="fa-regular fa-clock"></i><span id="liveDateTime">Loading...</span></div>
         <span id="dashboardClock"></span>
+      </div>
+
+      <div class="clock-card" style="background:linear-gradient(120deg, var(--amber-shadow), var(--amber-deep));">
+        <div><i class="fa-solid fa-right-to-bracket"></i> Last Login</div>
+        <span id="dashLastLogin">-</span>
       </div>
 
       <section class="stats-grid-lg">
@@ -353,22 +359,22 @@
         <div class="actions-grid">
           <a href="add-student.html" class="action-item">
             <div class="action-icon blue"><i class="fa-solid fa-user-plus"></i></div>
-            <div class="action-text"><h3>Add Student</h3><p>Naya student admission karein</p></div>
+            <div class="action-text"><h3>Add Student</h3><p>Enroll a new student</p></div>
             <i class="fa-solid fa-chevron-right arrow"></i>
           </a>
           <a href="add-teacher.html" class="action-item">
             <div class="action-icon purple"><i class="fa-solid fa-chalkboard-user"></i></div>
-            <div class="action-text"><h3>Add Teacher</h3><p>Naya teacher onboard karein</p></div>
+            <div class="action-text"><h3>Add Teacher</h3><p>Onboard a new teacher</p></div>
             <i class="fa-solid fa-chevron-right arrow"></i>
           </a>
           <a href="publish-result.html" class="action-item">
             <div class="action-icon green"><i class="fa-solid fa-chart-column"></i></div>
-            <div class="action-text"><h3>Publish Results</h3><p>Marks enter karke result publish karein</p></div>
+            <div class="action-text"><h3>Publish Results</h3><p>Enter marks and publish results</p></div>
             <i class="fa-solid fa-chevron-right arrow"></i>
           </a>
           <a href="fee-management.html" class="action-item">
             <div class="action-icon orange"><i class="fa-solid fa-file-invoice-dollar"></i></div>
-            <div class="action-text"><h3>Fee Management</h3><p>Payments track aur verify karein</p></div>
+            <div class="action-text"><h3>Fee Management</h3><p>Track and verify payments</p></div>
             <i class="fa-solid fa-chevron-right arrow"></i>
           </a>
           <a href="notices.html" class="action-item">
@@ -378,7 +384,7 @@
           </a>
           <a href="gallery-management.html" class="action-item">
             <div class="action-icon teal"><i class="fa-solid fa-images"></i></div>
-            <div class="action-text"><h3>Gallery</h3><p>Photos upload aur manage karein</p></div>
+            <div class="action-text"><h3>Gallery</h3><p>Upload and manage photos</p></div>
             <i class="fa-solid fa-chevron-right arrow"></i>
           </a>
         </div>
@@ -390,7 +396,7 @@
 </div>
 
 <script>
-  Appearance.renderMenu(document.getElementById('appearanceMount'), { variant: 'inline' });
+  try { Appearance.renderMenu(document.getElementById('appearanceMount'), { variant: 'inline' }); } catch(e) {}
 </script>
 
 <script>
