@@ -184,7 +184,7 @@
 
 <p class="role-note">
   <i class="fa-solid fa-circle-info"></i>
-  <span>Teacher login tabhi kaam karega jab Admin unhe add/update kare — tabhi unke email par password-setup link jaata hai.</span>
+  <span>Teacher login only works once the Admin adds or updates them — that\u2019s when the password-setup link goes to their email.</span>
 </p>
 
 <script>
@@ -245,7 +245,7 @@
   cord.addEventListener('keydown', (e) => { if(e.key==='Enter'||e.key===' '){ e.preventDefault(); cycleNeon(); } });
 
   // Appearance menu (System / Light / Dark) — persists across the whole site
-  Appearance.renderMenu(document.getElementById('appearanceMount'), { variant: 'corner' });
+  try { Appearance.renderMenu(document.getElementById('appearanceMount'), { variant: 'corner' }); } catch(e) {}
 
   if (!reduceMotion && window.matchMedia('(hover:hover)').matches){
     const lampWrap = document.getElementById('lampWrap');
