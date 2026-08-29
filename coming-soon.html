@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Coming Soon- Page Not Found</title>
+<title>Coming Soon</title>
 <style>
   :root{
     --teal-light:#bdfce7;
@@ -13,7 +13,6 @@
   }
   *{ margin:0; padding:0; box-sizing:border-box; }
   html,body{
-    height:100%;
     font-family:'Segoe UI', Arial, sans-serif;
     background:#020a15;
     overflow-x:hidden;
@@ -23,7 +22,7 @@
     *{ animation-duration:.01ms !important; animation-iteration-count:1 !important; }
   }
 
-  .page{ position:relative; width:100%; min-height:100vh; }
+  .page{ position:relative; width:100%; }
 
   /* ---------------- NAV ---------------- */
   .nav-wrap{
@@ -103,64 +102,183 @@
 
   .house-light{ animation:flicker 2.6s ease-in-out infinite; }
 
-  /* ---------------- CONTENT OVERLAY ---------------- */
+  /* ---------------- CONTENT OVERLAY (positioned inside scene-wrap, always proportional to artwork) ---------------- */
   .content{
     position:absolute;
     left:6.5%;
-    top:30%;
+    top:32%;
     z-index:8;
     max-width:520px;
+    width:88%;
   }
-  .error-code{
-    font-size:clamp(70px,10vw,128px);
+  .eyebrow{
+    font-size:clamp(11px,1.3vw,13px);
+    letter-spacing:4px;
+    font-weight:700;
+    color:var(--teal-light);
+    opacity:.85;
+    margin-bottom:10px;
+  }
+  .coming-soon{
+    font-size:clamp(42px,7.2vw,84px);
     font-weight:800;
-    letter-spacing:2px;
-    background:linear-gradient(180deg, #ffffff 0%, var(--teal-light) 35%, var(--teal-deep) 100%);
+    letter-spacing:1px;
+    background:linear-gradient(180deg, #ffffff 0%, var(--teal-light) 40%, var(--teal-deep) 100%);
     -webkit-background-clip:text;
     background-clip:text;
     color:transparent;
-    line-height:.95;
-    filter:drop-shadow(0 0 18px rgba(160,240,215,.55)) drop-shadow(0 0 46px rgba(111,227,196,.4));
+    line-height:1.05;
+    filter:drop-shadow(0 0 18px rgba(160,240,215,.5)) drop-shadow(0 0 40px rgba(111,227,196,.35));
   }
-  .error-text{
-    font-size:clamp(15px,2.1vw,23px);
-    letter-spacing:6px;
-    font-weight:800;
-    margin-top:12px;
-    color:#f6f9ff;
+  .sub-text{
+    font-size:clamp(13px,1.6vw,16px);
+    line-height:1.6;
+    font-weight:500;
+    margin-top:16px;
+    color:#dfeaf8;
     text-shadow:0 2px 12px rgba(0,0,0,.4);
+    max-width:420px;
   }
-  .btn-home{
-    margin-top:28px;
-    display:inline-flex;
-    align-items:center;
-    gap:8px;
-    padding:14px 34px;
+
+  /* ---------------- BELOW-THE-FOLD SECTION ---------------- */
+  .below-section{
+    position:relative;
+    background:linear-gradient(180deg, #03101f 0%, #050d1c 100%);
+    padding:56px 20px 40px;
+    text-align:center;
+    overflow:hidden;
+  }
+  .below-section::before{
+    content:"";
+    position:absolute;
+    top:-120px; left:50%;
+    transform:translateX(-50%);
+    width:900px; height:260px;
+    background:radial-gradient(ellipse at center, rgba(111,227,196,.08), transparent 70%);
+    pointer-events:none;
+  }
+  .countdown{
+    position:relative;
+    display:flex;
+    justify-content:center;
+    gap:14px;
+    flex-wrap:wrap;
+    margin-bottom:34px;
+  }
+  .cd-box{
+    background:rgba(111,227,196,.08);
+    backdrop-filter:blur(8px);
+    -webkit-backdrop-filter:blur(8px);
+    border:1px solid rgba(190,252,231,.22);
+    border-radius:16px;
+    padding:16px 20px;
+    min-width:76px;
+  }
+  .cd-box span{
+    display:block;
+    font-size:clamp(24px,4vw,36px);
+    font-weight:800;
+    color:var(--teal-light);
+    font-variant-numeric:tabular-nums;
+    text-shadow:0 0 20px rgba(111,227,196,.4);
+  }
+  .cd-box label{
+    display:block;
+    margin-top:4px;
+    font-size:11px;
+    letter-spacing:1.5px;
+    color:#9fb3c8;
+    text-transform:uppercase;
+  }
+  .notify-form{
+    position:relative;
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    flex-wrap:wrap;
+    max-width:460px;
+    margin:0 auto 14px;
+  }
+  .notify-form input{
+    flex:1 1 220px;
+    padding:14px 20px;
+    border-radius:30px;
+    border:1.5px solid rgba(190,252,231,.25);
+    background:rgba(255,255,255,.04);
+    color:#eafff7;
+    font-size:14px;
+    outline:none;
+    transition:border-color .2s ease, background .2s ease;
+  }
+  .notify-form input::placeholder{ color:#7f93a8; }
+  .notify-form input:focus{ border-color:rgba(190,252,231,.6); background:rgba(255,255,255,.07); }
+  .notify-form button{
+    padding:14px 28px;
+    border-radius:30px;
+    border:1.5px solid rgba(190,252,231,.55);
     background:linear-gradient(135deg, rgba(111,227,196,.38), rgba(63,174,149,.32));
     backdrop-filter:blur(8px);
     -webkit-backdrop-filter:blur(8px);
-    border:1.5px solid rgba(190,252,231,.55);
-    border-radius:30px;
     color:#eafff7;
     font-weight:700;
-    letter-spacing:1.2px;
+    letter-spacing:.8px;
     font-size:13.5px;
     cursor:pointer;
     box-shadow:0 8px 24px rgba(20,50,60,.35), inset 0 1px 0 rgba(255,255,255,.2);
     transition:transform .22s ease, box-shadow .22s ease, background .22s ease;
+    white-space:nowrap;
   }
-  .btn-home:hover{
+  .notify-form button:hover{
     transform:translateY(-3px);
     background:linear-gradient(135deg, rgba(111,227,196,.55), rgba(63,174,149,.45));
     box-shadow:0 14px 30px rgba(20,50,60,.45), inset 0 1px 0 rgba(255,255,255,.25);
+  }
+  .form-note{
+    position:relative;
+    font-size:12px;
+    color:#7f93a8;
+    margin-bottom:36px;
+    min-height:16px;
+  }
+  .social-row{
+    position:relative;
+    display:flex;
+    justify-content:center;
+    gap:16px;
+    margin-bottom:22px;
+  }
+  .social-row a{
+    width:38px; height:38px;
+    display:flex; align-items:center; justify-content:center;
+    border-radius:50%;
+    border:1px solid rgba(190,252,231,.22);
+    background:rgba(255,255,255,.03);
+    color:var(--teal-light);
+    text-decoration:none;
+    transition:background .2s ease, transform .2s ease, border-color .2s ease;
+  }
+  .social-row a:hover{
+    background:rgba(111,227,196,.14);
+    border-color:rgba(190,252,231,.5);
+    transform:translateY(-3px);
+  }
+  .social-row svg{ width:16px; height:16px; }
+  .copyright{
+    position:relative;
+    font-size:12px;
+    color:#5f7488;
+    letter-spacing:.4px;
   }
 
   @media (max-width:768px){
     nav{ gap:0; padding:8px 4px; flex-wrap:wrap; justify-content:center; }
     nav a{ font-size:11.5px; padding:6px 10px; }
-    .content{ top:24%; left:6%; }
-    .error-text{ letter-spacing:4px; }
-    .btn-home{ padding:12px 26px; }
+    .content{ top:26%; left:6%; }
+    .sub-text{ max-width:80%; }
+    .below-section{ padding:44px 16px 32px; }
+    .cd-box{ padding:12px 14px; min-width:64px; }
+    .notify-form button{ width:100%; }
+    .notify-form input{ flex-basis:100%; }
   }
 </style>
 </head>
@@ -171,16 +289,10 @@
     <nav>
       <a href="#">Home</a>
       <a href="#">About</a>
-      <a href="#">Login</a>
+      <a href="#">Service</a>
       <a href="#">Portfolio</a>
       <a href="#">Contact</a>
     </nav>
-  </div>
-
-  <div class="content">
-    <div class="error-code">Coming Soon</div>
-    <div class="error-text">PAGE NOT FOUND</div>
-    <button class="btn-home" onclick="window.location.href='#'">RETURN HOME</button>
   </div>
 
   <div class="scene-wrap">
@@ -563,8 +675,76 @@
         <circle cx="902" cy="234" r="8" fill="#02040c" stroke="#0c1730" stroke-width="1.4"/>
       </g>
     </svg>
+
+    <div class="content">
+      <div class="eyebrow">OUR NEW WEBSITE</div>
+      <div class="coming-soon">Coming<br>Soon</div>
+      <div class="sub-text">We're crafting something beautiful under the night sky. Leave your email below and we'll let you know the moment we launch.</div>
+    </div>
+  </div>
+
+  <div class="below-section">
+    <div class="countdown" id="countdown">
+      <div class="cd-box"><span id="cd-days">00</span><label>Days</label></div>
+      <div class="cd-box"><span id="cd-hours">00</span><label>Hours</label></div>
+      <div class="cd-box"><span id="cd-mins">00</span><label>Minutes</label></div>
+      <div class="cd-box"><span id="cd-secs">00</span><label>Seconds</label></div>
+    </div>
+
+    <form class="notify-form" id="notifyForm">
+      <input type="email" id="notifyEmail" placeholder="Enter your email address" required>
+      <button type="submit">Notify Me</button>
+    </form>
+    <div class="form-note" id="formNote"></div>
+
+    <div class="social-row">
+      <a href="#" aria-label="Email">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18v12H3z"/><path d="M3 6l9 7 9-7"/></svg>
+      </a>
+      <a href="#" aria-label="Twitter">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22 5.9c-.7.3-1.5.6-2.3.7.8-.5 1.5-1.3 1.8-2.3-.8.5-1.6.8-2.6 1-.7-.8-1.8-1.3-3-1.3-2.2 0-4 1.8-4 4 0 .3 0 .6.1.9-3.3-.2-6.3-1.8-8.2-4.2-.3.6-.5 1.3-.5 2 0 1.4.7 2.6 1.8 3.3-.6 0-1.3-.2-1.8-.5v.1c0 1.9 1.4 3.5 3.2 3.9-.3.1-.7.1-1.1.1-.3 0-.5 0-.8-.1.5 1.6 2 2.7 3.8 2.8-1.4 1.1-3.2 1.7-5.1 1.7-.3 0-.7 0-1-.1 1.8 1.2 4 1.8 6.3 1.8 7.5 0 11.7-6.3 11.7-11.7v-.5c.8-.6 1.5-1.3 2-2.1z"/></svg>
+      </a>
+      <a href="#" aria-label="Instagram">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg>
+      </a>
+    </div>
+    <p class="copyright">© <span id="yearNow"></span> All rights reserved.</p>
   </div>
 
 </div>
+
+<script>
+  // Countdown timer — set target 21 days from now
+  var target = new Date();
+  target.setDate(target.getDate() + 21);
+
+  function updateCountdown(){
+    var now = new Date();
+    var diff = target - now;
+    if (diff < 0) diff = 0;
+    var days = Math.floor(diff / (1000*60*60*24));
+    var hours = Math.floor((diff / (1000*60*60)) % 24);
+    var mins = Math.floor((diff / (1000*60)) % 60);
+    var secs = Math.floor((diff / 1000) % 60);
+    document.getElementById('cd-days').textContent = String(days).padStart(2,'0');
+    document.getElementById('cd-hours').textContent = String(hours).padStart(2,'0');
+    document.getElementById('cd-mins').textContent = String(mins).padStart(2,'0');
+    document.getElementById('cd-secs').textContent = String(secs).padStart(2,'0');
+  }
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+
+  document.getElementById('yearNow').textContent = new Date().getFullYear();
+
+  document.getElementById('notifyForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    var email = document.getElementById('notifyEmail').value;
+    var note = document.getElementById('formNote');
+    if(email){
+      note.textContent = "Thanks! We'll notify " + email + " when we launch.";
+      document.getElementById('notifyEmail').value = '';
+    }
+  });
+</script>
 </body>
 </html>
