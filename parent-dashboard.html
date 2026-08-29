@@ -258,7 +258,7 @@
       <!-- Result -->
       <section class="card" id="result-section">
         <div class="card-title"><i class="fa-solid fa-file-lines"></i><h2>Result</h2></div>
-        <p class="card-note">Report card dekhne ke liye month chunein aur button dabayein.</p>
+        <p class="card-note">Select a month and tap the button to view the report card.</p>
         <div class="field" style="max-width:260px;margin-bottom:18px;">
           <label>Select Month</label>
           <div class="input-wrap select-wrap"><select id="resultMonth"></select></div>
@@ -317,7 +317,7 @@
 </div>
 
 <script>
-  Appearance.renderMenu(document.getElementById('appearanceMount'), { variant: 'inline' });
+  try { Appearance.renderMenu(document.getElementById('appearanceMount'), { variant: 'inline' }); } catch(e) {}
 </script>
 
 <script>
@@ -336,8 +336,8 @@
 </script>
 
 <script>
-  MonthPicker.enhance(document.getElementById('resultMonth'));
-  MonthPicker.enhance(document.getElementById('attendanceMonth'));
+  try { MonthPicker.enhance(document.getElementById('resultMonth')); } catch(e) {}
+  try { MonthPicker.enhance(document.getElementById('attendanceMonth')); } catch(e) {}
 </script>
 
 <script type="module" src="parent.js"></script>
@@ -345,7 +345,7 @@
   function viewMyResult() {
     const monthSelect = document.getElementById('resultMonth');
     const month = monthSelect && monthSelect.value;
-    if (!month) { alert('Pehle month select karein.'); return; }
+    if (!month) { alert('Please select a month first.'); return; }
     localStorage.setItem('selectedMonth', month);
     window.location.href = 'result.html';
   }
