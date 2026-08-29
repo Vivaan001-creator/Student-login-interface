@@ -218,6 +218,7 @@
       <a href="gallery-management.html" class="nav-link"><i class="fa-solid fa-images"></i><span class="link-text">Gallery</span></a>
       <a href="#" class="nav-link"><i class="fa-regular fa-envelope"></i><span class="link-text">Messages</span></a>
       <a href="school-profile.html" class="nav-link"><i class="fa-solid fa-building-columns"></i><span class="link-text">Tuition Profile</span></a>
+      <a href="login-activity.html" class="nav-link"><i class="fa-solid fa-clock-rotate-left"></i><span class="link-text">Login Activity</span></a>
       <a href="change-password.html" class="nav-link"><i class="fa-solid fa-gear"></i><span class="link-text">Settings</span></a>
     </nav>
 
@@ -277,7 +278,7 @@
 </div>
 
 <script>
-  Appearance.renderMenu(document.getElementById('appearanceMount'), { variant: 'inline' });
+  try { Appearance.renderMenu(document.getElementById('appearanceMount'), { variant: 'inline' }); } catch(e) {}
 </script>
 
 <script>
