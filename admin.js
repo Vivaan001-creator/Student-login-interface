@@ -182,7 +182,8 @@ if (
     page.includes("notices.html") ||
     page.includes("gallery-management.html") ||
     page.includes("fee-management.html") ||
-    page.includes("attendance-overview.html")
+    page.includes("attendance-overview.html") ||
+    page.includes("login-activity.html")
 ) {
 
     if (sessionStorage.getItem("adminLoggedIn") !== "true") {
