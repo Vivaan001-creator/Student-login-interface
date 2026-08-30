@@ -110,6 +110,14 @@ async function adminLogin() {
         // page, plus this account's own last-login (no per-admin Firestore
         // doc exists, so a small singleton doc holds it).
         try {
+            // Capture the PREVIOUS login time before we overwrite it.
+            const prevSnap = await getDoc(doc(db, "appMeta", "adminLogin"));
+            const prevData = prevSnap.exists() ? prevSnap.data() : null;
+            const previousLogin = prevData && prevData.lastLogin
+                ? (prevData.lastLogin.toDate ? prevData.lastLogin.toDate().toISOString() : new Date(prevData.lastLogin).toISOString())
+                : "";
+            sessionStorage.setItem("previousLogin", previousLogin);
+
             await addDoc(collection(db, "loginLogs"), {
                 role: "admin",
                 refId: "admin",
@@ -976,21 +984,16 @@ loadDashboardStats();
 // ==========================
 // Admin's own last login (dashboard.html)
 // ==========================
-async function loadAdminLastLogin() {
+function loadAdminLastLogin() {
     const box = document.getElementById("dashLastLogin");
     if (!box) return;
-    try {
-        const snap = await getDoc(doc(db, "appMeta", "adminLogin"));
-        if (!snap.exists() || !snap.data().lastLogin) {
-            box.textContent = "First login";
-            return;
-        }
-        const d = snap.data();
-        const dt = d.lastLogin.toDate ? d.lastLogin.toDate() : new Date(d.lastLogin);
-        box.textContent = dt.toLocaleString("en-IN", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" });
-    } catch (error) {
-        console.error("Could not load admin last login:", error);
+    const previousLogin = sessionStorage.getItem("previousLogin");
+    if (!previousLogin) {
+        box.textContent = "First login";
+        return;
     }
+    const dt = new Date(previousLogin);
+    box.textContent = dt.toLocaleString("en-IN", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" });
 }
 loadAdminLastLogin();
 
