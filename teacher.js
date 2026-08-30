@@ -109,6 +109,13 @@ async function teacherLogin() {
     // plus this account's own last-login shown on the teacher's dashboard.
     try {
       const teacherData = teacherDoc.data();
+
+      // Capture the PREVIOUS login time before we overwrite it.
+      const previousLogin = teacherData.lastLogin
+        ? (teacherData.lastLogin.toDate ? teacherData.lastLogin.toDate().toISOString() : new Date(teacherData.lastLogin).toISOString())
+        : "";
+      sessionStorage.setItem("previousLogin", previousLogin);
+
       await addDoc(collection(db, "loginLogs"), {
         role: "teacher",
         refId: teacherDoc.id,
@@ -224,8 +231,9 @@ async function loadTeacherDashboard() {
     setText("teacherSubjectText", t.subject);
     setText("teacherEmailText", t.email);
 
-    if (t.lastLogin) {
-      const dt = t.lastLogin.toDate ? t.lastLogin.toDate() : new Date(t.lastLogin);
+    const previousLogin = sessionStorage.getItem("previousLogin");
+    if (previousLogin) {
+      const dt = new Date(previousLogin);
       setText("dashLastLogin", dt.toLocaleString("en-IN", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }));
     } else {
       setText("dashLastLogin", "First login");
