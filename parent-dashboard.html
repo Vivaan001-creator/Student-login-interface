@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script src="appearance.js"></script>
+<script src="session-timer.js"></script>
 <script src="month-picker.js"></script>
 <title>Parent Dashboard - Home Tuition</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -338,6 +339,10 @@
 <script>
   try { MonthPicker.enhance(document.getElementById('resultMonth')); } catch(e) {}
   try { MonthPicker.enhance(document.getElementById('attendanceMonth')); } catch(e) {}
+</script>
+
+<script>
+  try { SessionTimer.start({ flagKey: 'parentLoggedIn', loginUrl: 'parent-login.html' }); } catch(e) {}
 </script>
 
 <script type="module" src="parent.js"></script>
