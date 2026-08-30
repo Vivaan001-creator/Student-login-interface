@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script src="appearance.js"></script>
+<script src="session-timer.js"></script>
 <script src="month-picker.js"></script>
 <title>Home Tuition - Assessment Result</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -150,8 +151,18 @@
 </div>
 
 <script>
-  Appearance.renderMenu(document.getElementById('appearanceMount'), { variant: 'corner' });
-  MonthPicker.enhance(document.getElementById('monthSelect'));
+  try { Appearance.renderMenu(document.getElementById('appearanceMount'), { variant: 'corner' }); } catch(e) {}
+  try { MonthPicker.enhance(document.getElementById('monthSelect')); } catch(e) {}
+</script>
+
+<script>
+  try {
+    const isParentSessionActive = sessionStorage.getItem('parentLoggedIn') === 'true';
+    SessionTimer.start({
+      flagKeys: ['parentLoggedIn', 'studentLoggedIn'],
+      loginUrl: isParentSessionActive ? 'parent-login.html' : 'student-login.html'
+    });
+  } catch(e) {}
 </script>
 
 <script type="module" src="result.js"></script>
