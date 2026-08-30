@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script src="appearance.js"></script>
+<script src="session-timer.js"></script>
 <title>Attendance - Home Tuition</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -189,7 +190,11 @@
 </div>
 
 <script>
-  Appearance.renderMenu(document.getElementById('appearanceMount'), { variant: 'inline' });
+  try { Appearance.renderMenu(document.getElementById('appearanceMount'), { variant: 'inline' }); } catch(e) {}
+</script>
+
+<script>
+  try { SessionTimer.start({ flagKey: 'teacherLoggedIn', loginUrl: 'teacher-login.html' }); } catch(e) {}
 </script>
 
 <script type="module" src="teacher.js"></script>
