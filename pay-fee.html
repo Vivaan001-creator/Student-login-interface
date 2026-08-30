@@ -1,98 +1,812 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<script src="appearance.js"></script>
-<title>Fee Payment - Home Tuition</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
+<title>Coming Soon</title>
 <style>
   :root{
-    --paper:#f7f2e4; --ink:#241f14; --ink-soft:#7a715c; --ink-faint:#a89d84;
-    --amber:#ffb347; --amber-deep:#ff8c42; --amber-shadow:#d9691f; --coral:#ff6f61;
-    --navy-900:#161d3a; --navy-950:#0e1326;
-    --radius-lg:24px; --radius-md:14px;
-    --ease:cubic-bezier(.16,.84,.44,1);
-    --surface-card:#ffffff; --surface-card-border:rgba(36,31,20,.06); --surface-card-shadow:rgba(36,31,20,.1);
-  }
-  html[data-theme="dark"]{
-    --paper:#161d3a; --ink:#f3ecd9; --ink-soft:#b7bcdc; --ink-faint:#7c84a8;
-    --surface-card:rgba(255,255,255,.045); --surface-card-border:rgba(255,255,255,.1); --surface-card-shadow:rgba(0,0,0,.35);
+    --teal-light:#bdfce7;
+    --teal:#6fe3c4;
+    --teal-deep:#3fae95;
+    --ink:#eaf1ff;
   }
   *{ margin:0; padding:0; box-sizing:border-box; }
-  body{ font-family:'Inter', sans-serif; background:var(--paper); color:var(--ink); min-height:100vh; transition:background-color .5s ease, color .5s ease; }
-  h1,h2{ font-family:'Fraunces', serif; font-weight:600; }
-  a{ text-decoration:none; }
-
-  @keyframes fadeInPage{ from{opacity:0;} to{opacity:1;} }
-  @keyframes slideUpFade{ from{opacity:0; transform:translateY(16px);} to{opacity:1; transform:translateY(0);} }
-
-  .pay-page{ max-width:460px; margin:0 auto; padding:32px 20px 60px; animation:fadeInPage .5s ease both; }
-  .pay-back{ display:inline-flex; align-items:center; gap:8px; color:var(--amber-shadow); font-size:13px; font-weight:700; margin-bottom:18px; transition:gap .2s var(--ease); }
-  .pay-back:hover{ gap:11px; }
-
-  .pay-card{ background:var(--surface-card); border:1px solid var(--surface-card-border); border-radius:var(--radius-lg); box-shadow:0 20px 50px var(--surface-card-shadow); padding:32px 26px; text-align:center; animation:slideUpFade .5s var(--ease) both; }
-  .pay-icon{ width:64px; height:64px; border-radius:50%; background:linear-gradient(135deg, var(--amber) 0%, var(--coral) 100%); color:#241608; display:flex; align-items:center; justify-content:center; font-size:26px; margin:0 auto 18px; box-shadow:0 10px 22px rgba(255,140,66,.3); }
-  .pay-who{ font-size:13px; color:var(--ink-soft); margin-bottom:2px; }
-  .pay-period{ font-size:17px; font-weight:700; margin-bottom:20px; }
-  .pay-amount-label{ font-size:11.5px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.5px; }
-  .pay-amount{ font-size:42px; font-weight:800; margin:4px 0 20px; font-family:'Fraunces', serif; }
-  .pay-amount-lock{ font-size:11.5px; color:var(--ink-faint); margin-top:-14px; margin-bottom:22px; display:flex; align-items:center; justify-content:center; gap:6px; }
-
-  .btn-upi{
-    width:100%; display:flex; align-items:center; justify-content:center; gap:10px;
-    background:linear-gradient(135deg, var(--amber) 0%, var(--coral) 100%); color:#241608; border:none;
-    border-radius:999px; padding:15px; font-size:14.5px; font-weight:700; font-family:inherit; cursor:pointer; margin-bottom:16px;
-    box-shadow:0 4px 0 var(--amber-shadow), 0 14px 26px rgba(255,140,66,.28);
-    transition:transform .15s var(--ease), box-shadow .15s var(--ease);
+  html,body{
+    font-family:'Segoe UI', Arial, sans-serif;
+    background:#020a15;
+    overflow-x:hidden;
+    color:var(--ink);
   }
-  .btn-upi:hover{ transform:translateY(-2px); box-shadow:0 6px 0 var(--amber-shadow), 0 18px 32px rgba(255,140,66,.34); }
-  .btn-upi:active{ transform:translateY(2px); box-shadow:0 2px 0 var(--amber-shadow), 0 8px 16px rgba(255,140,66,.3); }
-
-  .pay-divider{ display:flex; align-items:center; gap:10px; color:var(--ink-faint); font-size:11px; font-weight:700; letter-spacing:.5px; margin:18px 0 16px; }
-  .pay-divider .line{ flex:1; height:1px; background:rgba(36,31,20,.09); }
-  .pay-confirm-hint{ font-size:12.5px; color:var(--ink-soft); margin-bottom:16px; line-height:1.6; text-align:left; }
-  .pay-confirm-hint strong{ color:var(--ink); }
-
-  .btn-confirm-paid{
-    width:100%; background:var(--navy-900); color:#f3ecd9; border:none; border-radius:999px;
-    padding:15px; font-size:14px; font-weight:700; font-family:inherit; cursor:pointer;
-    display:flex; align-items:center; justify-content:center; gap:10px;
-    box-shadow:0 4px 0 var(--navy-950), 0 12px 24px rgba(14,19,38,.2);
-    transition:transform .15s var(--ease), box-shadow .15s var(--ease), opacity .2s var(--ease);
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:.01ms !important; animation-iteration-count:1 !important; }
   }
-  .btn-confirm-paid:not(:disabled):hover{ transform:translateY(-2px); }
-  .btn-confirm-paid:not(:disabled):active{ transform:translateY(2px); box-shadow:0 2px 0 var(--navy-950), 0 6px 14px rgba(14,19,38,.2); }
-  .btn-confirm-paid:disabled{ opacity:.45; cursor:default; box-shadow:none; }
 
-  .pay-cancel{ display:block; text-align:center; margin-top:18px; color:var(--ink-soft); font-size:12.5px; }
-  .pay-cancel:hover{ color:var(--amber-deep); }
+  .page{ position:relative; width:100%; }
 
-  .pay-state-msg{ text-align:center; padding:50px 10px; color:var(--ink-soft); font-size:14px; }
-  .pay-state-msg i{ font-size:32px; display:block; margin-bottom:14px; color:var(--amber-deep); }
+  /* ---------------- NAV ---------------- */
+  .nav-wrap{
+    position:relative;
+    z-index:10;
+    display:flex;
+    justify-content:center;
+    padding:26px 20px 0;
+  }
+  nav{
+    display:flex;
+    align-items:center;
+    gap:2px;
+    background:rgba(6,14,32,.55);
+    backdrop-filter:blur(6px);
+    -webkit-backdrop-filter:blur(6px);
+    border:1px solid rgba(255,255,255,.06);
+    border-radius:40px;
+    padding:10px 8px;
+  }
+  nav a{
+    color:#e4ecff;
+    text-decoration:none;
+    font-size:14px;
+    font-weight:700;
+    letter-spacing:.2px;
+    opacity:.9;
+    padding:8px 18px;
+    border-radius:30px;
+    transition:opacity .25s, background .25s, color .25s;
+  }
+  nav a:hover{ opacity:1; background:rgba(111,227,196,.14); color:var(--teal-light); }
 
-  @media (prefers-reduced-motion: reduce){ *{ animation:none !important; transition:none !important; } }
+  /* ---------------- SCENE (SVG) ---------------- */
+  .scene-wrap{ position:relative; width:100%; line-height:0; background:#02101f; }
+  .scene-wrap svg{ display:block; width:100%; height:auto; }
+
+  .fan-group{
+    transform-origin:902px 234px;
+    animation:spin 7s linear infinite;
+  }
+  .fan-group-reflect{
+    transform-origin:902px 234px;
+    animation:spinRev 7s linear infinite;
+  }
+  @keyframes spin{ from{ transform:rotate(0deg); } to{ transform:rotate(360deg); } }
+  @keyframes spinRev{ from{ transform:rotate(360deg); } to{ transform:rotate(0deg); } }
+
+  .light-flicker{ animation:flicker 3.4s ease-in-out infinite; }
+  @keyframes flicker{
+    0%,100%{ opacity:1; } 45%{ opacity:.72; } 50%{ opacity:1; } 75%{ opacity:.82; }
+  }
+
+  .moon-glow{ animation:glow 5s ease-in-out infinite; }
+  @keyframes glow{ 0%,100%{ opacity:.6; } 50%{ opacity:.9; } }
+
+  .star{ animation:twinkle 3.4s ease-in-out infinite; }
+  @keyframes twinkle{ 0%,100%{ opacity:.2; } 50%{ opacity:1; } }
+
+  .boat{ animation:bob 4.5s ease-in-out infinite; }
+  @keyframes bob{ 0%,100%{ transform:translateY(0px); } 50%{ transform:translateY(-3px); } }
+
+  .shooting{ opacity:0; animation:shoot 8s linear infinite; }
+  @keyframes shoot{
+    0%{ transform:translate(0,0); opacity:0; }
+    3%{ opacity:1; }
+    14%{ transform:translate(-220px,150px); opacity:0; }
+    100%{ opacity:0; }
+  }
+  .shooting.s2{ animation-delay:4s; }
+
+  .ripple-line{ animation:ripple 6s ease-in-out infinite; }
+  @keyframes ripple{
+    0%,100%{ transform:translateX(0); opacity:.5; }
+    50%{ transform:translateX(14px); opacity:.9; }
+  }
+
+  .house-light{ animation:flicker 2.6s ease-in-out infinite; }
+
+  /* ---------------- CONTENT OVERLAY (positioned inside scene-wrap, always proportional to artwork) ---------------- */
+  .content{
+    position:absolute;
+    left:6.5%;
+    top:32%;
+    z-index:8;
+    max-width:520px;
+    width:88%;
+  }
+  .eyebrow{
+    font-size:clamp(11px,1.3vw,13px);
+    letter-spacing:4px;
+    font-weight:700;
+    color:var(--teal-light);
+    opacity:.85;
+    margin-bottom:10px;
+  }
+  .coming-soon{
+    font-size:clamp(42px,7.2vw,84px);
+    font-weight:800;
+    letter-spacing:1px;
+    background:linear-gradient(180deg, #ffffff 0%, var(--teal-light) 40%, var(--teal-deep) 100%);
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+    line-height:1.05;
+    filter:drop-shadow(0 0 18px rgba(160,240,215,.5)) drop-shadow(0 0 40px rgba(111,227,196,.35));
+  }
+  .sub-text{
+    font-size:clamp(13px,1.6vw,16px);
+    line-height:1.6;
+    font-weight:500;
+    margin-top:16px;
+    color:#dfeaf8;
+    text-shadow:0 2px 12px rgba(0,0,0,.4);
+    max-width:420px;
+  }
+
+  /* ---------------- BELOW-THE-FOLD SECTION ---------------- */
+  .below-section{
+    position:relative;
+    background:linear-gradient(180deg, #03101f 0%, #050d1c 100%);
+    padding:56px 20px 40px;
+    text-align:center;
+    overflow:hidden;
+  }
+  .below-section::before{
+    content:"";
+    position:absolute;
+    top:-120px; left:50%;
+    transform:translateX(-50%);
+    width:900px; height:260px;
+    background:radial-gradient(ellipse at center, rgba(111,227,196,.08), transparent 70%);
+    pointer-events:none;
+  }
+  .below-heading{
+    position:relative;
+    font-size:clamp(24px,3.4vw,34px);
+    font-weight:800;
+    letter-spacing:.5px;
+    background:linear-gradient(180deg, #ffffff 0%, var(--teal-light) 60%, var(--teal-deep) 100%);
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+    margin-bottom:12px;
+  }
+  .below-sub{
+    position:relative;
+    font-size:14px;
+    color:#9fb3c8;
+    max-width:460px;
+    margin:0 auto 40px;
+    line-height:1.6;
+  }
+  .features{
+    position:relative;
+    display:flex;
+    justify-content:center;
+    gap:18px;
+    flex-wrap:wrap;
+    max-width:820px;
+    margin:0 auto 44px;
+  }
+  .feature-card{
+    flex:1 1 220px;
+    max-width:250px;
+    background:rgba(111,227,196,.06);
+    backdrop-filter:blur(8px);
+    -webkit-backdrop-filter:blur(8px);
+    border:1px solid rgba(190,252,231,.18);
+    border-radius:18px;
+    padding:26px 20px;
+    transition:transform .25s ease, border-color .25s ease, background .25s ease;
+  }
+  .feature-card:hover{
+    transform:translateY(-4px);
+    border-color:rgba(190,252,231,.4);
+    background:rgba(111,227,196,.1);
+  }
+  .feature-icon{
+    width:44px; height:44px;
+    margin:0 auto 14px;
+    display:flex; align-items:center; justify-content:center;
+    border-radius:50%;
+    background:linear-gradient(135deg, rgba(111,227,196,.28), rgba(63,174,149,.2));
+    color:var(--teal-light);
+  }
+  .feature-icon svg{ width:22px; height:22px; }
+  .feature-card h3{
+    font-size:15px;
+    font-weight:700;
+    color:#eafff7;
+    margin-bottom:6px;
+    letter-spacing:.3px;
+  }
+  .feature-card p{
+    font-size:12.5px;
+    color:#93a8bd;
+    line-height:1.55;
+  }
+  .notify-form{
+    position:relative;
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    flex-wrap:wrap;
+    max-width:460px;
+    margin:0 auto 14px;
+  }
+  .notify-form input{
+    flex:1 1 220px;
+    padding:14px 20px;
+    border-radius:30px;
+    border:1.5px solid rgba(190,252,231,.25);
+    background:rgba(255,255,255,.04);
+    color:#eafff7;
+    font-size:14px;
+    outline:none;
+    transition:border-color .2s ease, background .2s ease;
+  }
+  .notify-form input::placeholder{ color:#7f93a8; }
+  .notify-form input:focus{ border-color:rgba(190,252,231,.6); background:rgba(255,255,255,.07); }
+  .notify-form button{
+    padding:14px 28px;
+    border-radius:30px;
+    border:1.5px solid rgba(190,252,231,.55);
+    background:linear-gradient(135deg, rgba(111,227,196,.38), rgba(63,174,149,.32));
+    backdrop-filter:blur(8px);
+    -webkit-backdrop-filter:blur(8px);
+    color:#eafff7;
+    font-weight:700;
+    letter-spacing:.8px;
+    font-size:13.5px;
+    cursor:pointer;
+    box-shadow:0 8px 24px rgba(20,50,60,.35), inset 0 1px 0 rgba(255,255,255,.2);
+    transition:transform .22s ease, box-shadow .22s ease, background .22s ease;
+    white-space:nowrap;
+  }
+  .notify-form button:hover{
+    transform:translateY(-3px);
+    background:linear-gradient(135deg, rgba(111,227,196,.55), rgba(63,174,149,.45));
+    box-shadow:0 14px 30px rgba(20,50,60,.45), inset 0 1px 0 rgba(255,255,255,.25);
+  }
+  .form-note{
+    position:relative;
+    font-size:12px;
+    color:#7f93a8;
+    margin-bottom:36px;
+    min-height:16px;
+  }
+  .social-row{
+    position:relative;
+    display:flex;
+    justify-content:center;
+    gap:16px;
+    margin-bottom:22px;
+  }
+  .social-row a{
+    width:38px; height:38px;
+    display:flex; align-items:center; justify-content:center;
+    border-radius:50%;
+    border:1px solid rgba(190,252,231,.22);
+    background:rgba(255,255,255,.03);
+    color:var(--teal-light);
+    text-decoration:none;
+    transition:background .2s ease, transform .2s ease, border-color .2s ease;
+  }
+  .social-row a:hover{
+    background:rgba(111,227,196,.14);
+    border-color:rgba(190,252,231,.5);
+    transform:translateY(-3px);
+  }
+  .social-row svg{ width:16px; height:16px; }
+  .copyright{
+    position:relative;
+    font-size:12px;
+    color:#5f7488;
+    letter-spacing:.4px;
+  }
+
+  @media (max-width:768px){
+    nav{ gap:0; padding:8px 4px; flex-wrap:wrap; justify-content:center; }
+    nav a{ font-size:11.5px; padding:6px 10px; }
+    .content{ top:26%; left:6%; }
+    .sub-text{ max-width:80%; }
+    .below-section{ padding:44px 16px 32px; }
+    .feature-card{ flex:1 1 100%; max-width:320px; }
+    .notify-form button{ width:100%; }
+    .notify-form input{ flex-basis:100%; }
+  }
 </style>
 </head>
 <body>
+<div class="page">
 
-<div id="appearanceMount"></div>
-
-<div class="pay-page">
-  <a href="parent-dashboard.html" class="pay-back"><i class="fa-solid fa-arrow-left"></i> Dashboard par vaapas jaayein</a>
-
-  <div id="payContent">
-    <div class="pay-state-msg"><i class="fa-solid fa-spinner fa-spin"></i> Loading...</div>
+  <div class="nav-wrap">
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="my-portfolio.html">Portfolio</a>
+      <a href="login.html">Service</a>
+      <a href="my-portfolio.html#contact">Contact</a>
+      <a href="my-portfolio.html#about">About</a>
+    </nav>
   </div>
+
+  <div class="scene-wrap">
+    <svg viewBox="0 0 1200 900" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+      <defs>
+        <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"  stop-color="#02101f"/>
+          <stop offset="20%" stop-color="#001c3b"/>
+          <stop offset="32%" stop-color="#002c53"/>
+          <stop offset="44%" stop-color="#0e4d72"/>
+          <stop offset="54%" stop-color="#2f6f92"/>
+          <stop offset="60%" stop-color="#254e6c"/>
+        </linearGradient>
+        <linearGradient id="water" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"  stop-color="#0c3252"/>
+          <stop offset="40%" stop-color="#0a3a65"/>
+          <stop offset="100%" stop-color="#03101f"/>
+        </linearGradient>
+        <radialGradient id="moonBody" cx="38%" cy="34%" r="68%">
+          <stop offset="0%" stop-color="#ffffff"/>
+          <stop offset="55%" stop-color="#eceae2"/>
+          <stop offset="100%" stop-color="#cfd0c8"/>
+        </radialGradient>
+        <radialGradient id="moonHalo" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#bfe0ee" stop-opacity=".55"/>
+          <stop offset="55%" stop-color="#7fa9c2" stop-opacity=".15"/>
+          <stop offset="100%" stop-color="#7fa9c2" stop-opacity="0"/>
+        </radialGradient>
+        <linearGradient id="towerGrad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#02040c"/>
+          <stop offset="50%" stop-color="#0c1730"/>
+          <stop offset="100%" stop-color="#02040c"/>
+        </linearGradient>
+        <radialGradient id="windowGlow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#ffedb0"/>
+          <stop offset="100%" stop-color="#ffb84d"/>
+        </radialGradient>
+        <linearGradient id="mtnFar" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#294a68"/>
+          <stop offset="100%" stop-color="#1b3651"/>
+        </linearGradient>
+        <linearGradient id="mtnMid" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#193249"/>
+          <stop offset="100%" stop-color="#102438"/>
+        </linearGradient>
+        <linearGradient id="mtnNear" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#0a1524"/>
+          <stop offset="100%" stop-color="#060e1a"/>
+        </linearGradient>
+
+        <clipPath id="waterClip"><rect x="0" y="457" width="1200" height="443"/></clipPath>
+
+        <!-- ============ FULL SCENE (reused for reflection) ============ -->
+        <g id="sceneContent">
+          <!-- Sky -->
+          <rect x="0" y="0" width="1200" height="457" fill="url(#sky)"/>
+
+          <!-- Stars -->
+          <g fill="#ffffff">
+            <circle class="star" cx="40" cy="30" r="1.3" style="animation-delay:.1s"/>
+            <circle class="star" cx="90" cy="70" r="1" style="animation-delay:1.0s"/>
+            <circle class="star" cx="150" cy="40" r="1.4" style="animation-delay:.5s"/>
+            <circle class="star" cx="210" cy="90" r="1" style="animation-delay:1.6s"/>
+            <circle class="star" cx="270" cy="50" r="1.2" style="animation-delay:2.1s"/>
+            <circle class="star" cx="320" cy="100" r="1" style="animation-delay:.4s"/>
+            <circle class="star" cx="380" cy="60" r="1.5" style="animation-delay:1.3s"/>
+            <circle class="star" cx="440" cy="110" r="1" style="animation-delay:2.4s"/>
+            <circle class="star" cx="500" cy="40" r="1.2" style="animation-delay:.7s"/>
+            <circle class="star" cx="560" cy="80" r="1" style="animation-delay:1.8s"/>
+            <circle class="star" cx="610" cy="30" r="1.3" style="animation-delay:.3s"/>
+            <circle class="star" cx="660" cy="120" r="1" style="animation-delay:1.1s"/>
+            <circle class="star" cx="700" cy="60" r="1.4" style="animation-delay:2.6s"/>
+            <circle class="star" cx="60" cy="150" r="1" style="animation-delay:.6s"/>
+            <circle class="star" cx="130" cy="180" r="1.2" style="animation-delay:1.5s"/>
+            <circle class="star" cx="190" cy="140" r="1" style="animation-delay:.9s"/>
+            <circle class="star" cx="250" cy="200" r="1.3" style="animation-delay:2.0s"/>
+            <circle class="star" cx="310" cy="160" r="1" style="animation-delay:.2s"/>
+            <circle class="star" cx="360" cy="220" r="1.1" style="animation-delay:1.4s"/>
+            <circle class="star" cx="420" cy="170" r="1" style="animation-delay:2.3s"/>
+            <circle class="star" cx="470" cy="230" r="1.3" style="animation-delay:.8s"/>
+            <circle class="star" cx="520" cy="190" r="1" style="animation-delay:1.7s"/>
+            <circle class="star" cx="580" cy="250" r="1.2" style="animation-delay:.4s"/>
+            <circle class="star" cx="630" cy="200" r="1" style="animation-delay:2.5s"/>
+            <circle class="star" cx="20" cy="260" r="1" style="animation-delay:1.2s"/>
+            <circle class="star" cx="750" cy="40" r="1.2" style="animation-delay:.5s"/>
+            <circle class="star" cx="800" cy="90" r="1" style="animation-delay:1.6s"/>
+            <circle class="star" cx="850" cy="30" r="1.4" style="animation-delay:2.2s"/>
+            <circle class="star" cx="620" cy="330" r="1.3" fill="#fff" style="animation-delay:.9s"/>
+            <circle class="star" cx="880" cy="60" r="1" style="animation-delay:.3s"/>
+            <circle class="star" cx="930" cy="100" r="1.2" style="animation-delay:1.9s"/>
+            <circle class="star" cx="1000" cy="50" r="1" style="animation-delay:.6s"/>
+            <circle class="star" cx="1050" cy="90" r="1.3" style="animation-delay:1.1s"/>
+            <circle class="star" cx="1100" cy="40" r="1" style="animation-delay:2.4s"/>
+            <circle class="star" cx="1150" cy="80" r="1.2" style="animation-delay:.7s"/>
+            <circle class="star" cx="1180" cy="140" r="1" style="animation-delay:1.5s"/>
+            <circle class="star" cx="1120" cy="170" r="1.1" style="animation-delay:.2s"/>
+            <circle class="star" cx="1060" cy="200" r="1" style="animation-delay:2.0s"/>
+            <circle class="star" cx="990" cy="160" r="1.3" style="animation-delay:.8s"/>
+            <circle class="star" cx="950" cy="220" r="1" style="animation-delay:1.3s"/>
+            <circle class="star" cx="1180" cy="260" r="1.1" style="animation-delay:.4s"/>
+            <circle class="star" cx="1000" cy="280" r="1" style="animation-delay:1.9s"/>
+            <circle class="star" cx="1100" cy="250" r="1.2" style="animation-delay:.6s"/>
+            <circle class="star" cx="850" cy="150" r="1" style="animation-delay:2.3s"/>
+            <circle class="star" cx="780" cy="200" r="1.1" style="animation-delay:1.0s"/>
+            <circle class="star" cx="720" cy="160" r="1" style="animation-delay:.3s"/>
+            <circle class="star" cx="150" cy="300" r="1" style="animation-delay:1.4s"/>
+            <circle class="star" cx="450" cy="290" r="1" style="animation-delay:.5s"/>
+            <circle class="star" cx="550" cy="330" r="1.1" style="animation-delay:2.1s"/>
+          </g>
+
+          <!-- Constellation (upper-left) -->
+          <g stroke="#bcd6e8" stroke-width="1" opacity=".55" fill="none">
+            <polyline points="115,194 131,199 147,197 163,189 181,188 221,139 289,134 338,116 362,202 293,242"/>
+          </g>
+          <g fill="#ffffff">
+            <circle cx="115" cy="194" r="2.2"/>
+            <circle cx="131" cy="199" r="2"/>
+            <circle cx="147" cy="197" r="2"/>
+            <circle cx="163" cy="189" r="2"/>
+            <circle cx="181" cy="188" r="2.4"/>
+            <circle cx="221" cy="139" r="2.2"/>
+            <circle cx="289" cy="134" r="2.4"/>
+            <circle cx="338" cy="116" r="2.8"/>
+            <circle cx="362" cy="202" r="2.2"/>
+            <circle cx="293" cy="242" r="2.6"/>
+          </g>
+
+          <circle class="shooting s1" cx="950" cy="90" r="2" fill="#fff"/>
+          <circle class="shooting s2" cx="1080" cy="150" r="2" fill="#fff"/>
+
+          <!-- Moon -->
+          <circle class="moon-glow" cx="734" cy="344" r="110" fill="url(#moonHalo)"/>
+          <circle cx="734" cy="344" r="43" fill="url(#moonBody)"/>
+          <circle cx="720" cy="330" r="6" fill="#c7c9c2" opacity=".45"/>
+          <circle cx="746" cy="352" r="4.2" fill="#c7c9c2" opacity=".35"/>
+          <circle cx="726" cy="360" r="3" fill="#c7c9c2" opacity=".35"/>
+          <circle cx="750" cy="332" r="2.6" fill="#c7c9c2" opacity=".3"/>
+
+          <!-- Mountains (2 layers depth, kept low so open water near the boat stays open) -->
+          <path d="M0,470 L0,420 L80,380 L160,415 L260,360 L340,410 L430,375 L520,405 L610,355 L700,400 L790,370 L880,405 L970,365 L1060,400 L1150,375 L1200,395 L1200,470 Z" fill="url(#mtnFar)"/>
+          <path d="M0,470 L0,440 L100,400 L200,435 L300,395 L400,430 L500,405 L600,440 L680,400 L780,435 L860,405 L960,438 L1050,410 L1150,440 L1200,425 L1200,470 Z" fill="url(#mtnMid)"/>
+
+          <!-- Boat with rider (left, clear of text overlay) -->
+          <g transform="translate(49,480)">
+            <path d="M-46,-2 Q-30,-7 -14,-6 L14,-6 Q30,-7 46,-2 Q24,11 0,11.5 Q-24,11 -46,-2 Z" fill="#03080f"/>
+            <path d="M-6,-6 Q-6,-11 -4,-14 L4,-14 Q6,-11 6,-6 Q0,-4 -6,-6 Z" fill="#03080f"/>
+            <circle cx="0" cy="-18.5" r="4.6" fill="#03080f"/>
+          </g>
+
+          <!-- Left tree cluster (pines + round canopy trees, per reference) -->
+          <g fill="#060d18">
+            <!-- pine 1 -->
+            <rect x="266" y="466" width="4" height="8"/>
+            <path d="M254,470 L268,442 L282,470 Z"/>
+            <path d="M258,448 L268,424 L278,448 Z"/>
+            <path d="M261,430 L268,412 L275,430 Z"/>
+            <!-- pine 2 (taller, slightly right) -->
+            <rect x="301" y="466" width="4" height="8"/>
+            <path d="M287,470 L303,436 L319,470 Z"/>
+            <path d="M291,442 L303,416 L315,442 Z"/>
+            <path d="M294,422 L303,402 L312,422 Z"/>
+          </g>
+          <!-- round canopy tree 1 -->
+          <g fill="#060d18">
+            <rect x="396" y="424" width="5" height="46"/>
+            <circle cx="398" cy="412" r="19"/>
+            <circle cx="380" cy="426" r="15"/>
+            <circle cx="417" cy="424" r="16"/>
+            <circle cx="398" cy="398" r="14"/>
+          </g>
+          <!-- stone arch ruins with ivy -->
+          <g fill="#060d18">
+            <path d="M432,470 L432,438 Q432,424 446,424 Q460,424 460,438 L460,470 L452,470 L452,440 Q452,432 446,432 Q440,432 440,440 L440,470 Z"/>
+            <circle cx="437" cy="452" r="7"/>
+            <circle cx="463" cy="446" r="9"/>
+            <circle cx="466" cy="462" r="8"/>
+          </g>
+          <!-- round canopy tree 2 -->
+          <g fill="#060d18">
+            <rect x="538" y="420" width="5" height="50"/>
+            <circle cx="540" cy="406" r="21"/>
+            <circle cx="519" cy="422" r="16"/>
+            <circle cx="562" cy="420" r="17"/>
+            <circle cx="540" cy="390" r="15"/>
+          </g>
+          <!-- pine 3 -->
+          <g fill="#060d18">
+            <rect x="601" y="466" width="4" height="8"/>
+            <path d="M587,470 L603,432 L619,470 Z"/>
+            <path d="M591,438 L603,410 L615,438 Z"/>
+            <path d="M594,416 L603,396 L612,416 Z"/>
+          </g>
+
+          <!-- WINDMILL ISLAND -->
+          <ellipse cx="905" cy="463" rx="165" ry="10" fill="#040910"/>
+
+          <!-- right-side small trees -->
+          <g fill="#060d18">
+            <rect x="1021" y="446" width="4" height="24"/>
+            <circle cx="1023" cy="436" r="15"/>
+            <circle cx="1010" cy="446" r="11"/>
+            <circle cx="1036" cy="445" r="12"/>
+            <rect x="1059" y="452" width="3" height="16"/>
+            <path d="M1049,468 L1061,438 L1073,468 Z"/>
+            <path d="M1052,444 L1061,424 L1070,444 Z"/>
+          </g>
+
+          <!-- branching tree among houses -->
+          <g stroke="#050b16" stroke-width="3.4" fill="none" stroke-linecap="round">
+            <path d="M1128,468 L1126,432 M1126,432 L1112,410 M1126,432 L1140,406 M1126,432 L1128,398"/>
+          </g>
+          <g fill="#050b16">
+            <circle cx="1112" cy="405" r="11"/>
+            <circle cx="1140" cy="400" r="13"/>
+            <circle cx="1128" cy="390" r="12"/>
+            <circle cx="1122" cy="412" r="10"/>
+          </g>
+
+          <!-- Houses (peaked roof cottages, 2 lit windows each) -->
+          <g>
+            <path d="M1088,470 L1088,444 L1105,432 L1122,444 L1122,470 Z" fill="#050b16"/>
+            <rect class="house-light" x="1093" y="454" width="7" height="9" fill="#ffcf7a" style="animation-delay:.3s"/>
+            <rect class="house-light" x="1108" y="454" width="7" height="9" fill="#ffcf7a" style="animation-delay:1.1s"/>
+          </g>
+          <g>
+            <path d="M1148,470 L1148,438 L1171,422 L1194,438 L1194,470 Z" fill="#050b16"/>
+            <rect class="house-light" x="1155" y="450" width="8" height="10" fill="#ffcf7a" style="animation-delay:.6s"/>
+            <rect class="house-light" x="1177" y="450" width="8" height="10" fill="#ffcf7a" style="animation-delay:1.4s"/>
+          </g>
+
+          <!-- Tower body (tapered, 3 sections implied by windows) -->
+          <path d="M862,461 L881,220 L923,220 L942,461 Z" fill="url(#towerGrad)"/>
+          <!-- Roof -->
+          <path d="M876,220 L928,220 L902,178 Z" fill="#02040c"/>
+          <!-- Gable window -->
+          <rect class="light-flicker" x="896" y="197" width="12" height="12" rx="1" fill="url(#windowGlow)"/>
+
+          <!-- Balcony ring + triangular strut -->
+          <rect x="856" y="298" width="92" height="6" rx="2" fill="#02040c"/>
+          <g stroke="#02040c" stroke-width="2">
+            <line x1="864" y1="298" x2="864" y2="286"/>
+            <line x1="878" y1="298" x2="878" y2="286"/>
+            <line x1="892" y1="298" x2="892" y2="286"/>
+            <line x1="906" y1="298" x2="906" y2="286"/>
+            <line x1="920" y1="298" x2="920" y2="286"/>
+            <line x1="934" y1="298" x2="934" y2="286"/>
+          </g>
+          <path d="M942,304 L978,322 L978,332 L942,314 Z" fill="#02040c"/>
+
+          <!-- Upper grid window -->
+          <g>
+            <rect x="884" y="234" width="31" height="39" rx="1" fill="url(#windowGlow)" class="light-flicker" style="animation-delay:.4s"/>
+            <g stroke="#02040c" stroke-width="1.6">
+              <line x1="899.5" y1="234" x2="899.5" y2="273"/>
+              <line x1="884" y1="253.5" x2="915" y2="253.5"/>
+            </g>
+          </g>
+          <!-- Lower grid window -->
+          <g>
+            <rect x="880" y="373" width="43" height="51" rx="1" fill="url(#windowGlow)" class="light-flicker" style="animation-delay:1s"/>
+            <g stroke="#02040c" stroke-width="2">
+              <line x1="901.5" y1="373" x2="901.5" y2="424"/>
+              <line x1="880" y1="398.5" x2="923" y2="398.5"/>
+              <line x1="891" y1="373" x2="891" y2="424"/>
+              <line x1="912" y1="373" x2="912" y2="424"/>
+            </g>
+          </g>
+        </g>
+        <!-- ============ end sceneContent ============ -->
+      </defs>
+
+      <!-- draw the water base first, then reflection sits on it -->
+      <rect x="0" y="457" width="1200" height="443" fill="url(#water)"/>
+      <g clip-path="url(#waterClip)" opacity=".62">
+        <g transform="translate(0,914) scale(1,-1)">
+          <use href="#sceneContent" xlink:href="#sceneContent"/>
+          <!-- reflected fan blades, mirrored rotation -->
+          <g class="fan-group-reflect">
+            <g>
+              <path d="M895,234 L909,234 L933,98 L871,98 Z" fill="#040a18" opacity=".2"/>
+              <path d="M895,234 L909,234 L933,98 L871,98 Z" fill="none" stroke="#02040c" stroke-width="3"/>
+              <line x1="879" y1="206" x2="925" y2="206" stroke="#02040c" stroke-width="2.2"/>
+              <line x1="883" y1="176" x2="921" y2="176" stroke="#02040c" stroke-width="2.2"/>
+              <line x1="887" y1="146" x2="917" y2="146" stroke="#02040c" stroke-width="2.2"/>
+              <line x1="891" y1="116" x2="913" y2="116" stroke="#02040c" stroke-width="2.2"/>
+              <line x1="871" y1="98" x2="909" y2="234" stroke="#02040c" stroke-width="1.5"/>
+              <line x1="933" y1="98" x2="895" y2="234" stroke="#02040c" stroke-width="1.5"/>
+            </g>
+            <g transform="rotate(90 902 234)">
+              <path d="M895,234 L909,234 L933,98 L871,98 Z" fill="#040a18" opacity=".2"/>
+              <path d="M895,234 L909,234 L933,98 L871,98 Z" fill="none" stroke="#02040c" stroke-width="3"/>
+              <line x1="879" y1="206" x2="925" y2="206" stroke="#02040c" stroke-width="2.2"/>
+              <line x1="883" y1="176" x2="921" y2="176" stroke="#02040c" stroke-width="2.2"/>
+              <line x1="887" y1="146" x2="917" y2="146" stroke="#02040c" stroke-width="2.2"/>
+              <line x1="891" y1="116" x2="913" y2="116" stroke="#02040c" stroke-width="2.2"/>
+              <line x1="871" y1="98" x2="909" y2="234" stroke="#02040c" stroke-width="1.5"/>
+              <line x1="933" y1="98" x2="895" y2="234" stroke="#02040c" stroke-width="1.5"/>
+            </g>
+            <g transform="rotate(180 902 234)">
+              <path d="M895,234 L909,234 L933,98 L871,98 Z" fill="#040a18" opacity=".2"/>
+              <path d="M895,234 L909,234 L933,98 L871,98 Z" fill="none" stroke="#02040c" stroke-width="3"/>
+              <line x1="879" y1="206" x2="925" y2="206" stroke="#02040c" stroke-width="2.2"/>
+              <line x1="883" y1="176" x2="921" y2="176" stroke="#02040c" stroke-width="2.2"/>
+              <line x1="887" y1="146" x2="917" y2="146" stroke="#02040c" stroke-width="2.2"/>
+              <line x1="891" y1="116" x2="913" y2="116" stroke="#02040c" stroke-width="2.2"/>
+              <line x1="871" y1="98" x2="909" y2="234" stroke="#02040c" stroke-width="1.5"/>
+              <line x1="933" y1="98" x2="895" y2="234" stroke="#02040c" stroke-width="1.5"/>
+            </g>
+            <g transform="rotate(270 902 234)">
+              <path d="M895,234 L909,234 L933,98 L871,98 Z" fill="#040a18" opacity=".2"/>
+              <path d="M895,234 L909,234 L933,98 L871,98 Z" fill="none" stroke="#02040c" stroke-width="3"/>
+              <line x1="879" y1="206" x2="925" y2="206" stroke="#02040c" stroke-width="2.2"/>
+              <line x1="883" y1="176" x2="921" y2="176" stroke="#02040c" stroke-width="2.2"/>
+              <line x1="887" y1="146" x2="917" y2="146" stroke="#02040c" stroke-width="2.2"/>
+              <line x1="891" y1="116" x2="913" y2="116" stroke="#02040c" stroke-width="2.2"/>
+              <line x1="871" y1="98" x2="909" y2="234" stroke="#02040c" stroke-width="1.5"/>
+              <line x1="933" y1="98" x2="895" y2="234" stroke="#02040c" stroke-width="1.5"/>
+            </g>
+            <circle cx="902" cy="234" r="8" fill="#02040c" stroke="#0c1730" stroke-width="1.4"/>
+          </g>
+        </g>
+      </g>
+      <!-- soft darkening overlay for water depth, applied BEFORE the real scene draws on top -->
+      <rect x="0" y="457" width="1200" height="443" fill="url(#water)" opacity=".22"/>
+      <!-- ripple lines (under real scene, over reflection) -->
+      <g stroke="#8fa6dd" stroke-width="1" opacity=".15">
+        <line class="ripple-line" x1="0" y1="520" x2="1200" y2="520"/>
+        <line class="ripple-line" x1="0" y1="580" x2="1200" y2="580" style="animation-delay:1s"/>
+        <line class="ripple-line" x1="0" y1="650" x2="1200" y2="650" style="animation-delay:2s"/>
+        <line class="ripple-line" x1="0" y1="720" x2="1200" y2="720" style="animation-delay:.5s"/>
+        <line class="ripple-line" x1="0" y1="790" x2="1200" y2="790" style="animation-delay:1.5s"/>
+        <line class="ripple-line" x1="0" y1="850" x2="1200" y2="850" style="animation-delay:.8s"/>
+      </g>
+
+      <!-- draw the real scene on top so shoreline elements (boat, island edge) sit above the water -->
+      <use href="#sceneContent" xlink:href="#sceneContent"/>
+
+      <!-- Fan / blades — rotates around hub (902,234) -->
+      <g class="fan-group">
+        <g>
+          <path d="M895,234 L909,234 L933,98 L871,98 Z" fill="#040a18" opacity=".2"/>
+          <path d="M895,234 L909,234 L933,98 L871,98 Z" fill="none" stroke="#02040c" stroke-width="3"/>
+          <line x1="879" y1="206" x2="925" y2="206" stroke="#02040c" stroke-width="2.2"/>
+          <line x1="883" y1="176" x2="921" y2="176" stroke="#02040c" stroke-width="2.2"/>
+          <line x1="887" y1="146" x2="917" y2="146" stroke="#02040c" stroke-width="2.2"/>
+          <line x1="891" y1="116" x2="913" y2="116" stroke="#02040c" stroke-width="2.2"/>
+          <line x1="871" y1="98" x2="909" y2="234" stroke="#02040c" stroke-width="1.5"/>
+          <line x1="933" y1="98" x2="895" y2="234" stroke="#02040c" stroke-width="1.5"/>
+        </g>
+        <g transform="rotate(90 902 234)">
+          <path d="M895,234 L909,234 L933,98 L871,98 Z" fill="#040a18" opacity=".2"/>
+          <path d="M895,234 L909,234 L933,98 L871,98 Z" fill="none" stroke="#02040c" stroke-width="3"/>
+          <line x1="879" y1="206" x2="925" y2="206" stroke="#02040c" stroke-width="2.2"/>
+          <line x1="883" y1="176" x2="921" y2="176" stroke="#02040c" stroke-width="2.2"/>
+          <line x1="887" y1="146" x2="917" y2="146" stroke="#02040c" stroke-width="2.2"/>
+          <line x1="891" y1="116" x2="913" y2="116" stroke="#02040c" stroke-width="2.2"/>
+          <line x1="871" y1="98" x2="909" y2="234" stroke="#02040c" stroke-width="1.5"/>
+          <line x1="933" y1="98" x2="895" y2="234" stroke="#02040c" stroke-width="1.5"/>
+        </g>
+        <g transform="rotate(180 902 234)">
+          <path d="M895,234 L909,234 L933,98 L871,98 Z" fill="#040a18" opacity=".2"/>
+          <path d="M895,234 L909,234 L933,98 L871,98 Z" fill="none" stroke="#02040c" stroke-width="3"/>
+          <line x1="879" y1="206" x2="925" y2="206" stroke="#02040c" stroke-width="2.2"/>
+          <line x1="883" y1="176" x2="921" y2="176" stroke="#02040c" stroke-width="2.2"/>
+          <line x1="887" y1="146" x2="917" y2="146" stroke="#02040c" stroke-width="2.2"/>
+          <line x1="891" y1="116" x2="913" y2="116" stroke="#02040c" stroke-width="2.2"/>
+          <line x1="871" y1="98" x2="909" y2="234" stroke="#02040c" stroke-width="1.5"/>
+          <line x1="933" y1="98" x2="895" y2="234" stroke="#02040c" stroke-width="1.5"/>
+        </g>
+        <g transform="rotate(270 902 234)">
+          <path d="M895,234 L909,234 L933,98 L871,98 Z" fill="#040a18" opacity=".2"/>
+          <path d="M895,234 L909,234 L933,98 L871,98 Z" fill="none" stroke="#02040c" stroke-width="3"/>
+          <line x1="879" y1="206" x2="925" y2="206" stroke="#02040c" stroke-width="2.2"/>
+          <line x1="883" y1="176" x2="921" y2="176" stroke="#02040c" stroke-width="2.2"/>
+          <line x1="887" y1="146" x2="917" y2="146" stroke="#02040c" stroke-width="2.2"/>
+          <line x1="891" y1="116" x2="913" y2="116" stroke="#02040c" stroke-width="2.2"/>
+          <line x1="871" y1="98" x2="909" y2="234" stroke="#02040c" stroke-width="1.5"/>
+          <line x1="933" y1="98" x2="895" y2="234" stroke="#02040c" stroke-width="1.5"/>
+        </g>
+        <circle cx="902" cy="234" r="8" fill="#02040c" stroke="#0c1730" stroke-width="1.4"/>
+      </g>
+    </svg>
+
+    <div class="content">
+      <div class="eyebrow">OUR NEW WEBPAGE</div>
+      <div class="coming-soon">Coming<br>Soon</div>
+      <div class="sub-text">We're crafting something beautiful under the night sky. Leave your email below and we'll let you know the moment we launch.</div>
+    </div>
+  </div>
+
+  <div class="below-section">
+    <div class="below-heading">Be the first to know</div>
+    <p class="below-sub">We're putting the finishing touches on something special. Here's a little of what to expect.</p>
+
+    <div class="features">
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+        </div>
+        <h3>Thoughtful Design</h3>
+        <p>Every detail crafted with care, built to feel calm and effortless.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8Z"/></svg>
+        </div>
+        <h3>Fast &amp; Modern</h3>
+        <p>Built on a lightweight foundation for a smooth experience everywhere.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/></svg>
+        </div>
+        <h3>Secure &amp; Reliable</h3>
+        <p>Your data and trust matter to us — protected from day one.</p>
+      </div>
+    </div>
+
+    <form class="notify-form" id="notifyForm">
+      <input type="email" id="notifyEmail" placeholder="Enter your email address" required>
+      <button type="submit">Notify Me</button>
+    </form>
+    <div class="form-note" id="formNote"></div>
+
+    <div class="social-row">
+      <a href="vivaan510399@gmail.com" aria-label="Email">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18v12H3z"/><path d="M3 6l9 7 9-7"/></svg>
+      </a>
+      <a href="vivaan001_X" aria-label="Twitter">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22 5.9c-.7.3-1.5.6-2.3.7.8-.5 1.5-1.3 1.8-2.3-.8.5-1.6.8-2.6 1-.7-.8-1.8-1.3-3-1.3-2.2 0-4 1.8-4 4 0 .3 0 .6.1.9-3.3-.2-6.3-1.8-8.2-4.2-.3.6-.5 1.3-.5 2 0 1.4.7 2.6 1.8 3.3-.6 0-1.3-.2-1.8-.5v.1c0 1.9 1.4 3.5 3.2 3.9-.3.1-.7.1-1.1.1-.3 0-.5 0-.8-.1.5 1.6 2 2.7 3.8 2.8-1.4 1.1-3.2 1.7-5.1 1.7-.3 0-.7 0-1-.1 1.8 1.2 4 1.8 6.3 1.8 7.5 0 11.7-6.3 11.7-11.7v-.5c.8-.6 1.5-1.3 2-2.1z"/></svg>
+      </a>
+      <a href="vivaan001_creator" aria-label="Instagram">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg>
+      </a>
+    </div>
+    <p class="copyright">© <span id="yearNow"></span> All rights reserved.</p>
+  </div>
+
 </div>
 
-<script>
-  Appearance.renderMenu(document.getElementById('appearanceMount'), { variant: 'corner' });
-</script>
+<script type="module">
+  // ===== Firebase (reuses your existing project setup) =====
+  // Assumes this file sits in the same folder as your Firebase.js
+  // (the one admin.js already imports db/storage/auth from).
+  // If coming-soon.html lives in a different folder, adjust the path below.
+  import { db } from "./Firebase.js";
+  import { collection, addDoc, serverTimestamp }
+    from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
-<script type="module" src="pay-fee.js?v=2"></script>
+  document.getElementById('yearNow').textContent = new Date().getFullYear();
+
+  const form = document.getElementById('notifyForm');
+  const note = document.getElementById('formNote');
+  const emailInput = document.getElementById('notifyEmail');
+  const submitBtn = form.querySelector('button');
+
+  form.addEventListener('submit', async function(e){
+    e.preventDefault();
+    const email = emailInput.value.trim();
+    if(!email) return;
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Sending...';
+
+    try{
+      await addDoc(collection(db, 'subscribers'), {
+        email: email,
+        createdAt: serverTimestamp(),
+        source: 'coming-soon-page'
+      });
+      note.textContent = "Thanks! We'll notify " + email + " when we launch.";
+      note.style.color = '#8de8cb';
+      emailInput.value = '';
+    }catch(err){
+      console.error(err);
+      note.textContent = "Something went wrong. Please try again.";
+      note.style.color = '#ff9a9a';
+    }finally{
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Notify Me';
+    }
+  });
+</script>
 </body>
 </html>
