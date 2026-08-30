@@ -98,6 +98,14 @@ async function studentLogin() {
     // last-login shown on the student's dashboard. Never blocks the login
     // itself if tracking happens to fail (e.g. a rules/network hiccup).
     try {
+      // Capture the PREVIOUS login time before we overwrite it — this is
+      // what "Last Login" should show (the time before this current visit),
+      // not the timestamp we're about to write for this very login.
+      const previousLogin = student.lastLogin
+        ? (student.lastLogin.toDate ? student.lastLogin.toDate().toISOString() : new Date(student.lastLogin).toISOString())
+        : "";
+      sessionStorage.setItem("previousLogin", previousLogin);
+
       await addDoc(collection(db, "loginLogs"), {
         role: "student",
         refId: roll,
@@ -282,8 +290,9 @@ async function loadStudentDashboard() {
   setText("dashMotherName", student.mother || "-");
   setText("dashAttendance", (student.attendance || "0") + "%");
 
-  if (student.lastLogin) {
-    const dt = student.lastLogin.toDate ? student.lastLogin.toDate() : new Date(student.lastLogin);
+  const previousLogin = sessionStorage.getItem("previousLogin");
+  if (previousLogin) {
+    const dt = new Date(previousLogin);
     setText("dashLastLogin", dt.toLocaleString("en-IN", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }));
   } else {
     setText("dashLastLogin", "First login");
