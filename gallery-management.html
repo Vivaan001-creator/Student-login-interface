@@ -215,6 +215,11 @@
   }
 
   @media (prefers-reduced-motion: reduce){ *{ animation:none !important; transition:none !important; } }
+
+  .loading-state{ text-align:center; padding:36px 20px; color:var(--ink-soft); font-size:13px; }
+  .spinner{ width:32px; height:32px; border:3px solid rgba(255,140,66,.15); border-top-color:var(--amber-deep);
+    border-radius:50%; animation:spin .8s linear infinite; margin:0 auto 12px; }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
 </style>
 </head>
 <body>
@@ -277,7 +282,7 @@
     </header>
 
     <section class="classes-card">
-      <div class="gallery-grid" id="galleryGrid"><p class="no-class-msg">Loading gallery...</p></div>
+      <div class="gallery-grid" id="galleryGrid"><div class="loading-state" style="grid-column:1/-1;"><div class="spinner"></div>Loading gallery...</div></div>
     </section>
 
     <footer class="footer">Made with care, one student at a time. © 2026 Home Tuition.</footer>
