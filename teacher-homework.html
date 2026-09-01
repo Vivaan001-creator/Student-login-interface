@@ -150,6 +150,11 @@
     table.classes-table td::before{ content:attr(data-label); font-weight:600; color:var(--ink-soft); font-size:11px; text-align:left; }
   }
   @media (prefers-reduced-motion: reduce){ *{ animation:none !important; transition:none !important; } }
+
+  .loading-state{ text-align:center; padding:36px 20px; color:var(--ink-soft); font-size:13px; }
+  .spinner{ width:32px; height:32px; border:3px solid rgba(255,140,66,.15); border-top-color:var(--amber-deep);
+    border-radius:50%; animation:spin .8s linear infinite; margin:0 auto 12px; }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
 </style>
 </head>
 <body>
@@ -220,7 +225,7 @@
 
       <div class="classes-card" style="margin-top:20px;">
         <div class="form-section-title">Posted Homework</div>
-        <div id="homeworkList"><p class="result-empty-msg">Loading...</p></div>
+        <div id="homeworkList"><div class="loading-state"><div class="spinner"></div>Loading...</div></div>
       </div>
 
       <footer class="footer">Made with care, one student at a time. © 2026 Home Tuition.</footer>
