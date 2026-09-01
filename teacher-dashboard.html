@@ -205,6 +205,11 @@
   }
 
   @media (prefers-reduced-motion: reduce){ *{ animation:none !important; transition:none !important; } }
+
+  .loading-state{ text-align:center; padding:36px 20px; color:var(--ink-soft); font-size:13px; }
+  .spinner{ width:32px; height:32px; border:3px solid rgba(255,140,66,.15); border-top-color:var(--amber-deep);
+    border-radius:50%; animation:spin .8s linear infinite; margin:0 auto 12px; }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
 </style>
 </head>
 <body>
@@ -283,7 +288,7 @@
       <!-- My Class -->
       <section class="card" id="my-class">
         <div class="card-title"><i class="fa-solid fa-chalkboard"></i><h2>My Class</h2></div>
-        <div id="teacherClassBox"><p class="no-class-msg">Loading...</p></div>
+        <div id="teacherClassBox"><div class="loading-state"><div class="spinner"></div>Loading...</div></div>
       </section>
 
       <!-- Quick actions -->
