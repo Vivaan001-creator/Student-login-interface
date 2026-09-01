@@ -177,6 +177,11 @@
   }
 
   @media (prefers-reduced-motion: reduce){ *{ animation:none !important; transition:none !important; } }
+
+  .loading-state{ text-align:center; padding:36px 20px; color:var(--ink-soft); font-size:13px; }
+  .spinner{ width:32px; height:32px; border:3px solid rgba(255,140,66,.15); border-top-color:var(--amber-deep);
+    border-radius:50%; animation:spin .8s linear infinite; margin:0 auto 12px; }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
 </style>
 </head>
 <body>
@@ -249,7 +254,7 @@
       <div class="table-wrapper">
         <table class="classes-table">
           <thead><tr><th>Roll No</th><th>Name</th><th>Father's Name</th><th>Class</th><th>Action</th></tr></thead>
-          <tbody id="studentTable"><tr><td colspan="5">Loading students...</td></tr></tbody>
+          <tbody id="studentTable"><tr><td colspan="5"><div class="loading-state"><div class="spinner"></div>Loading students...</div></td></tr></tbody>
         </table>
       </div>
 
