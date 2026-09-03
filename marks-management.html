@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="appearance.js"></script>
+<script src="session-timer.js"></script>
+<title>Marks & Subjects - Home Tuition</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --navy-950:#0e1326; --navy-900:#161d3a; --navy-800:#232c56;
+    --cream:#fdf6e8; --cream-dim:#f4e8d0; --paper:#f7f2e4;
+    --amber:#ffb347; --amber-deep:#ff8c42; --amber-shadow:#d9691f; --coral:#ff6f61;
+    --ink:#241f14; --ink-soft:#7a715c; --ink-faint:#a89d84;
+    --green:#2fb87f; --green-bg:#e4f7ee;
+    --red:#e5584a; --red-bg:#fdeceb;
+    --blue:#4a7fd6; --blue-bg:#e9f0fd;
+    --purple:#8a6fe8; --purple-bg:#f0ecfd;
+    --teal:#22b8a4; --teal-bg:#e3f8f5;
+    --pink:#e2649e; --pink-bg:#fceaf3;
+    --radius-lg:24px; --radius-md:16px; --radius-sm:12px;
+    --surface-card:#ffffff; --surface-card-border:rgba(36,31,20,.06);
+    --surface-card-shadow:rgba(36,31,20,.07); --surface-hover:#eee3cc;
+    --ease:cubic-bezier(.16,.84,.44,1);
+  }
+
+  html[data-theme="dark"]{
+    --cream:#1c2444; --cream-dim:#232c56; --paper:#161d3a;
+    --ink:#f3ecd9; --ink-soft:#b7bcdc; --ink-faint:#7c84a8;
+    --green-bg:#173a2c; --red-bg:#3a1e1c; --blue-bg:#1c2c4a;
+    --purple-bg:#2a2456; --teal-bg:#173a38; --pink-bg:#3a2038;
+    --surface-card:rgba(255,255,255,.045); --surface-card-border:rgba(255,255,255,.1);
+    --surface-card-shadow:rgba(0,0,0,.35); --surface-hover:rgba(255,255,255,.07);
+  }
+
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  body{ font-family:'Inter', sans-serif; background:var(--paper); color:var(--ink); }
+  h1,h2,h3{ font-family:'Fraunces', serif; font-weight:600; }
+  a{ text-decoration:none; color:inherit; }
+  ::-webkit-scrollbar{ width:8px; height:8px; }
+  ::-webkit-scrollbar-thumb{ background:rgba(36,31,20,.15); border-radius:8px; }
+
+  .app{ display:flex; min-height:100vh; }
+
+  /* ============ SIDEBAR ============ */
+  .sidebar{
+    width:78px; background:linear-gradient(180deg, var(--navy-900) 0%, var(--navy-950) 100%);
+    color:#f3ecd9; display:flex; flex-direction:column; padding:20px 0;
+    position:sticky; top:0; height:100vh; transition:width .3s var(--ease); z-index:40; overflow-y:auto; overflow-x:hidden;
+  }
+  .sidebar.expanded{ width:242px; }
+  .menu-toggle{
+    background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); color:#f3ecd9;
+    width:36px; height:36px; border-radius:10px; cursor:pointer; font-size:14px;
+    margin:0 auto 22px; display:flex; align-items:center; justify-content:center; transition:background .2s var(--ease); flex-shrink:0;
+  }
+  .menu-toggle:hover{ background:rgba(255,255,255,.12); }
+  .sidebar-brand{ display:flex; align-items:center; gap:12px; padding:0 20px; margin-bottom:26px; flex-shrink:0; }
+  .brand-icon{ min-width:38px; height:38px; border-radius:11px; background:linear-gradient(135deg, var(--amber) 0%, var(--coral) 100%);
+    display:flex; align-items:center; justify-content:center; color:#241608; font-size:16px; box-shadow:0 6px 14px rgba(255,140,66,.3); }
+  .brand-text{ white-space:nowrap; opacity:0; transition:opacity .25s var(--ease) .1s; }
+  .sidebar.expanded .brand-text{ opacity:1; }
+  .brand-text h1{ font-size:16px; line-height:1; }
+  .brand-text h1 .accent{ color:var(--amber); }
+  .brand-text p{ font-size:10.5px; color:#b7bcdc; letter-spacing:.4px; text-transform:uppercase; margin-top:2px; }
+
+  .sidebar-nav{ display:flex; flex-direction:column; gap:3px; padding:0 12px; flex:1; }
+  .nav-link, .nav-parent{
+    display:flex; align-items:center; gap:14px; width:100%; border:none; background:none; cursor:pointer;
+    padding:11px 12px; border-radius:11px; color:#c7cbe0; font-size:13px; font-weight:500; font-family:inherit;
+    white-space:nowrap; transition:background .2s var(--ease), color .2s var(--ease); text-align:left;
+  }
+  .nav-link i, .nav-parent i{ width:16px; text-align:center; font-size:14px; flex-shrink:0; }
+  .nav-link:hover, .nav-parent:hover{ background:rgba(255,255,255,.06); color:#fff; }
+  .nav-link.active{ background:rgba(255,179,71,.14); color:var(--amber); }
+  .link-text{ opacity:0; transition:opacity .2s var(--ease); }
+  .sidebar.expanded .link-text{ opacity:1; }
+  .chevron{ margin-left:auto; font-size:10px !important; transition:transform .25s var(--ease); opacity:0; }
+  .sidebar.expanded .chevron{ opacity:1; }
+  .nav-parent.expanded .chevron{ transform:rotate(180deg); }
+
+  .submenu{ display:flex; flex-direction:column; gap:2px; max-height:200px; overflow:hidden; transition:max-height .3s var(--ease), opacity .2s var(--ease); padding-left:14px; opacity:1; }
+  .submenu.collapsed{ max-height:0; opacity:0; }
+  .sub-link{ display:flex; align-items:center; gap:12px; padding:9px 12px; border-radius:10px; color:#a8adc9; font-size:12.5px; white-space:nowrap; transition:background .2s var(--ease), color .2s var(--ease); }
+  .sub-link i{ width:14px; text-align:center; font-size:12px; }
+  .sub-link:hover{ background:rgba(255,255,255,.05); color:#fff; }
+  .sub-link.active{ color:var(--amber); }
+  .sidebar:not(.expanded) .submenu{ display:none; }
+
+  .logout-link{ display:flex; align-items:center; gap:14px; margin:10px 12px 4px; padding:11px 12px; border-radius:11px; color:#e5584a; font-size:13px; font-weight:500; transition:background .2s var(--ease); flex-shrink:0; }
+  .logout-link i{ width:16px; text-align:center; }
+  .logout-link:hover{ background:rgba(229,88,74,.12); }
+
+  .sidebar-backdrop{ display:none; position:fixed; inset:0; background:rgba(14,19,38,.5); z-index:30; }
+  .sidebar-backdrop.active{ display:block; }
+
+  /* ============ MAIN ============ */
+  .main{ flex:1; min-width:0; padding:30px 30px 50px; max-width:1200px; }
+
+  .page-topbar{ display:flex; align-items:flex-start; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-bottom:24px; }
+  .page-topbar-left h1{ font-size:clamp(22px,3.5vw,28px); }
+  .page-topbar-left p{ font-size:13px; color:var(--ink-soft); margin-top:6px; }
+  .btn-add-class{
+    display:inline-flex; align-items:center; gap:8px; border:none; cursor:pointer;
+    background:linear-gradient(135deg, var(--amber) 0%, var(--coral) 100%); color:#241608;
+    font-weight:700; font-size:13.5px; font-family:inherit; padding:12px 22px; border-radius:999px;
+    box-shadow:0 4px 0 var(--amber-shadow), 0 10px 22px rgba(255,140,66,.28);
+    transition:transform .15s var(--ease), box-shadow .15s var(--ease);
+  }
+  .btn-add-class:hover{ transform:translateY(-2px); box-shadow:0 6px 0 var(--amber-shadow), 0 14px 26px rgba(255,140,66,.34); }
+  .btn-add-class:active{ transform:translateY(2px); box-shadow:0 2px 0 var(--amber-shadow), 0 6px 14px rgba(255,140,66,.3); }
+
+  .classes-card{ background:var(--surface-card); border:1px solid rgba(36,31,20,.06); border-radius:var(--radius-lg); padding:24px; box-shadow:0 16px 36px rgba(36,31,20,.07); margin-bottom:20px; }
+  .classes-card-toolbar{ margin-bottom:18px; }
+  .search-box-wrap{ position:relative; max-width:420px; }
+  .search-box-wrap i{ position:absolute; left:16px; top:50%; transform:translateY(-50%); color:var(--ink-soft); font-size:13px; }
+  .search-box-wrap input{ width:100%; padding:12px 16px 12px 40px; border:1.5px solid rgba(36,31,20,.09); border-radius:12px; font-size:13.5px; font-family:inherit; background:var(--paper); transition:border-color .2s var(--ease); }
+  .search-box-wrap input:focus{ outline:none; border-color:var(--amber-deep); }
+
+  .table-wrapper{ overflow-x:auto; border-radius:var(--radius-md); border:1px solid rgba(36,31,20,.06); margin-bottom:22px; }
+  table.classes-table{ width:100%; border-collapse:collapse; font-size:13px; }
+  table.classes-table th{ text-align:left; background:var(--paper); color:var(--ink-soft); font-weight:600; font-size:11px; text-transform:uppercase; letter-spacing:.3px; padding:13px 16px; white-space:nowrap; }
+  table.classes-table td{ padding:13px 16px; border-top:1px solid rgba(36,31,20,.05); }
+  @keyframes rowFadeIn{ from{opacity:0; transform:translateX(-6px);} to{opacity:1; transform:translateX(0);} }
+  table.classes-table tbody tr{ animation:rowFadeIn .4s var(--ease) both; }
+
+  .status-active{ background:var(--green-bg); color:var(--green); font-size:11px; font-weight:700; padding:4px 11px; border-radius:999px; white-space:nowrap; }
+  .status-inactive{ background:var(--red-bg); color:var(--red); font-size:11px; font-weight:700; padding:4px 11px; border-radius:999px; white-space:nowrap; }
+
+  .action-btns{ display:flex; gap:6px; flex-wrap:wrap; }
+  .action-btns button{ display:inline-flex; align-items:center; gap:5px; border:none; cursor:pointer; font-family:inherit; font-size:11.5px; font-weight:600; padding:7px 12px; border-radius:9px; transition:transform .15s var(--ease), filter .15s var(--ease); }
+  .action-btns button:hover{ transform:translateY(-2px); }
+  .btn-view{ background:var(--blue-bg); color:var(--blue); }
+  .btn-edit{ background:#fdf0e3; color:var(--amber-deep); }
+  .btn-delete{ background:var(--red-bg); color:var(--red); }
+
+  .mini-stats-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(150px,1fr)); gap:14px; }
+  .mini-stat-card{ display:flex; align-items:center; gap:12px; background:var(--paper); border:1px solid rgba(36,31,20,.05); border-radius:var(--radius-md); padding:14px 16px; transition:transform .15s ease-out, box-shadow .2s var(--ease); transform-style:preserve-3d; will-change:transform; }
+  .mini-stat-card:hover{ box-shadow:0 12px 24px rgba(36,31,20,.1); }
+  .mini-stat-icon{ min-width:40px; height:40px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:15px; }
+  .mini-stat-icon.purple{ background:var(--purple-bg); color:var(--purple); }
+  .mini-stat-icon.blue{ background:var(--blue-bg); color:var(--blue); }
+  .mini-stat-icon.green{ background:var(--green-bg); color:var(--green); }
+  .mini-stat-icon.orange{ background:#fdf0e3; color:var(--amber-deep); }
+  .mini-stat-number{ font-size:16px; font-weight:700; }
+  .mini-stat-label{ font-size:11px; color:var(--ink-soft); margin-top:1px; }
+
+  .quick-tips-box{ display:flex; align-items:center; justify-content:space-between; gap:20px; background:linear-gradient(120deg, var(--navy-900), var(--navy-950)); color:#f3ecd9; border-radius:var(--radius-lg); padding:26px 28px; margin-bottom:20px; }
+  .quick-tips-text h3{ font-size:15px; display:flex; align-items:center; gap:8px; margin-bottom:12px; color:var(--amber); }
+  .quick-tips-text ul{ list-style:none; display:flex; flex-direction:column; gap:7px; }
+  .quick-tips-text li{ font-size:12.5px; color:#c7cbe0; line-height:1.5; padding-left:16px; position:relative; }
+  .quick-tips-text li::before{ content:'—'; position:absolute; left:0; color:var(--amber); }
+  .quick-tips-illustration{ font-size:52px; color:rgba(255,179,71,.25); flex-shrink:0; }
+
+  .ref-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(260px,1fr)); gap:14px; }
+  .ref-card{ background:var(--paper); border:1px solid rgba(36,31,20,.05); border-radius:var(--radius-md); padding:16px 18px; }
+  .ref-card-header{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:12px; flex-wrap:wrap; }
+  .ref-class-name{ font-size:14px; font-weight:700; font-family:'Fraunces', serif; }
+  .ref-marks-pill{ font-size:10.5px; font-weight:700; color:var(--amber-deep); background:#fdf0e3; padding:4px 10px; border-radius:999px; white-space:nowrap; }
+  .ref-subjects{ display:flex; flex-wrap:wrap; gap:6px; }
+  .ref-subject-chip{ font-size:11px; font-weight:600; background:#fff; border:1px solid rgba(36,31,20,.07); padding:4px 10px; border-radius:999px; color:var(--ink); }
+
+  .footer{ text-align:center; font-size:12px; color:var(--ink-faint); padding:10px 0 6px; }
+
+  @media (max-width:900px){
+    .sidebar{ position:fixed; left:0; top:0; width:0; padding-left:0; padding-right:0; }
+    .sidebar.expanded{ width:242px; padding-left:0; padding-right:0; }
+    .sidebar.expanded .sidebar-brand, .sidebar.expanded .sidebar-nav{ padding-left:12px; padding-right:12px; }
+    .menu-toggle{ position:fixed; top:16px; left:16px; z-index:50; margin:0; background:var(--navy-900); }
+    .main{ padding:70px 16px 40px; }
+    .quick-tips-box{ flex-direction:column; align-items:flex-start; }
+  }
+
+  @media (max-width:760px){
+    table.classes-table thead{ display:none; }
+    table.classes-table, table.classes-table tbody, table.classes-table tr, table.classes-table td{ display:block; width:100%; }
+    table.classes-table tr{ margin:10px; border:1px solid rgba(36,31,20,.08); border-radius:14px; padding:6px 14px; background:var(--surface-card); }
+    table.classes-table td{ display:flex; justify-content:space-between; align-items:center; gap:12px; padding:9px 0; border:none; border-bottom:1px solid rgba(36,31,20,.05); text-align:right; }
+    table.classes-table td:last-child{ border-bottom:none; }
+    table.classes-table td::before{ content:attr(data-label); font-weight:600; color:var(--ink-soft); font-size:11px; text-align:left; }
+  }
+
+  @media (prefers-reduced-motion: reduce){ *{ animation:none !important; transition:none !important; } }
+
+  .loading-state{ text-align:center; padding:36px 20px; color:var(--ink-soft); font-size:13px; }
+  .spinner{ width:32px; height:32px; border:3px solid rgba(255,140,66,.15); border-top-color:var(--amber-deep);
+    border-radius:50%; animation:spin .8s linear infinite; margin:0 auto 12px; }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <aside class="sidebar" id="sidebar">
+    <button class="menu-toggle" id="menuToggle" aria-label="Toggle Menu"><i class="fa-solid fa-bars"></i></button>
+
+    <div class="sidebar-brand">
+      <div class="brand-icon"><i class="fa-solid fa-lightbulb"></i></div>
+      <div class="brand-text"><h1><span class="accent">Home</span></h1><p>Tuition</p></div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="dashboard.html" class="nav-link"><i class="fa-solid fa-house"></i><span class="link-text">Dashboard</span></a>
+      <a href="classes.html" class="nav-link"><i class="fa-solid fa-chalkboard"></i><span class="link-text">All Classes</span></a>
+
+      <button class="nav-parent" id="studentsToggle">
+        <i class="fa-solid fa-user-group"></i><span class="link-text">Students</span><i class="fa-solid fa-chevron-down chevron"></i>
+      </button>
+      <div class="submenu collapsed" id="studentsSubmenu">
+        <a href="students.html" class="sub-link"><i class="fa-regular fa-user"></i> All Students</a>
+        <a href="add-student.html" class="sub-link"><i class="fa-solid fa-circle-plus"></i> Add Student</a>
+      </div>
+
+      <button class="nav-parent" id="teachersToggle">
+        <i class="fa-solid fa-chalkboard-user"></i><span class="link-text">Teachers</span><i class="fa-solid fa-chevron-down chevron"></i>
+      </button>
+      <div class="submenu collapsed" id="teachersSubmenu">
+        <a href="teachers.html" class="sub-link"><i class="fa-regular fa-user"></i> All Teachers</a>
+        <a href="add-teacher.html" class="sub-link"><i class="fa-solid fa-circle-plus"></i> Add Teacher</a>
+      </div>
+
+      <a href="#" class="nav-link"><i class="fa-regular fa-square-check"></i><span class="link-text">Attendance</span></a>
+      <a href="#" class="nav-link"><i class="fa-solid fa-file-lines"></i><span class="link-text">Assignments</span></a>
+      <a href="marks-management.html" class="nav-link active"><i class="fa-solid fa-file-pen"></i><span class="link-text">Exams</span></a>
+      <a href="publish-result.html" class="nav-link"><i class="fa-solid fa-chart-column"></i><span class="link-text">Results</span></a>
+      <a href="fee-management.html" class="nav-link"><i class="fa-solid fa-file-invoice-dollar"></i><span class="link-text">Fee Management</span></a>
+      <a href="notices.html" class="nav-link"><i class="fa-regular fa-bell"></i><span class="link-text">Notice Board</span></a>
+      <a href="gallery-management.html" class="nav-link"><i class="fa-solid fa-images"></i><span class="link-text">Gallery</span></a>
+      <a href="#" class="nav-link"><i class="fa-regular fa-envelope"></i><span class="link-text">Messages</span></a>
+      <a href="school-profile.html" class="nav-link"><i class="fa-solid fa-building-columns"></i><span class="link-text">Tuition Profile</span></a>
+      <a href="login-activity.html" class="nav-link"><i class="fa-solid fa-clock-rotate-left"></i><span class="link-text">Login Activity</span></a>
+      <a href="change-password.html" class="nav-link"><i class="fa-solid fa-gear"></i><span class="link-text">Settings</span></a>
+    </nav>
+
+    <a href="#" onclick="adminLogout()" class="logout-link"><i class="fa-solid fa-arrow-right-from-bracket"></i><span class="link-text">Logout</span></a>
+    <div style="display:flex; justify-content:center; margin:6px 0 4px;" id="appearanceMount"></div>
+  </aside>
+
+  <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+  <div class="main marks-management-page">
+    <header class="page-topbar">
+      <div class="page-topbar-left">
+        <h1>Marks &amp; Subjects</h1>
+        <p>Subjects and max/pass marks for every class — set once for the whole tuition.</p>
+      </div>
+    </header>
+
+    <section class="classes-card">
+      <div class="ref-grid" id="marksReferenceGrid">
+        <div class="loading-state"><div class="spinner"></div>Loading...</div>
+      </div>
+    </section>
+
+    <section class="quick-tips-box">
+      <div class="quick-tips-text">
+        <h3><i class="fa-solid fa-location-dot"></i> About This Page</h3>
+        <ul>
+          <li>Nursery, L.K.G and U.K.G are marked out of 50 (pass mark 17) — every other class out of 60 (pass mark 20).</li>
+          <li>Subjects here are the same ones teachers see on their "Add Marks" page.</li>
+          <li>This is a reference view — to change a class's subjects, ask your developer to update it in the code.</li>
+        </ul>
+      </div>
+      <div class="quick-tips-illustration"><i class="fa-solid fa-file-pen"></i></div>
+    </section>
+
+    <footer class="footer">Made with care, one student at a time. © 2026 Home Tuition.</footer>
+  </div>
+</div>
+
+<script>
+  try { Appearance.renderMenu(document.getElementById('appearanceMount'), { variant: 'inline' }); } catch(e) {}
+</script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function(){
+    if (!window.matchMedia('(hover:hover)').matches || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    document.querySelectorAll('.mini-stat-card').forEach(card => {
+      card.addEventListener('pointermove', (e) => {
+        const r = card.getBoundingClientRect();
+        const x = (e.clientX - r.left)/r.width - 0.5;
+        const y = (e.clientY - r.top)/r.height - 0.5;
+        card.style.transform = `perspective(600px) rotateY(${x*8}deg) rotateX(${-y*8}deg) translateY(-2px)`;
+      });
+      card.addEventListener('pointerleave', () => { card.style.transform = ''; });
+    });
+  });
+</script>
+
+<script>
+  try { SessionTimer.start({ flagKey: 'adminLoggedIn', loginUrl: 'admin.html' }); } catch(e) {}
+</script>
+
+<script type="module" src="admin.js"></script>
+</body>
+</html>
