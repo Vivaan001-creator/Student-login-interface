@@ -182,8 +182,7 @@ if (
     page.includes("notices.html") ||
     page.includes("gallery-management.html") ||
     page.includes("fee-management.html") ||
-    page.includes("attendance-overview.html") ||
-    page.includes("login-activity.html")
+    page.includes("attendance-overview.html")
 ) {
 
     if (sessionStorage.getItem("adminLoggedIn") !== "true") {
@@ -2672,132 +2671,6 @@ window.deleteClass = deleteClass;
 // ==========================
 // Shared helper
 // ==========================
-// ==========================
-// Admin — Change Password (change-password.html)
-// Same pattern as changeTeacherPassword(): send a Firebase reset
-// link, this time to the admin's own registered email. No arbitrary
-// email input here — admin is already authenticated, so it always
-// targets their own account.
-// ==========================
-async function changeAdminPassword() {
-    const ADMIN_EMAIL = "vivaan510399@gmail.com";
-    const btn = document.getElementById("changePasswordBtn");
-    if (btn) { btn.disabled = true; btn.textContent = "Sending..."; }
-    try {
-        await sendPasswordResetEmail(auth, ADMIN_EMAIL);
-        alert("Password reset link sent to " + ADMIN_EMAIL + ". Check your inbox.");
-    } catch (error) {
-        console.error(error);
-        alert(error.message);
-    } finally {
-        if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Send Password Reset Link'; }
-    }
-}
-window.changeAdminPassword = changeAdminPassword;
-
-// ==========================
-// Publish Result — admin overview (publish-result.html)
-// Marks are entered per-teacher on teacher-marks.html; this page just
-// gives admin visibility into every student's publish status, with an
-// override toggle for convenience (same students/{roll}.publishStatus
-// field teacher-marks.html already uses).
-// ==========================
-async function loadPublishOverview() {
-    const tableBody = document.getElementById("publishOverviewTable");
-    if (!tableBody) return;
-
-    tableBody.innerHTML = `<tr><td colspan="5"><div class="loading-state"><div class="spinner"></div>Loading students...</div></td></tr>`;
-
-    try {
-        const snap = await getDocs(collection(db, "students"));
-
-        if (snap.empty) {
-            tableBody.innerHTML = `<tr><td colspan="5">No students found.</td></tr>`;
-            return;
-        }
-
-        const rows = [];
-        snap.forEach((docSnap) => {
-            const s = docSnap.data();
-            rows.push({ roll: docSnap.id, name: s.name || s.studentName || "-", cls: s.class || "-", status: s.publishStatus || "unpublished" });
-        });
-        rows.sort((a, b) => (a.cls > b.cls ? 1 : a.cls < b.cls ? -1 : Number(a.roll) - Number(b.roll)));
-
-        tableBody.innerHTML = "";
-        rows.forEach((r) => {
-            const row = document.createElement("tr");
-            const isPublished = r.status === "published";
-            row.innerHTML = `
-                <td data-label="Roll No.">${escapeHtmlAdmin(r.roll)}</td>
-                <td data-label="Name">${escapeHtmlAdmin(r.name)}</td>
-                <td data-label="Class">${escapeHtmlAdmin(r.cls)}</td>
-                <td data-label="Status"><span class="${isPublished ? "status-active" : "status-inactive"}">${isPublished ? "Published" : "Unpublished"}</span></td>
-                <td data-label="Action">
-                    <div class="action-btns">
-                        <button class="${isPublished ? "btn-delete" : "btn-view"}" onclick="toggleStudentPublish('${r.roll}', '${isPublished ? "unpublished" : "published"}')">
-                            <i class="fa-solid ${isPublished ? "fa-eye-slash" : "fa-upload"}"></i> ${isPublished ? "Unpublish" : "Publish"}
-                        </button>
-                    </div>
-                </td>
-            `;
-            tableBody.appendChild(row);
-        });
-    } catch (error) {
-        console.error("Could not load publish overview:", error);
-        tableBody.innerHTML = `<tr><td colspan="5">Could not load students.</td></tr>`;
-    }
-}
-loadPublishOverview();
-
-async function toggleStudentPublish(roll, newStatus) {
-    try {
-        await setDoc(doc(db, "students", roll), { publishStatus: newStatus }, { merge: true });
-        loadPublishOverview();
-    } catch (error) {
-        console.error(error);
-        alert(error.message);
-    }
-}
-window.toggleStudentPublish = toggleStudentPublish;
-
-function searchPublishOverview() {
-    const input = document.getElementById("searchPublishOverview")?.value.toLowerCase() || "";
-    document.querySelectorAll("#publishOverviewTable tr").forEach((row) => {
-        row.style.display = row.textContent.toLowerCase().includes(input) ? "" : "none";
-    });
-}
-window.searchPublishOverview = searchPublishOverview;
-
-// ==========================
-// Marks & Subjects — read-only reference (marks-management.html)
-// classSubjects / max-marks live as constants in this file (not
-// Firestore), so this page just displays what's currently configured.
-// ==========================
-function loadMarksReference() {
-    const box = document.getElementById("marksReferenceGrid");
-    if (!box) return;
-
-    const lowerClasses = ["Nursery", "L.K.G", "U.K.G"];
-    box.innerHTML = "";
-
-    Object.keys(classSubjects).forEach((cls) => {
-        const isLower = lowerClasses.includes(cls);
-        const max = isLower ? 50 : 60;
-        const pass = isLower ? 17 : 20;
-        const card = document.createElement("div");
-        card.className = "ref-card";
-        card.innerHTML = `
-            <div class="ref-card-header">
-                <span class="ref-class-name">Class ${escapeHtmlAdmin(cls)}</span>
-                <span class="ref-marks-pill">${max} marks &middot; pass ${pass}</span>
-            </div>
-            <div class="ref-subjects">${classSubjects[cls].map((s) => `<span class="ref-subject-chip">${escapeHtmlAdmin(s)}</span>`).join("")}</div>
-        `;
-        box.appendChild(card);
-    });
-}
-loadMarksReference();
-
 function escapeHtmlAdmin(str) {
   return String(str)
     .replaceAll("&", "&amp;")
@@ -3511,4 +3384,127 @@ async function searchFeeStudent() {
           ${statusBadge}
         </div>
         <button class="btn-add-class" onclick="openPaymentModal()">
-         
+          <i class="fa-solid fa-plus"></i> Record Payment
+        </button>
+      </div>
+
+      ${dueListHtml}
+
+      <h3 class="form-section-title" style="font-size:13.5px;margin-top:16px;">Payment History</h3>
+      <div class="table-wrapper">
+        <table class="classes-table">
+          <thead>
+            <tr><th>Date</th><th>Amount</th><th>Mode</th><th>Note</th></tr>
+          </thead>
+          <tbody>${paymentRowsHtml}</tbody>
+        </table>
+      </div>
+    `;
+
+  } catch (error) {
+    console.error(error);
+    resultBox.innerHTML = `<p class="no-class-msg">Error: ${escapeHtmlAdmin(error.message)}</p>`;
+  }
+
+}
+window.searchFeeStudent = searchFeeStudent;
+
+function openPaymentModal() {
+
+  if (!currentFeeStudentRoll) return;
+
+  document.getElementById("paymentForm").reset();
+  document.getElementById("paymentDate").value = new Date().toISOString().slice(0, 10);
+  document.getElementById("paymentModalBackdrop").classList.add("open");
+
+}
+window.openPaymentModal = openPaymentModal;
+
+function closePaymentModal() {
+  document.getElementById("paymentModalBackdrop").classList.remove("open");
+}
+window.closePaymentModal = closePaymentModal;
+
+const paymentModalBackdropEl = document.getElementById("paymentModalBackdrop");
+if (paymentModalBackdropEl) {
+  paymentModalBackdropEl.addEventListener("click", function (e) {
+    if (e.target === paymentModalBackdropEl) closePaymentModal();
+  });
+}
+
+async function savePayment() {
+
+  if (!currentFeeStudentRoll) return;
+
+  const amount = Number(document.getElementById("paymentAmount").value);
+  const dateValue = document.getElementById("paymentDate").value;
+  const mode = document.getElementById("paymentMode").value;
+  const note = document.getElementById("paymentNote").value.trim();
+
+  if (!amount || !dateValue) {
+    alert("Please enter Amount and Date.");
+    return;
+  }
+
+  try {
+
+    await addDoc(collection(db, "students", currentFeeStudentRoll, "payments"), {
+      amount,
+      date: Timestamp.fromDate(new Date(dateValue)),
+      mode,
+      note,
+      source: "admin",
+      verified: true,
+      recordedAt: Timestamp.now()
+    });
+
+    closePaymentModal();
+    await searchFeeStudent();
+
+    alert("Payment recorded successfully.");
+
+  } catch (error) {
+    console.error(error);
+    alert(error.message);
+  }
+
+}
+window.savePayment = savePayment;
+
+// ==========================================================
+// Verify / Reject a parent-self-reported payment
+// (Fee Ledger — payments with source: "parent_portal" sit as
+// "Pending Verification" until admin acts on them here. Only
+// after Verify does the amount count toward that student's
+// Paid total / clear the corresponding due period.)
+// ==========================================================
+async function verifyPayment(roll, paymentId) {
+
+  try {
+    await updateDoc(doc(db, "students", roll, "payments", paymentId), {
+      verified: true
+    });
+    await searchFeeStudent();
+  } catch (error) {
+    console.error(error);
+    alert(error.message);
+  }
+
+}
+window.verifyPayment = verifyPayment;
+
+async function rejectPayment(roll, paymentId) {
+
+  const confirmReject = confirm("Yeh self-reported payment reject karke hata dein? Agar parent ne galat report kiya tha, toh 'Yes' karein. Yeh undo nahi ho sakta.");
+  if (!confirmReject) return;
+
+  try {
+    await deleteDoc(doc(db, "students", roll, "payments", paymentId));
+    await searchFeeStudent();
+  } catch (error) {
+    console.error(error);
+    alert(error.message);
+  }
+
+}
+window.rejectPayment = rejectPayment;
