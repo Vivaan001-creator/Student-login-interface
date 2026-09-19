@@ -113,6 +113,27 @@
   .input-wrap input::placeholder{ color:var(--ink-soft); opacity:.7; }
   .input-wrap input:focus{ outline:none; border-color:var(--amber); box-shadow:inset 0 2px 4px rgba(0,0,0,.12), 0 0 0 3px rgba(255,179,71,.18); }
 
+  /* ---- Date of Birth: always type="date" so the picker opens on mobile / APK WebView ---- */
+  .input-wrap input[type="date"]{
+    min-height:46px; -webkit-appearance:none; appearance:none;
+    color-scheme:dark; text-align:left;
+  }
+  html[data-theme="light"] .input-wrap input[type="date"]{ color-scheme:light; }
+
+  /* tapping anywhere on the field opens the picker */
+  .input-wrap input[type="date"]::-webkit-calendar-picker-indicator{
+    position:absolute; inset:0; width:100%; height:100%;
+    opacity:0; cursor:pointer;
+  }
+
+  /* hide the native "dd/mm/yyyy" when empty, show our own placeholder */
+  .input-wrap input[type="date"]:not(.has-value)::-webkit-datetime-edit{ color:transparent; }
+  .dob-placeholder{
+    position:absolute; left:38px; top:50%; transform:translateY(-50%);
+    font-size:14px; color:var(--ink-soft); opacity:.7; pointer-events:none;
+  }
+  .input-wrap input[type="date"].has-value ~ .dob-placeholder{ display:none; }
+
   .dob-hint{ font-size:11.5px; color:var(--ink-soft); text-align:left; margin:-6px 0 18px; line-height:1.5; }
 
   .login-btn{
@@ -209,8 +230,8 @@
     <label class="field-label" for="studentDob">Date of Birth</label>
     <div class="input-wrap">
       <i class="fa-regular fa-calendar input-icon"></i>
-      <input type="text" id="studentDob" name="studentDob" placeholder="dd-mm-yyyy" autocomplete="off"
-             onfocus="(this.type='date')" onblur="(this.type='text')">
+      <input type="date" id="studentDob" name="studentDob" autocomplete="off">
+      <span class="dob-placeholder" id="dobPlaceholder">dd-mm-yyyy</span>
     </div>
 
     <p class="dob-hint">Enter the same Date of Birth given on the admission form.</p>
@@ -284,6 +305,17 @@
 
   // Appearance menu (System / Light / Dark) — persists across the whole site
   try { Appearance.renderMenu(document.getElementById('appearanceMount'), { variant: 'corner' }); } catch(e) {}
+
+  // ---- Date of Birth picker (mobile / APK friendly) ----
+  const dobInput = document.getElementById('studentDob');
+  dobInput.max = new Date().toISOString().split('T')[0]; // future date na chun sake
+  const syncDob = () => dobInput.classList.toggle('has-value', !!dobInput.value);
+  dobInput.addEventListener('input', syncDob);
+  dobInput.addEventListener('change', syncDob);
+  dobInput.addEventListener('click', () => {
+    try { dobInput.showPicker && dobInput.showPicker(); } catch(e) {}
+  });
+  syncDob();
 
   if (!reduceMotion && window.matchMedia('(hover:hover)').matches){
     const lampWrap = document.getElementById('lampWrap');
