@@ -41,122 +41,111 @@ if (!roll) {
 const classSubjects = {
 
 "Nursery": [
-        "English",
-        "Math",
-        "Hindi",
-        "Rhymes",
-        "G.K",
+        "Hindi Writing",
+        "Hindi O/Kavi. Oral",
+        "English Writing",
+        "English O/RHY.Oral",
+        "Math O/Writing"
     ],
 
   "L.K.G": [
-        "English",
-        "Math",
-        "Hindi",
-        "Rhymes",
-        "G.K",
+        "Hindi Writing",
+        "Hindi O/Kavi. Oral",
+        "English Writing",
+        "English O/RHY.Oral",
+        "Math O/Writing"
     ],
 
   "U.K.G": [
-        "English",
-        "Math",
-        "Hindi",
-        "Rhymes",
-        "G.K",
+        "Hindi Writing",
+        "Hindi O/Kavi. Oral",
+        "English Writing",
+        "English O/RHY.Oral",
+        "Math O/Writing"
     ],
   
     "1": [
         "Science",
         "Social Studies",
         "Hindi",
-        "English",
-        "Math"
+        "Math",
+        "English"
     ],
 
     "2": [
         "Science",
         "Social Studies",
         "Hindi",
-        "English",
-        "Math"
+        "Math",
+        "English"
     ],
 
     "3": [
         "Science",
         "Social Studies",
         "Hindi",
-        "English",
-        "Math"
+        "Math",
+        "English"
     ],
 
     "4": [
         "Science",
         "Social Studies",
         "Hindi",
-        "English",
-        "Math"
+        "Math",
+        "English"
     ],
 
     "5": [
         "Science",
         "Social Studies",
         "Hindi",
-        "English",
-        "Math"
+        "Math",
+        "English"
     ],
 
     "6": [
-        "English",
-        "Math",
-        "Hindi",
         "Science",
-        "Social Studies"
-        
+        "Social Studies",
+        "Hindi",
+        "Math",
+        "English"
     ],
 
   "7": [
-        "English",
-        "Math",
-        "Hindi",
         "Science",
-        "Social Studies"
+        "Social Studies",
+        "Hindi",
+        "Math",
+        "English"
     ],
 
   
   "8": [
-        "English",
-        "Math",
-        "Hindi",
         "Science",
-        "Social Studies"
-        
+        "Social Studies",
+        "Hindi",
+        "Math",
+        "English"
     ],
 
   "9": [
-        "English",
-        "Math",
-        "Hindi",
         "Science",
-        "Social Studies"
-        
+        "Social Studies",
+        "Hindi",
+        "Math",
+        "English"
     ],
 
   "10": [
-        "English",
-        "Math",
-        "Hindi",
         "Science",
-        "Social Studies"
-        
+        "Social Studies",
+        "Hindi",
+        "Math",
+        "English"
     ]
 
 };
-
-const lowerClassKeys = ["nursery", "l.k.g", "u.k.g"];
-
-function isLowerClass(classValue) {
-  const key = (classValue || "").toLowerCase().replace(/^class\s*/, "").trim();
-  return lowerClassKeys.includes(key);
-}
 
 function gradeForPercentage(pct) {
   if (pct >= 90) return "A1";
@@ -295,9 +284,9 @@ async function loadResult(month) {
     return;
   }
 
-  const lower = isLowerClass(student.class);
-  const maxMarks = lower ? 50 : 60;
-  const passMarks = lower ? 17 : 20;
+  // Every class, every subject: 50 marks (pass mark 17).
+  const maxMarks = 50;
+  const passMarks = 17;
 
   let total = 0;
   let obtained = 0;
