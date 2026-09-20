@@ -106,36 +106,14 @@ async function adminLogin() {
 
         await signInWithEmailAndPassword(auth, email, password);
 
-        // Login tracking — same record admin can review on the Login Activity
-        // page, plus this account's own last-login (no per-admin Firestore
-        // doc exists, so a small singleton doc holds it).
-        try {
-            // Capture the PREVIOUS login time before we overwrite it.
-            const prevSnap = await getDoc(doc(db, "appMeta", "adminLogin"));
-            const prevData = prevSnap.exists() ? prevSnap.data() : null;
-            const previousLogin = prevData && prevData.lastLogin
-                ? (prevData.lastLogin.toDate ? prevData.lastLogin.toDate().toISOString() : new Date(prevData.lastLogin).toISOString())
-                : "";
-            sessionStorage.setItem("previousLogin", previousLogin);
-
-            await addDoc(collection(db, "loginLogs"), {
-                role: "admin",
-                refId: "admin",
-                name: "Admin",
-                timestamp: serverTimestamp()
-            });
-            await setDoc(doc(db, "appMeta", "adminLogin"), {
-                lastLogin: serverTimestamp(),
-                loginCount: increment(1)
-            }, { merge: true });
-        } catch (logErr) {
-            console.error("Login tracking failed:", logErr);
-        }
-
         sessionStorage.setItem("adminLoggedIn","true");
 
+        // Login tracking runs in the background AFTER we've already
+        // committed to redirecting — a slow/hung Firestore call must
+        // never be able to block or freeze the login itself.
+        recordAdminLoginTracking();
 
-window.location.href="dashboard.html";
+        window.location.href="dashboard.html";
 
     } catch (error) {
 
@@ -147,6 +125,34 @@ window.location.href="dashboard.html";
 }
 
 window.adminLogin = adminLogin;
+
+// Background login tracking for adminLogin() — deliberately never
+// awaited by the caller, so a slow/hung Firestore call can't block
+// the actual login/redirect. Best-effort only.
+async function recordAdminLoginTracking() {
+    try {
+        // Capture the PREVIOUS login time before we overwrite it.
+        const prevSnap = await getDoc(doc(db, "appMeta", "adminLogin"));
+        const prevData = prevSnap.exists() ? prevSnap.data() : null;
+        const previousLogin = prevData && prevData.lastLogin
+            ? (prevData.lastLogin.toDate ? prevData.lastLogin.toDate().toISOString() : new Date(prevData.lastLogin).toISOString())
+            : "";
+        sessionStorage.setItem("previousLogin", previousLogin);
+
+        await addDoc(collection(db, "loginLogs"), {
+            role: "admin",
+            refId: "admin",
+            name: "Admin",
+            timestamp: serverTimestamp()
+        });
+        await setDoc(doc(db, "appMeta", "adminLogin"), {
+            lastLogin: serverTimestamp(),
+            loginCount: increment(1)
+        }, { merge: true });
+    } catch (logErr) {
+        console.error("Login tracking failed:", logErr);
+    }
+}
 
 const loginForm = document.getElementById("loginForm");
 
@@ -182,7 +188,8 @@ if (
     page.includes("notices.html") ||
     page.includes("gallery-management.html") ||
     page.includes("fee-management.html") ||
-    page.includes("attendance-overview.html")
+    page.includes("attendance-overview.html") ||
+    page.includes("login-activity.html")
 ) {
 
     if (sessionStorage.getItem("adminLoggedIn") !== "true") {
@@ -338,112 +345,108 @@ window.editStudent = editStudent;
 const classSubjects = {
 
 "Nursery": [
-        "English",
-        "Math",
-        "Hindi",
-        "Rhymes",
-        "G.K",
+        "Hindi Writing",
+        "Hindi O/Kavi. Oral",
+        "English Writing",
+        "English O/RHY.Oral",
+        "Math O/Writing"
     ],
 
   "L.K.G": [
-        "English",
-        "Math",
-        "Hindi",
-        "Rhymes",
-        "G.K",
+        "Hindi Writing",
+        "Hindi O/Kavi. Oral",
+        "English Writing",
+        "English O/RHY.Oral",
+        "Math O/Writing"
     ],
 
   "U.K.G": [
-        "English",
-        "Math",
-        "Hindi",
-        "Rhymes",
-        "G.K",
+        "Hindi Writing",
+        "Hindi O/Kavi. Oral",
+        "English Writing",
+        "English O/RHY.Oral",
+        "Math O/Writing"
     ],
   
     "1": [
         "Science",
         "Social Studies",
         "Hindi",
-        "English",
-        "Math"
+        "Math",
+        "English"
     ],
 
     "2": [
         "Science",
         "Social Studies",
         "Hindi",
-        "English",
-        "Math"
+        "Math",
+        "English"
     ],
 
     "3": [
         "Science",
         "Social Studies",
         "Hindi",
-        "English",
-        "Math"
+        "Math",
+        "English"
     ],
 
     "4": [
         "Science",
         "Social Studies",
         "Hindi",
-        "English",
-        "Math"
+        "Math",
+        "English"
     ],
 
     "5": [
         "Science",
         "Social Studies",
         "Hindi",
-        "English",
-        "Math"
+        "Math",
+        "English"
     ],
 
     "6": [
-        "English",
-        "Math",
-        "Hindi",
         "Science",
-        "Social Studies"
-        
+        "Social Studies",
+        "Hindi",
+        "Math",
+        "English"
     ],
 
   "7": [
-        "English",
-        "Math",
-        "Hindi",
         "Science",
-        "Social Studies"
+        "Social Studies",
+        "Hindi",
+        "Math",
+        "English"
     ],
 
   
   "8": [
-        "English",
-        "Math",
-        "Hindi",
         "Science",
-        "Social Studies"
-        
+        "Social Studies",
+        "Hindi",
+        "Math",
+        "English"
     ],
 
   "9": [
-        "English",
-        "Math",
-        "Hindi",
         "Science",
-        "Social Studies"
-        
+        "Social Studies",
+        "Hindi",
+        "Math",
+        "English"
     ],
 
   "10": [
-        "English",
-        "Math",
-        "Hindi",
         "Science",
-        "Social Studies"
-        
+        "Social Studies",
+        "Hindi",
+        "Math",
+        "English"
     ]
 
 };
@@ -594,21 +597,10 @@ function loadSubjects(student) {
 
     subjects.forEach(subject => {
 
-    const lowerClasses = [
-        "Nursery",
-        "L.K.G",
-        "U.K.G"
-    ];
-
-    const maxMarks =
-        lowerClasses.includes(student.class)
-        ? 50
-        : 60;
-
-    const passMarks =
-        lowerClasses.includes(student.class)
-        ? 17
-        : 20;
+    // Every class, every subject: 50 marks (pass mark 17) — no more
+    // split between Nursery/L.K.G/U.K.G and Classes 1-10.
+    const maxMarks = 50;
+    const passMarks = 17;
 
     marksEditor.innerHTML += `
     <div class="subject-row">
@@ -2671,6 +2663,211 @@ window.deleteClass = deleteClass;
 // ==========================
 // Shared helper
 // ==========================
+// ==========================
+// Admin — Change Password (change-password.html)
+// Same pattern as changeTeacherPassword(): send a Firebase reset
+// link, this time to the admin's own registered email. No arbitrary
+// email input here — admin is already authenticated, so it always
+// targets their own account.
+// ==========================
+async function changeAdminPassword() {
+    const ADMIN_EMAIL = "vivaan510399@gmail.com";
+    const btn = document.getElementById("changePasswordBtn");
+    if (btn) { btn.disabled = true; btn.textContent = "Sending..."; }
+    try {
+        await sendPasswordResetEmail(auth, ADMIN_EMAIL);
+        alert("Password reset link sent to " + ADMIN_EMAIL + ". Check your inbox.");
+    } catch (error) {
+        console.error(error);
+        alert(error.message);
+    } finally {
+        if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Send Password Reset Link'; }
+    }
+}
+window.changeAdminPassword = changeAdminPassword;
+
+// ==========================
+// Publish Result — admin overview (publish-result.html)
+// Marks are entered per-teacher on teacher-marks.html; this page just
+// gives admin visibility into every student's publish status, with an
+// override toggle for convenience (same students/{roll}.publishStatus
+// field teacher-marks.html already uses).
+// ==========================
+async function loadPublishOverview() {
+    const tableBody = document.getElementById("publishOverviewTable");
+    if (!tableBody) return;
+
+    tableBody.innerHTML = `<tr><td colspan="5"><div class="loading-state"><div class="spinner"></div>Loading students...</div></td></tr>`;
+
+    try {
+        const snap = await getDocs(collection(db, "students"));
+
+        if (snap.empty) {
+            tableBody.innerHTML = `<tr><td colspan="5">No students found.</td></tr>`;
+            return;
+        }
+
+        const rows = [];
+        snap.forEach((docSnap) => {
+            const s = docSnap.data();
+            rows.push({ roll: docSnap.id, name: s.name || s.studentName || "-", cls: s.class || "-", status: s.publishStatus || "unpublished" });
+        });
+        rows.sort((a, b) => (a.cls > b.cls ? 1 : a.cls < b.cls ? -1 : Number(a.roll) - Number(b.roll)));
+
+        tableBody.innerHTML = "";
+        rows.forEach((r) => {
+            const row = document.createElement("tr");
+            const isPublished = r.status === "published";
+            row.innerHTML = `
+                <td data-label="Roll No.">${escapeHtmlAdmin(r.roll)}</td>
+                <td data-label="Name">${escapeHtmlAdmin(r.name)}</td>
+                <td data-label="Class">${escapeHtmlAdmin(r.cls)}</td>
+                <td data-label="Status"><span class="${isPublished ? "status-active" : "status-inactive"}">${isPublished ? "Published" : "Unpublished"}</span></td>
+                <td data-label="Action">
+                    <div class="action-btns">
+                        <button class="${isPublished ? "btn-delete" : "btn-view"}" onclick="toggleStudentPublish('${r.roll}', '${isPublished ? "unpublished" : "published"}')">
+                            <i class="fa-solid ${isPublished ? "fa-eye-slash" : "fa-upload"}"></i> ${isPublished ? "Unpublish" : "Publish"}
+                        </button>
+                    </div>
+                </td>
+            `;
+            tableBody.appendChild(row);
+        });
+    } catch (error) {
+        console.error("Could not load publish overview:", error);
+        tableBody.innerHTML = `<tr><td colspan="5">Could not load students.</td></tr>`;
+    }
+}
+loadPublishOverview();
+
+async function toggleStudentPublish(roll, newStatus) {
+    try {
+        await setDoc(doc(db, "students", roll), { publishStatus: newStatus }, { merge: true });
+        loadPublishOverview();
+    } catch (error) {
+        console.error(error);
+        alert(error.message);
+    }
+}
+window.toggleStudentPublish = toggleStudentPublish;
+
+function searchPublishOverview() {
+    const input = document.getElementById("searchPublishOverview")?.value.toLowerCase() || "";
+    document.querySelectorAll("#publishOverviewTable tr").forEach((row) => {
+        row.style.display = row.textContent.toLowerCase().includes(input) ? "" : "none";
+    });
+}
+window.searchPublishOverview = searchPublishOverview;
+
+// ==========================
+// Marks & Subjects — read-only reference (marks-management.html)
+// classSubjects / max-marks live as constants in this file (not
+// Firestore), so this page just displays what's currently configured.
+// ==========================
+function loadMarksReference() {
+    const box = document.getElementById("marksReferenceGrid");
+    if (!box) return;
+
+    box.innerHTML = "";
+
+    Object.keys(classSubjects).forEach((cls) => {
+        const max = 50;
+        const pass = 17;
+        const card = document.createElement("div");
+        card.className = "ref-card";
+        card.innerHTML = `
+            <div class="ref-card-header">
+                <span class="ref-class-name">Class ${escapeHtmlAdmin(cls)}</span>
+                <span class="ref-marks-pill">${max} marks &middot; pass ${pass}</span>
+            </div>
+            <div class="ref-subjects">${classSubjects[cls].map((s) => `<span class="ref-subject-chip">${escapeHtmlAdmin(s)}</span>`).join("")}</div>
+        `;
+        box.appendChild(card);
+    });
+}
+loadMarksReference();
+
+// ==========================
+// Attendance Overview — admin (attendance-overview.html)
+// Attendance is marked per-student, per-day by teachers at
+// students/{roll}/attendance/{date}. This aggregates that across
+// every student for a chosen month using a collectionGroup query.
+// ==========================
+async function loadAttendanceOverview() {
+    const tableBody = document.getElementById("attendanceOverviewTable");
+    const monthInput = document.getElementById("overviewMonth");
+    if (!tableBody || !monthInput) return;
+
+    const month = monthInput.value; // "YYYY-MM"
+    if (!month) return;
+
+    tableBody.innerHTML = `<tr><td colspan="5"><div class="loading-state"><div class="spinner"></div>Loading attendance...</div></td></tr>`;
+
+    try {
+        const [studentsSnap, attendanceSnap] = await Promise.all([
+            getDocs(collection(db, "students")),
+            getDocs(collectionGroup(db, "attendance"))
+        ]);
+
+        const studentInfo = {};
+        studentsSnap.forEach((docSnap) => {
+            const s = docSnap.data();
+            studentInfo[docSnap.id] = { name: s.name || s.studentName || "-", cls: s.class || "-" };
+        });
+
+        const counts = {}; // roll -> { present, absent }
+        attendanceSnap.forEach((docSnap) => {
+            if (!docSnap.id.startsWith(month)) return; // doc id is the date, "YYYY-MM-DD"
+            const data = docSnap.data();
+            const roll = data.studentRoll;
+            if (!roll) return;
+            if (!counts[roll]) counts[roll] = { present: 0, absent: 0 };
+            if (data.status === "Present") counts[roll].present++;
+            else counts[roll].absent++;
+        });
+
+        const rolls = Object.keys(counts);
+        if (rolls.length === 0) {
+            tableBody.innerHTML = `<tr><td colspan="5">No attendance marked yet for this month.</td></tr>`;
+            return;
+        }
+
+        rolls.sort((a, b) => {
+            const clsA = (studentInfo[a] || {}).cls || "";
+            const clsB = (studentInfo[b] || {}).cls || "";
+            return clsA > clsB ? 1 : clsA < clsB ? -1 : Number(a) - Number(b);
+        });
+
+        tableBody.innerHTML = "";
+        rolls.forEach((roll) => {
+            const info = studentInfo[roll] || { name: "-", cls: "-" };
+            const c = counts[roll];
+            const total = c.present + c.absent;
+            const pct = total > 0 ? Math.round((c.present / total) * 100) : 0;
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td data-label="Roll No.">${escapeHtmlAdmin(roll)}</td>
+                <td data-label="Name">${escapeHtmlAdmin(info.name)}</td>
+                <td data-label="Class">${escapeHtmlAdmin(info.cls)}</td>
+                <td data-label="Present / Absent">${c.present} / ${c.absent}</td>
+                <td data-label="Attendance"><span class="${pct >= 75 ? "status-active" : "status-inactive"}">${pct}%</span></td>
+            `;
+            tableBody.appendChild(row);
+        });
+    } catch (error) {
+        console.error("Could not load attendance overview:", error);
+        tableBody.innerHTML = `<tr><td colspan="5">Could not load attendance.</td></tr>`;
+    }
+}
+if (location.pathname.includes("attendance-overview.html")) {
+    const monthInput = document.getElementById("overviewMonth");
+    if (monthInput && !monthInput.value) {
+        monthInput.value = new Date().toISOString().slice(0, 7);
+    }
+    loadAttendanceOverview();
+}
+window.loadAttendanceOverview = loadAttendanceOverview;
+
 function escapeHtmlAdmin(str) {
   return String(str)
     .replaceAll("&", "&amp;")
