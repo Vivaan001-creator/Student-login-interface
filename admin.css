@@ -419,7 +419,7 @@ form {
   padding: 15px;
   border: none;
   border-radius: 14px;
-  background: linear-gradient(135deg, #6a5ff0 0%, #5346e0 100%);
+  background: #6a5ff0;
   color: #ffffff;
   font-family: inherit;
   font-size: 16px;
@@ -2642,7 +2642,7 @@ form {
   padding: 15px;
   border: none;
   border-radius: 14px;
-  background: linear-gradient(135deg, #6a5ff0 0%, #7c6ff2 100%);
+  background: #6a5ff0;
   color: #ffffff;
   font-family: inherit;
   font-size: 16px;
@@ -4687,7 +4687,7 @@ button { font-family: inherit; cursor: pointer; }
 
 /* ---- hero card ---- */
 .hero-card {
-  background: linear-gradient(135deg, #ffffff 55%, var(--purple-100) 100%);
+  background: #ffffff;
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
   padding: 30px 34px;
@@ -4714,7 +4714,7 @@ button { font-family: inherit; cursor: pointer; }
   width: 60px;
   height: 60px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--purple), #7c73f5);
+  background: var(--purple);
   color: #fff;
   display: flex;
   align-items: center;
@@ -5010,7 +5010,7 @@ button { font-family: inherit; cursor: pointer; }
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--purple), var(--purple-dark));
+  background: var(--purple);
   color: #ffffff;
   box-shadow: 0 10px 22px rgba(91, 82, 234, 0.32);
 }
@@ -5135,7 +5135,7 @@ button { font-family: inherit; cursor: pointer; }
   font-size: 14.5px;
   font-weight: 600;
   color: #ffffff;
-  background: linear-gradient(135deg, #6a5ff0 0%, #5346e0 100%);
+  background: #6a5ff0;
   cursor: pointer;
   box-shadow: 0 10px 22px rgba(83, 70, 224, 0.28);
   transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
@@ -5416,7 +5416,7 @@ button { font-family: inherit; cursor: pointer; }
   flex-shrink: 0;
 }
 
-.mini-stat-icon.purple { background: linear-gradient(135deg, #6a5ff0, #5346e0); }
+.mini-stat-icon.purple { background: #6a5ff0; }
 .mini-stat-icon.green  { background: linear-gradient(135deg, #34c979, #1f9d55); }
 .mini-stat-icon.blue   { background: linear-gradient(135deg, #4b9bff, #2f6fe0); }
 .mini-stat-icon.orange { background: linear-gradient(135deg, #ffb648, #f08a1c); }
@@ -5588,7 +5588,7 @@ button { font-family: inherit; cursor: pointer; }
 }
 
 .modal-actions .btn-primary-solid {
-  background: linear-gradient(135deg, #6a5ff0 0%, #5346e0 100%);
+  background: #6a5ff0;
   color: #fff;
   border: none;
   border-radius: 10px;
@@ -5644,7 +5644,7 @@ button { font-family: inherit; cursor: pointer; }
   width: 60px;
   height: 60px;
   border-radius: 16px;
-  background: linear-gradient(135deg, #6a5ff0, #4a41d6);
+  background: #6a5ff0;
   color: #fff;
   display: flex;
   align-items: center;
@@ -5744,7 +5744,7 @@ button { font-family: inherit; cursor: pointer; }
   box-shadow: var(--shadow-hover, 0 10px 30px rgba(91, 82, 234, 0.16));
 }
 .child-chip.active {
-  background: linear-gradient(135deg, var(--purple, #5b52ea) 0%, var(--purple-dark, #4a41d6) 100%);
+  background: var(--purple, #5b52ea);
   border-color: transparent;
   color: #fff;
   box-shadow: 0 10px 20px rgba(91, 82, 234, 0.28);
@@ -6086,7 +6086,7 @@ button { font-family: inherit; cursor: pointer; }
 
 .profile-hero {
   position: relative;
-  background: linear-gradient(120deg, #ffffff 45%, var(--purple-100) 100%);
+  background: #ffffff;
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
   padding: 32px 34px;
@@ -6114,7 +6114,7 @@ button { font-family: inherit; cursor: pointer; }
   width: 90px;
   height: 90px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--purple), #7c73f5);
+  background: var(--purple);
   color: #fff;
   display: flex;
   align-items: center;
@@ -6141,7 +6141,7 @@ button { font-family: inherit; cursor: pointer; }
   width: 30px;
   height: 30px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--purple), var(--purple-dark));
+  background: var(--purple);
   color: #fff;
   border: 3px solid #ffffff;
   display: flex;
@@ -6346,7 +6346,7 @@ button { font-family: inherit; cursor: pointer; }
 .activity-icon.green  { background: linear-gradient(135deg, #34c979, #1f9d55); }
 .activity-icon.blue   { background: linear-gradient(135deg, #4b9bff, #2f6fe0); }
 .activity-icon.orange { background: linear-gradient(135deg, #ffb648, #f08a1c); }
-.activity-icon.purple { background: linear-gradient(135deg, #6a5ff0, #5346e0); }
+.activity-icon.purple { background: #6a5ff0; }
 .activity-icon.pink   { background: linear-gradient(135deg, #ff7ab0, #e0457f); }
 
 .activity-body {
@@ -6705,11 +6705,11 @@ button { font-family: inherit; cursor: pointer; }
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  background: linear-gradient(135deg, var(--purple, #5b52ea) 0%, var(--purple-dark, #4a41d6) 100%);
+  background: var(--purple, #5b52ea);
   color: #fff;
   border: none;
   padding: 9px 18px;
-  border-radius: 999px;
+  border-radius:12px;
   font-size: 12.5px;
   font-weight: 700;
   font-family: inherit;

@@ -5,17 +5,17 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 // ==========================================================
-// Session guard — supports EITHER session type that can land on
+// Session guard - supports EITHER session type that can land on
 // this page: a student's own login (studentLoggedIn/studentRoll)
 // or a parent's login (parentLoggedIn/parentActiveRoll, set by
-// parent.js — parentActiveRoll is whichever child is currently
+// parent.js - parentActiveRoll is whichever child is currently
 // selected on the Parent Dashboard's child switcher).
 //
 // This page is intentionally shared rather than duplicated per
-// role — same Firestore reads, same print layout either way.
+// role - same Firestore reads, same print layout either way.
 // ==========================================================
-const isParentSession = sessionStorage.getItem("parentLoggedIn") === "true";
-const isStudentSession = sessionStorage.getItem("studentLoggedIn") === "true";
+const isParentSession = localStorage.getItem("parentLoggedIn") === "true";
+const isStudentSession = localStorage.getItem("studentLoggedIn") === "true";
 
 if (!isParentSession && !isStudentSession) {
   alert("Session Expired. Please Login Again.");
@@ -24,8 +24,8 @@ if (!isParentSession && !isStudentSession) {
 }
 
 const roll = isParentSession
-  ? sessionStorage.getItem("parentActiveRoll")
-  : sessionStorage.getItem("studentRoll");
+  ? localStorage.getItem("parentActiveRoll")
+  : localStorage.getItem("studentRoll");
 
 if (!roll) {
   alert("Session Expired. Please Login Again.");
@@ -34,118 +34,145 @@ if (!roll) {
 }
 
 // ==========================================================
-// Grading helpers — identical boundaries/wording to student.js
+// Grading helpers - identical boundaries/wording to student.js
 // so the dashboard and this print page always agree.
 // ==========================================================
 
 const classSubjects = {
 
 "Nursery": [
-        "Hindi Writing",
-        "Hindi O/Kavi. Oral",
-        "English Writing",
-        "English O/RHY.Oral",
-        "Math O/Writing"
+        "English",
+        "Math",
+        "Hindi",
+        "Rhymes",
+        "G.K",
     ],
 
   "L.K.G": [
-        "Hindi Writing",
-        "Hindi O/Kavi. Oral",
-        "English Writing",
-        "English O/RHY.Oral",
-        "Math O/Writing"
+        "English",
+        "Math",
+        "Hindi",
+        "Rhymes",
+        "G.K",
     ],
 
   "U.K.G": [
-        "Hindi Writing",
-        "Hindi O/Kavi. Oral",
-        "English Writing",
-        "English O/RHY.Oral",
-        "Math O/Writing"
+        "English",
+        "Math",
+        "Hindi",
+        "Rhymes",
+        "G.K",
     ],
   
     "1": [
         "Science",
         "Social Studies",
         "Hindi",
-        "Math",
-        "English"
+        "English",
+        "Math"
     ],
 
     "2": [
         "Science",
         "Social Studies",
         "Hindi",
-        "Math",
-        "English"
+        "English",
+        "Math"
     ],
 
     "3": [
         "Science",
         "Social Studies",
         "Hindi",
-        "Math",
-        "English"
+        "English",
+        "Math"
     ],
 
     "4": [
         "Science",
         "Social Studies",
         "Hindi",
-        "Math",
-        "English"
+        "English",
+        "Math"
     ],
 
     "5": [
         "Science",
         "Social Studies",
         "Hindi",
-        "Math",
-        "English"
+        "English",
+        "Math"
     ],
 
     "6": [
-        "Science",
-        "Social Studies",
-        "Hindi",
+        "English",
         "Math",
-        "English"
+        "Hindi",
+        "Science",
+        "Social Studies"
+        
     ],
 
   "7": [
-        "Science",
-        "Social Studies",
-        "Hindi",
+        "English",
         "Math",
-        "English"
+        "Hindi",
+        "Science",
+        "Social Studies"
     ],
 
   
   "8": [
-        "Science",
-        "Social Studies",
-        "Hindi",
+        "English",
         "Math",
-        "English"
+        "Hindi",
+        "Science",
+        "Social Studies"
+        
     ],
 
   "9": [
-        "Science",
-        "Social Studies",
-        "Hindi",
+        "English",
         "Math",
-        "English"
+        "Hindi",
+        "Science",
+        "Social Studies"
+        
     ],
 
   "10": [
-        "Science",
-        "Social Studies",
-        "Hindi",
+        "English",
         "Math",
-        "English"
+        "Hindi",
+        "Science",
+        "Social Studies"
+        
     ]
 
 };
+
+const lowerClassKeys = ["nursery", "l.k.g", "u.k.g"];
+
+function isLowerClass(classValue) {
+  const key = (classValue || "").toLowerCase().replace(/^class\s*/, "").trim();
+  return lowerClassKeys.includes(key);
+}
+
+// classSubjects above uses keys like "Nursery"/"1", while
+// student.class can be stored as "Class 1", "class 1", "1", etc.
+// Normalize both sides the same way (used to be missing - this is
+// what let stray metadata fields on the result document render as
+// if they were subjects, see getSubjectsForClass()).
+const classSubjectsNormalized = {};
+Object.keys(classSubjects).forEach((k) => {
+  const normKey = k.toLowerCase().replace(/^class\s*/, "").trim();
+  classSubjectsNormalized[normKey] = classSubjects[k];
+});
+
+function getSubjectsForClass(classValue) {
+  const key = (classValue || "").toLowerCase().replace(/^class\s*/, "").trim();
+  return classSubjectsNormalized[key] || null;
+}
 
 function gradeForPercentage(pct) {
   if (pct >= 90) return "A1";
@@ -177,7 +204,7 @@ function escapeHtml(str) {
 }
 
 // ==========================================================
-// Month list — same list student.js uses for the dashboard,
+// Month list - same list student.js uses for the dashboard,
 // kept here too since this page must work stand-alone even if
 // nothing set a "selected month" before navigating in.
 // ==========================================================
@@ -203,7 +230,17 @@ function currentMonthLabel() {
 // DOM refs
 // ==========================================================
 const tableBody = document.getElementById("marksTableBody");
-const monthSelect = document.getElementById("monthSelect");
+const monthLabel = document.getElementById("monthLabel");
+
+// The month was already chosen on the dashboard (Results tab) -
+// this page just shows that month's result, it doesn't offer a
+// second place to change it. Falls back to the current month only
+// if someone opens this page directly without going through the
+// dashboard first.
+function resolveMonth() {
+  const stored = localStorage.getItem("selectedMonth");
+  return stored && MONTHS.includes(stored) ? stored : currentMonthLabel();
+}
 
 let student = null;
 
@@ -214,7 +251,7 @@ async function init() {
     studentSnap = await getDoc(doc(db, "students", roll));
   } catch (error) {
     console.error(error);
-    tableBody.innerHTML = `<tr><td colspan="5" class="empty-row">Data load nahi ho paaya: ${escapeHtml(error.message)}</td></tr>`;
+    tableBody.innerHTML = `<tr><td colspan="5" class="empty-row">Could not load data: ${escapeHtml(error.message)}</td></tr>`;
     return;
   }
 
@@ -233,21 +270,9 @@ async function init() {
   document.getElementById("studentSection").textContent = student.section || "-";
   document.getElementById("attendance").textContent = (student.attendance || "0") + "%";
 
-  populateMonths();
-  monthSelect.addEventListener("change", () => loadResult(monthSelect.value));
-
-  await loadResult(monthSelect.value);
-}
-
-function populateMonths() {
-  monthSelect.innerHTML = "";
-  MONTHS.forEach((m) => {
-    const opt = document.createElement("option");
-    opt.value = m;
-    opt.textContent = m;
-    monthSelect.appendChild(opt);
-  });
-  monthSelect.value = currentMonthLabel();
+  const month = resolveMonth();
+  monthLabel.textContent = month;
+  await loadResult(month);
 }
 
 async function loadResult(month) {
@@ -258,7 +283,7 @@ async function loadResult(month) {
   document.getElementById("comment").textContent = "-";
 
   if ((student.publishStatus || "unpublished") !== "published") {
-    tableBody.innerHTML = `<tr><td colspan="5" class="empty-row">Result abhi school dwara publish nahi kiya gaya hai.</td></tr>`;
+    tableBody.innerHTML = `<tr><td colspan="5" class="empty-row">The result has not been published yet.</td></tr>`;
     return;
   }
 
@@ -267,26 +292,42 @@ async function loadResult(month) {
     resultSnap = await getDoc(doc(db, "students", roll, "results", month));
   } catch (error) {
     console.error(error);
-    tableBody.innerHTML = `<tr><td colspan="5" class="empty-row">Result load nahi ho paaya: ${escapeHtml(error.message)}</td></tr>`;
+    tableBody.innerHTML = `<tr><td colspan="5" class="empty-row">Could not load result: ${escapeHtml(error.message)}</td></tr>`;
     return;
   }
 
   if (!resultSnap.exists()) {
-    tableBody.innerHTML = `<tr><td colspan="5" class="empty-row">${escapeHtml(month)} ke liye result abhi upload nahi hua hai.</td></tr>`;
+    tableBody.innerHTML = `<tr><td colspan="5" class="empty-row">The result for ${escapeHtml(month)} has not been uploaded yet.</td></tr>`;
     return;
   }
 
   const data = resultSnap.data();
-  const subjects = Object.entries(data);
+
+  // BUG FIX: this used to be Object.entries(data), which rendered
+  // EVERY field stored on the result document as if it were a
+  // subject - including bookkeeping fields the teacher's marks-entry
+  // page also saves on the same doc (updatedBy, updatedAt,
+  // studentRoll, etc). A Firestore Timestamp shown as "marks" is
+  // where the huge garbled numbers in the total/percentage came
+  // from. Now we only ever look up the real subjects for this
+  // student's class (same list classes.html / teacher-marks.html
+  // use), in the correct fixed order, defaulting to 0 for any
+  // subject not yet entered.
+  const validSubjectNames = getSubjectsForClass(student.class);
+  const subjects = validSubjectNames
+    ? validSubjectNames.map((s) => [s, data[s] !== undefined ? data[s] : 0])
+    : Object.entries(data).filter(([key]) =>
+        !["updatedBy", "updatedAt", "studentRoll", "publishedAt", "publishedBy", "publishStatus"].includes(key)
+      );
 
   if (subjects.length === 0) {
-    tableBody.innerHTML = `<tr><td colspan="5" class="empty-row">${escapeHtml(month)} ke liye koi subject marks nahi mile.</td></tr>`;
+    tableBody.innerHTML = `<tr><td colspan="5" class="empty-row">No subject marks found for ${escapeHtml(month)}.</td></tr>`;
     return;
   }
 
-  // Every class, every subject: 50 marks (pass mark 17).
-  const maxMarks = 50;
-  const passMarks = 17;
+  const lower = isLowerClass(student.class);
+  const maxMarks = lower ? 50 : 60;
+  const passMarks = lower ? 17 : 20;
 
   let total = 0;
   let obtained = 0;
@@ -300,11 +341,11 @@ async function loadResult(month) {
 
     rows += `
       <tr>
-        <td>${escapeHtml(subject)}</td>
-        <td>${maxMarks}</td>
-        <td>${passMarks}</td>
-        <td>${score}</td>
-        <td><span class="${passed ? "status-pass" : "status-fail"}">${passed ? "Pass" : "Fail"}</span></td>
+        <td data-label="Subject">${escapeHtml(subject)}</td>
+        <td data-label="Max">${maxMarks}</td>
+        <td data-label="Pass">${passMarks}</td>
+        <td data-label="Marks">${score}</td>
+        <td data-label="Status"><span class="${passed ? "status-pass" : "status-fail"}">${passed ? "Pass" : "Fail"}</span></td>
       </tr>
     `;
   });
@@ -334,13 +375,13 @@ function downloadPDF() {
 
 function logoutStudent() {
   if (isParentSession) {
-    sessionStorage.removeItem("parentLoggedIn");
-    sessionStorage.removeItem("parentContact");
-    sessionStorage.removeItem("parentActiveRoll");
+    localStorage.removeItem("parentLoggedIn");
+    localStorage.removeItem("parentContact");
+    localStorage.removeItem("parentActiveRoll");
     window.location.replace("parent-login.html");
   } else {
-    sessionStorage.removeItem("studentLoggedIn");
-    sessionStorage.removeItem("studentRoll");
+    localStorage.removeItem("studentLoggedIn");
+    localStorage.removeItem("studentRoll");
     window.location.replace("student-login.html");
   }
 }

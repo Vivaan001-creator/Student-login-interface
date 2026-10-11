@@ -2,15 +2,21 @@
 <html lang="en" data-theme="light">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https://firebasestorage.googleapis.com https://storage.googleapis.com https://*.googleusercontent.com; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://www.gstatic.com; object-src 'none'; base-uri 'self'; form-action 'self' mailto:">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="description" content="About Vivaan, the tutor behind GenAlpha: background, skills and projects.">
+<meta name="theme-color" content="#0e1326">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vivaan — Portfolio</title>
+<title>About Vivaan - GenAlpha</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700;9..144,800&family=Work+Sans:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <style>
   :root{
     --bg:#FBF0DC; --surface:#FFFFFF; --text:#211B14; --text-soft:#726B5C;
-    --primary:#F2660C; --primary-soft:#FCE3C9; --border:#EFE1C4;
+    --primary:#B8470A; --primary-soft:#FCE3C9; --border:#EFE1C4;
     --shadow:0 10px 30px rgba(33,27,20,0.08);
   }
   html[data-theme="dark"]{
@@ -252,7 +258,7 @@
     <span class="eyebrow">Portfolio</span>
     <h1>Still learning.<br>Always building.</h1>
     <div class="tagline"><span id="roleText"></span><span class="caret">|</span></div>
-    <p class="sub">I'm Vivaan, a student who enjoys understanding how things work well enough to build them myself — one small project at a time.</p>
+    <p class="sub">I'm Vivaan, a student who enjoys understanding how things work well enough to build them myself - one small project at a time.</p>
     <div class="cta-row">
       <a href="#projects" class="btn solid"><i class="fa-solid fa-diagram-project"></i> View Work</a>
       <a href="#contact" class="btn"><i class="fa-regular fa-paper-plane"></i> Contact Me</a>
@@ -263,7 +269,7 @@
   <section class="reveal" id="about">
     <span class="eyebrow">About</span>
     <h2>A bit about me</h2>
-    <p class="bio" style="margin-top:16px;">Most of my learning happens outside a syllabus — reading documentation, working through small projects, and steadily turning "how does this work" into "I can build this." I'm early in the journey, but consistent, curious, and always looking for the next thing to learn.</p>
+    <p class="bio" style="margin-top:16px;">Most of my learning happens outside a syllabus - reading documentation, working through small projects, and steadily turning "how does this work" into "I can build this." I'm early in the journey, but consistent, curious, and always looking for the next thing to learn.</p>
     <div class="fact-row">
       <span class="fact"><b>Status:</b> Student</span>
       <span class="fact"><b>Interest:</b> Web &amp; Software Development</span>
@@ -279,17 +285,17 @@
       <div class="feature-card">
         <div class="icon-badge"><i class="fa-solid fa-lightbulb"></i></div>
         <h3>Problem Solver</h3>
-        <p>I enjoy breaking a tricky problem down until it makes sense — then building the solution, piece by piece.</p>
+        <p>I enjoy breaking a tricky problem down until it makes sense - then building the solution, piece by piece.</p>
       </div>
       <div class="feature-card">
         <div class="icon-badge"><i class="fa-solid fa-bolt"></i></div>
         <h3>Quick Learner</h3>
-        <p>New tools, new languages — I pick things up fast and I'm not afraid to dive into the unfamiliar.</p>
+        <p>New tools, new languages - I pick things up fast and I'm not afraid to dive into the unfamiliar.</p>
       </div>
       <div class="feature-card">
         <div class="icon-badge"><i class="fa-solid fa-code"></i></div>
         <h3>Always Building</h3>
-        <p>I learn best by doing — most of what I know came from a project, not a textbook.</p>
+        <p>I learn best by doing - most of what I know came from a project, not a textbook.</p>
       </div>
     </div>
   </section>
@@ -320,7 +326,7 @@
   <section class="reveal" id="projects">
     <span class="eyebrow">Projects</span>
     <h2>Selected work</h2>
-    <!-- 🎯 EDIT HERE: replace each card below with a real project — title, description, link -->
+    <!-- 🎯 EDIT HERE: replace each card below with a real project - title, description, link -->
     <div class="project-grid">
       <div class="project-card">
         <div>
@@ -368,7 +374,9 @@
   </section>
 </main>
 
-<footer>© 2026 Vivaan. Built with care.</footer>
+<footer><nav class="footer-links" aria-label="Legal"><a href="login.html">Back to login</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a></nav><div>&copy; <span data-year>2026</span> Vivaan</div></footer>
+<link rel="stylesheet" href="site.css">
+<script src="site.js"></script>
 <button id="toTop" aria-label="Back to top"><i class="fa-solid fa-arrow-up"></i></button>
 
 <script>

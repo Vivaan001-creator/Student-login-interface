@@ -35,10 +35,10 @@ function buildUpiLink({ upiId, payeeName, amount, note }) {
 }
 
 // ==========================================================
-// Session guard — this page only makes sense inside a parent
+// Session guard - this page only makes sense inside a parent
 // session (it always returns to parent-dashboard.html).
 // ==========================================================
-if (sessionStorage.getItem("parentLoggedIn") !== "true") {
+if (localStorage.getItem("parentLoggedIn") !== "true") {
   alert("Session Expired. Please Login Again.");
   window.location.href = "parent-login.html";
   throw new Error("Not Logged In");
@@ -61,7 +61,7 @@ function renderState(iconClass, message) {
 
 async function init() {
   if (!roll || !periodKey) {
-    renderState("fa-triangle-exclamation", "Payment link theek nahi hai. Dashboard se dobara try karein.");
+    renderState("fa-triangle-exclamation", "The payment link is not valid. Please try again from the dashboard.");
     return;
   }
 
@@ -70,18 +70,18 @@ async function init() {
     studentSnap = await getDoc(doc(db, "students", roll));
   } catch (error) {
     console.error(error);
-    renderState("fa-triangle-exclamation", "Data load nahi ho paaya: " + escapeHtml(error.message));
+    renderState("fa-triangle-exclamation", "Could not load data: " + escapeHtml(error.message));
     return;
   }
 
   if (!studentSnap.exists()) {
-    renderState("fa-triangle-exclamation", "Student record nahi mila.");
+    renderState("fa-triangle-exclamation", "Student record not found.");
     return;
   }
 
   const student = studentSnap.data();
 
-  // Re-derive everything fresh from Firestore — the amount is
+  // Re-derive everything fresh from Firestore - the amount is
   // NEVER read from the URL, so it can't be edited by changing
   // the link.
   const classData = await findClassDoc(student.class);
@@ -89,7 +89,7 @@ async function init() {
   const feeFrequency = classData ? (classData.feeFrequency || "Monthly") : "Monthly";
 
   if (!feeAmount) {
-    renderState("fa-triangle-exclamation", "Is class ke liye fee abhi set nahi hui hai. School office se sampark karein.");
+    renderState("fa-triangle-exclamation", "The fee for this class has not been set yet. Please contact the tuition office.");
     return;
   }
 
@@ -115,7 +115,7 @@ async function init() {
   const period = periodsWithStatus.find((p) => p.key === periodKey);
 
   if (!period) {
-    renderState("fa-circle-info", "Yeh billing period nahi mila.");
+    renderState("fa-circle-info", "This billing period was not found.");
     return;
   }
 
@@ -125,9 +125,9 @@ async function init() {
         <div class="pay-icon"><i class="fa-solid fa-circle-check"></i></div>
         <div class="pay-who">${escapeHtml(student.name || roll)} · Roll ${escapeHtml(roll)}</div>
         <div class="pay-period">${escapeHtml(period.label)}</div>
-        <p class="pay-confirm-hint">Yeh payment already ho chuka hai — kuch aur karne ki zaroorat nahi.</p>
+        <p class="pay-confirm-hint">This payment has already been made. Nothing more to do.</p>
         <a href="parent-dashboard.html" class="pay-back" style="justify-content:center;">
-          <i class="fa-solid fa-arrow-left"></i> Dashboard par jaayein
+          <i class="fa-solid fa-arrow-left"></i> Go to dashboard
         </a>
       </div>
     `;
@@ -140,9 +140,9 @@ async function init() {
         <div class="pay-icon" style="background:#d97706;"><i class="fa-solid fa-hourglass-half"></i></div>
         <div class="pay-who">${escapeHtml(student.name || roll)} · Roll ${escapeHtml(roll)}</div>
         <div class="pay-period">${escapeHtml(period.label)}</div>
-        <p class="pay-confirm-hint">Aap is month ka payment pehle hi report kar chuke hain. School admin verify karne ke baad yeh "Paid" dikhega.</p>
+        <p class="pay-confirm-hint">You have already reported the payment for this month. It will show as "Paid" once the admin verifies it.</p>
         <a href="parent-dashboard.html" class="pay-back" style="justify-content:center;">
-          <i class="fa-solid fa-arrow-left"></i> Dashboard par jaayein
+          <i class="fa-solid fa-arrow-left"></i> Go to dashboard
         </a>
       </div>
     `;
@@ -151,7 +151,7 @@ async function init() {
 
   const amountDue = period.amountDue;
 
-  // Payment settings (UPI VPA) — admin-configured, read-only here.
+  // Payment settings (UPI VPA) - admin-configured, read-only here.
   let upiId = "";
   let payeeName = "Modern International School";
   try {
@@ -169,8 +169,8 @@ async function init() {
       <div class="pay-card">
         <div class="pay-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
         <div class="pay-who">${escapeHtml(student.name || roll)} · Roll ${escapeHtml(roll)}</div>
-        <div class="pay-period">${escapeHtml(period.label)} — Due ₹${amountDue}</div>
-        <p class="pay-confirm-hint">School ne abhi online (UPI) payment set up nahi kiya hai. Kripya school office mein sampark karke payment karein.</p>
+        <div class="pay-period">${escapeHtml(period.label)} - Due ₹${amountDue}</div>
+        <p class="pay-confirm-hint">Online (UPI) payment has not been set up yet. Please contact the tuition office to pay.</p>
       </div>
     `;
     return;
@@ -191,24 +191,24 @@ async function init() {
 
       <div class="pay-amount-label">Amount Due</div>
       <div class="pay-amount">₹${amountDue}</div>
-      <div class="pay-amount-lock"><i class="fa-solid fa-lock"></i> Yeh amount fixed hai, isko edit nahi kiya ja sakta</div>
+      <div class="pay-amount-lock"><i class="fa-solid fa-lock"></i> This amount is fixed and cannot be edited</div>
 
       <a class="btn-upi" id="upiPayBtn" href="${upiLink}">
         <i class="fa-solid fa-mobile-screen-button"></i> Pay ₹${amountDue} via UPI App
       </a>
 
-      <div class="pay-divider"><span class="line"></span><span>PHIR</span><span class="line"></span></div>
+      <div class="pay-divider"><span class="line"></span><span>THEN</span><span class="line"></span></div>
 
       <p class="pay-confirm-hint">
-        UPI app mein payment poora karne ke baad hi neeche wala button dabayein. Yeh payment turant "Paid" nahi dikhega —
-        <strong>school admin verify karega</strong> (apne bank/UPI statement se match karke), uske baad hi status "Paid" mein badlega.
+        Press the button below only after you finish the payment in your UPI app. The payment will not show as "Paid" immediately:
+        <strong>the admin will verify it</strong> against the bank or UPI statement, and only then will the status change to "Paid".
       </p>
 
       <button type="button" class="btn-confirm-paid" id="confirmPaidBtn" disabled>
-        <i class="fa-solid fa-paper-plane"></i> Payment Report Karein (Verification ke liye)
+        <i class="fa-solid fa-paper-plane"></i> Report Payment (for verification)
       </button>
 
-      <a href="parent-dashboard.html" class="pay-cancel">Cancel, Dashboard par vaapas jaayein</a>
+      <a href="parent-dashboard.html" class="pay-cancel">Cancel, back to dashboard</a>
     </div>
   `;
 
@@ -218,7 +218,7 @@ async function init() {
   // Soft nudge: the report step only unlocks after the parent has
   // actually opened the UPI app at least once from this page. This
   // is NOT a security check (clicking the link doesn't prove the
-  // payment went through) — the real safeguard is that this write
+  // payment went through) - the real safeguard is that this write
   // is marked verified:false and excluded from Paid/Due math until
   // an admin confirms it.
   upiBtn.addEventListener("click", () => {
@@ -234,7 +234,7 @@ async function init() {
         amount: amountDue,
         date: Timestamp.now(),
         mode: "UPI",
-        note: `Self-reported via Parent Portal — ${period.label}`,
+        note: `Self-reported via Parent Portal - ${period.label}`,
         source: "parent_portal",
         periodKey: period.key,
         verified: false,
@@ -245,7 +245,7 @@ async function init() {
         <div class="pay-card">
           <div class="pay-icon" style="background:#d97706;"><i class="fa-solid fa-hourglass-half"></i></div>
           <div class="pay-period">Payment Reported</div>
-          <p class="pay-confirm-hint">${escapeHtml(period.label)} ka ₹${amountDue} payment report ho gaya hai. School admin verify karne ke baad yeh "Paid" dikhega. Dashboard par redirect kiya ja raha hai...</p>
+          <p class="pay-confirm-hint">Your payment of ₹${amountDue} for ${escapeHtml(period.label)} has been reported. It will show as "Paid" once the admin verifies it. Taking you back to the dashboard...</p>
         </div>
       `;
 
@@ -256,8 +256,8 @@ async function init() {
     } catch (error) {
       console.error(error);
       confirmBtn.disabled = false;
-      confirmBtn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> Payment Report Karein (Verification ke liye)`;
-      alert("Payment report nahi ho paaya: " + error.message);
+      confirmBtn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> Report Payment (for verification)`;
+      alert("Could not report the payment: " + error.message);
     }
   });
 }

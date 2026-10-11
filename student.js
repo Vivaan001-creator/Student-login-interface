@@ -14,7 +14,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 // ==========================================================
-// Date helper — accepts dd-mm-yyyy OR yyyy-mm-dd and returns
+// Date helper - accepts dd-mm-yyyy OR yyyy-mm-dd and returns
 // a canonical yyyy-mm-dd string so login comparison works
 // regardless of which format was typed / picked.
 // ==========================================================
@@ -56,7 +56,7 @@ function formatDateNice(value) {
 // Student / Parent Login (Roll Number + Date of Birth)
 //
 // NOTE on security: this checks the roll+DOB pair against the
-// "students" collection directly from the client — there is no
+// "students" collection directly from the client - there is no
 // Firebase Auth account per student. That means your Firestore
 // rules must allow read access to a student doc for this check
 // to work, which also means DOB alone is a soft guard, not a
@@ -73,7 +73,7 @@ async function studentLogin() {
   const dob = dobInput.value.trim();
 
   if (!roll || !dob) {
-    alert("Roll Number aur Date of Birth dono bharein.");
+    alert("Please enter both Roll Number and Date of Birth.");
     return;
   }
 
@@ -81,7 +81,7 @@ async function studentLogin() {
     const studentSnap = await getDoc(doc(db, "students", roll));
 
     if (!studentSnap.exists()) {
-      alert("Yeh Roll Number system mein nahi mila.");
+      alert("This Roll Number was not found in the system.");
       return;
     }
 
@@ -90,21 +90,21 @@ async function studentLogin() {
     const enteredDob = toISODate(dob);
 
     if (!storedDob || storedDob !== enteredDob) {
-      alert("Date of Birth match nahi hui. Kripya dobara try karein.");
+      alert("Date of Birth does not match. Please try again.");
       return;
     }
 
-    // Login tracking — a record admin can review, plus this account's own
+    // Login tracking - a record admin can review, plus this account's own
     // last-login shown on the student's dashboard. Never blocks the login
     // itself if tracking happens to fail (e.g. a rules/network hiccup).
     try {
-      // Capture the PREVIOUS login time before we overwrite it — this is
+      // Capture the PREVIOUS login time before we overwrite it - this is
       // what "Last Login" should show (the time before this current visit),
       // not the timestamp we're about to write for this very login.
       const previousLogin = student.lastLogin
         ? (student.lastLogin.toDate ? student.lastLogin.toDate().toISOString() : new Date(student.lastLogin).toISOString())
         : "";
-      sessionStorage.setItem("previousLogin", previousLogin);
+      localStorage.setItem("previousLogin", previousLogin);
 
       await addDoc(collection(db, "loginLogs"), {
         role: "student",
@@ -121,8 +121,8 @@ async function studentLogin() {
       console.error("Login tracking failed:", logErr);
     }
 
-    sessionStorage.setItem("studentLoggedIn", "true");
-    sessionStorage.setItem("studentRoll", roll);
+    localStorage.setItem("studentLoggedIn", "true");
+    localStorage.setItem("studentRoll", roll);
     window.location.href = "student-dashboard.html";
 
   } catch (error) {
@@ -144,7 +144,7 @@ if (studentLoginForm) {
 // Dashboard access guard
 // ==========================================================
 if (window.location.pathname.includes("student-dashboard.html")) {
-  if (sessionStorage.getItem("studentLoggedIn") !== "true") {
+  if (localStorage.getItem("studentLoggedIn") !== "true") {
     window.location.replace("student-login.html");
   }
 }
@@ -153,8 +153,8 @@ if (window.location.pathname.includes("student-dashboard.html")) {
 // Logout
 // ==========================================================
 function studentLogout() {
-  sessionStorage.removeItem("studentLoggedIn");
-  sessionStorage.removeItem("studentRoll");
+  localStorage.removeItem("studentLoggedIn");
+  localStorage.removeItem("studentRoll");
   window.location.replace("student-login.html");
 }
 window.studentLogout = studentLogout;
@@ -165,7 +165,7 @@ window.studentLogout = studentLogout;
 // and "1" to the same key since the Add Student form and the
 // Class Management page currently store these differently)
 // ==========================================================
-const lowerClassKeys = ["nursery", "l.k.g", "u.k.g", "1", "2", "3", "4", "5"];
+const lowerClassKeys = ["nursery", "l.k.g", "u.k.g"];
 
 function isLowerClass(classValue) {
   const key = (classValue || "").toLowerCase().replace(/^class\s*/, "").trim();
@@ -174,7 +174,7 @@ function isLowerClass(classValue) {
 
 // ==========================================================
 // Grade + Teacher's Comment (ported from the original
-// result.js design — same percentage boundaries and wording)
+// result.js design - same percentage boundaries and wording)
 // ==========================================================
 function gradeForPercentage(pct) {
   if (pct >= 90) return "A1";
@@ -269,7 +269,7 @@ if (profileBox) {
 }
 
 async function loadStudentDashboard() {
-  const roll = sessionStorage.getItem("studentRoll");
+  const roll = localStorage.getItem("studentRoll");
   if (!roll) return;
 
   const snap = await getDoc(doc(db, "students", roll));
@@ -290,7 +290,7 @@ async function loadStudentDashboard() {
   setText("dashMotherName", student.mother || "-");
   setText("dashAttendance", (student.attendance || "0") + "%");
 
-  const previousLogin = sessionStorage.getItem("previousLogin");
+  const previousLogin = localStorage.getItem("previousLogin");
   if (previousLogin) {
     const dt = new Date(previousLogin);
     setText("dashLastLogin", dt.toLocaleString("en-IN", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }));
@@ -339,14 +339,14 @@ async function loadStudentResult(roll, student, month) {
   if (resultCommentBoxEl) resultCommentBoxEl.textContent = "";
 
   if (student.publishStatus !== "published") {
-    showEmpty(emptyMsg, "Aapka result abhi school dwara publish nahi kiya gaya hai.");
+    showEmpty(emptyMsg, "Your result has not been published yet.");
     return;
   }
 
   const snap = await getDoc(doc(db, "students", roll, "results", month));
 
   if (!snap.exists()) {
-    showEmpty(emptyMsg, month + " ke liye result abhi upload nahi hua hai.");
+    showEmpty(emptyMsg, "The result for " + month + " has not been uploaded yet.");
     return;
   }
 
@@ -361,7 +361,14 @@ async function loadStudentResult(roll, student, month) {
   let obtained = 0;
   let rows = "";
 
-  Object.entries(data).forEach(([subject, marks]) => {
+  // BUG FIX: this used to iterate Object.entries(data) directly,
+  // which also renders bookkeeping fields saved on the same result
+  // document (updatedBy, updatedAt, studentRoll, ...) as if they
+  // were subjects - a Firestore Timestamp shown as "marks" is what
+  // produced huge garbled totals. Skip those known non-subject keys.
+  const nonSubjectKeys = ["updatedBy", "updatedAt", "studentRoll", "publishedAt", "publishedBy", "publishStatus"];
+
+  Object.entries(data).filter(([key]) => !nonSubjectKeys.includes(key)).forEach(([subject, marks]) => {
     const score = Number(marks) || 0;
     total += maxMarks;
     obtained += score;
@@ -448,7 +455,7 @@ async function loadStudentAttendance(roll, month) {
   if (!range) return;
 
   try {
-    // Plain, unfiltered collection read — this needs no composite
+    // Plain, unfiltered collection read - this needs no composite
     // index at all. Filtering by month and sorting happens below,
     // in JS, on the (small, per-student) result set. Attendance
     // docs are keyed by yyyy-mm-dd, so string comparison works.
@@ -459,7 +466,7 @@ async function loadStudentAttendance(roll, month) {
       .sort((a, b) => (a.id < b.id ? 1 : -1)); // newest first
 
     if (docsInMonth.length === 0) {
-      showEmpty(emptyMsg, month + " ke liye abhi tak attendance record nahi hai.");
+      showEmpty(emptyMsg, "No attendance record for " + month + " yet.");
       return;
     }
 
@@ -518,7 +525,7 @@ async function loadStudentAttendance(roll, month) {
 
   } catch (error) {
     console.error(error);
-    showEmpty(emptyMsg, "Attendance load nahi ho paayi: " + error.message);
+    showEmpty(emptyMsg, "Could not load attendance: " + error.message);
   }
 }
 
@@ -540,7 +547,7 @@ async function loadStudentNotices() {
     const snap = await getDocs(noticesQuery);
 
     if (snap.empty) {
-      showEmpty(emptyMsg, "Abhi tak koi notice nahi hai.");
+      showEmpty(emptyMsg, "No notices yet.");
       return;
     }
 
@@ -570,14 +577,14 @@ async function loadStudentNotices() {
 
   } catch (error) {
     console.error(error);
-    showEmpty(emptyMsg, "Notices load nahi ho paayi: " + error.message);
+    showEmpty(emptyMsg, "Could not load notices: " + error.message);
   }
 }
 
 // ==========================================================
 // Fee Status (reads classes/{classId} for the fee structure
 // and students/{roll}/payments for this student's own payment
-// history — same data admin's Fee Management page writes)
+// history - same data admin's Fee Management page writes)
 // ==========================================================
 async function loadStudentFeeStatus(roll, student) {
   const summaryBox = document.getElementById("feeSummaryBox");
@@ -640,12 +647,12 @@ async function loadStudentFeeStatus(roll, student) {
     `;
 
     if (tableBody) {
-      tableBody.innerHTML = rows || `<tr><td colspan="4">Abhi koi payment record nahi hai.</td></tr>`;
+      tableBody.innerHTML = rows || `<tr><td colspan="4">No payment records yet.</td></tr>`;
     }
 
   } catch (error) {
     console.error(error);
-    if (emptyMsg) showEmpty(emptyMsg, "Fee status load nahi ho paayi: " + error.message);
+    if (emptyMsg) showEmpty(emptyMsg, "Could not load fee status: " + error.message);
   }
 }
 

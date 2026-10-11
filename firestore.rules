@@ -1,0 +1,154 @@
+rules_version = '2';
+
+// GenAlpha Firestore rules.
+//
+// Who can do what
+//   Admin    : the account vivaan510399@gmail.com. Full access.
+//   Teacher  : a signed-in user whose email has a document in /teacherAccounts
+//              (the admin app creates it when a teacher is added).
+//   Anyone   : students and parents are not Firebase users yet, so the
+//              student-facing data below is still publicly readable.
+//              THIS IS THE KNOWN REMAINING EXPOSURE. See SECURITY-REPORT.md.
+//
+// Signing in is NOT enough. Anyone can create a Firebase account with your
+// public API key, so request.auth != null must never grant write access.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null; }
+
+    function isAdmin() {
+      return signedIn()
+        && request.auth.token.email == 'vivaan510399@gmail.com';
+    }
+
+    function isTeacher() {
+      return signedIn()
+        && request.auth.token.email != null
+        && exists(/databases/$(database)/documents/teacherAccounts/$(request.auth.token.email));
+    }
+
+    function myTeacherId() {
+      return get(/databases/$(database)/documents/teacherAccounts/$(request.auth.token.email)).data.teacherId;
+    }
+
+    function isStaff() { return isAdmin() || isTeacher(); }
+
+    function onlyChanges(keys) {
+      return request.resource.data.diff(resource.data).affectedKeys().hasOnly(keys);
+    }
+
+    // ---------- Students and their records ----------
+    match /students/{roll} {
+      // Needed today because student and parent login read this document
+      // from the browser. Remove once login is moved to Firebase Auth.
+      allow read: if true;
+      allow create, delete: if isAdmin();
+
+      allow update: if isAdmin()
+        // A teacher may only publish or unpublish a result.
+        || (isTeacher() && onlyChanges(['publishStatus']))
+        // Login tracking written by the student's own browser.
+        || (onlyChanges(['lastLogin', 'loginCount'])
+            && request.resource.data.lastLogin == request.time
+            && request.resource.data.loginCount == resource.data.get('loginCount', 0) + 1);
+
+      match /attendance/{date} {
+        allow read: if true;
+        allow write: if isStaff();
+      }
+
+      match /results/{month} {
+        allow read: if true;
+        allow write: if isStaff();
+      }
+
+      match /payments/{paymentId} {
+        allow read: if true;
+        // A parent reports a payment. It must start unverified; only the
+        // admin can verify, edit or delete it.
+        allow create: if isAdmin()
+          || (request.resource.data.keys().hasOnly(
+                ['amount', 'date', 'mode', 'note', 'source', 'periodKey', 'verified', 'recordedAt'])
+              && request.resource.data.verified == false
+              && request.resource.data.source == 'parent_portal'
+              && request.resource.data.amount is number
+              && request.resource.data.amount > 0
+              && request.resource.data.amount < 1000000
+              && request.resource.data.note is string
+              && request.resource.data.note.size() < 300);
+        allow update, delete: if isAdmin();
+      }
+    }
+
+    // Group queries used by the admin screens.
+    match /{path=**}/attendance/{id} { allow read: if isStaff(); }
+    match /{path=**}/results/{id}    { allow read: if isStaff(); }
+
+    // ---------- Shared school data ----------
+    match /classes/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /notices/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /gallery/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /settings/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /homework/{id} {
+      allow read: if true;
+      allow create: if isAdmin()
+        || (isTeacher() && request.resource.data.postedBy == myTeacherId());
+      allow update: if isAdmin();
+      allow delete: if isAdmin()
+        || (isTeacher() && resource.data.postedBy == myTeacherId());
+    }
+
+    // ---------- Teachers ----------
+    match /teachers/{id} {
+      allow read: if isStaff();
+      allow create, delete: if isAdmin();
+      allow update: if isAdmin()
+        || (isTeacher() && myTeacherId() == id
+            && onlyChanges(['lastLogin', 'loginCount']));
+    }
+
+    // Access record the rules use to recognise a teacher. Keyed by email.
+    match /teacherAccounts/{email} {
+      allow read: if isAdmin()
+        || (signedIn() && request.auth.token.email == email);
+      allow write: if isAdmin();
+    }
+
+    // ---------- Activity log ----------
+    match /loginLogs/{id} {
+      allow read: if isAdmin();
+      allow create: if request.resource.data.keys().hasOnly(
+            ['role', 'refId', 'name', 'class', 'subject', 'timestamp'])
+          && request.resource.data.role in ['student', 'teacher', 'parent']
+          && request.resource.data.refId is string
+          && request.resource.data.refId.size() <= 100
+          && request.resource.data.name is string
+          && request.resource.data.name.size() <= 200
+          && request.resource.data.timestamp == request.time;
+      allow update, delete: if false;
+    }
+
+    // ---------- Everything else (appMeta, subscribers, contactMessages...) ----------
+    match /{document=**} {
+      allow read, write: if isAdmin();
+    }
+  }
+}

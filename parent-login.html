@@ -1,10 +1,18 @@
 <!DOCTYPE html>
-<html lang="hi" data-theme="dark">
+<html lang="en-IN" data-theme="dark">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https://firebasestorage.googleapis.com https://storage.googleapis.com https://*.googleusercontent.com; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://www.gstatic.com; object-src 'none'; base-uri 'self'; form-action 'self' mailto:">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="description" content="Parent login for GenAlpha using roll number and mobile number.">
+<meta name="theme-color" content="#0e1326">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="stylesheet" href="site.css">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script src="appearance.js"></script>
-<title>Parent Login - Home Tuition</title>
+<title>Parent Login - GenAlpha</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -15,7 +23,7 @@
     --cream:#fdf6e8;
     --amber:#ffb347; --amber-deep:#ff8c42; --amber-shadow:#d9691f; --coral:#ff6f61;
     --text-onDark:#f3ecd9; --text-onDark-soft:#b7bcdc;
-    --text-onLight:#241f14; --text-onLight-soft:#7a715c;
+    --text-onLight:#241f14; --text-onLight-soft:#6d644e;
     --radius-lg:26px;
     --ease:cubic-bezier(.16,.84,.44,1);
 
@@ -44,17 +52,7 @@
     opacity:var(--star-op); animation:twinkle 3.6s ease-in-out infinite; transition:opacity .5s var(--ease); }
   @keyframes twinkle{ 0%,100%{opacity:calc(var(--star-op)*.15);} 50%{opacity:var(--star-op);} }
 
-  .lamp-wrap{ position:relative; width:150px; perspective:600px;
-    animation:dropIn .8s var(--ease) both, lampBob 5.5s ease-in-out 1s infinite; margin-bottom:4px; }
   @keyframes dropIn{ from{opacity:0; transform:translateY(-20px);} to{opacity:1; transform:translateY(0);} }
-  @keyframes lampBob{ 0%,100%{transform:translateY(0);} 50%{transform:translateY(-5px);} }
-  .lamp-svg{ transform-style:preserve-3d; transition:transform .2s ease-out; filter:drop-shadow(0 16px 14px rgba(0,0,0,.4)); }
-  .lamp-glow{ animation:lampPulse 3.2s ease-in-out infinite; transform-origin:100px 95px; }
-  @keyframes lampPulse{ 0%,100%{opacity:.85; transform:scale(1);} 50%{opacity:1; transform:scale(1.06);} }
-  .pull-cord{ cursor:grab; outline:none; touch-action:none; -webkit-tap-highlight-color:transparent; transform-box:fill-box; transform-origin:50% 0%; animation:cordSway 3.6s ease-in-out infinite; }
-  .pull-cord.dragging{ cursor:grabbing; animation:none; }
-  .pull-cord:focus-visible{ outline:2px solid var(--amber); outline-offset:5px; border-radius:8px; }
-  @keyframes cordSway{ 0%,100%{transform:translateY(0) rotate(-4deg);} 50%{transform:translateY(0) rotate(4deg);} }
 
   .brand-title{ font-size:clamp(24px, 6vw, 30px); text-align:center; line-height:1.15; margin-top:6px; animation:fadeUp .7s .2s var(--ease) both; }
   .brand-title span{ color:var(--amber); }
@@ -90,7 +88,7 @@
   .dob-hint{ font-size:11.5px; color:var(--ink-soft); text-align:left; margin:-6px 0 18px; line-height:1.5; }
 
   .login-btn{ width:100%; display:flex; align-items:center; justify-content:center; gap:8px; padding:14px; border:none;
-    border-radius:999px; cursor:pointer; background:linear-gradient(135deg, var(--amber) 0%, var(--coral) 100%);
+    border-radius:12px; cursor:pointer; background:linear-gradient(135deg, var(--amber) 0%, var(--coral) 100%);
     color:#241608; font-weight:700; font-size:14.5px; font-family:inherit;
     box-shadow:0 4px 0 var(--amber-shadow), 0 14px 28px rgba(255,140,66,.28);
     transition:transform .15s var(--ease), box-shadow .15s var(--ease); }
@@ -104,6 +102,8 @@
   .back-link:hover{ color:var(--amber); }
 
   @media (prefers-reduced-motion: reduce){ *{ animation:none !important; transition:none !important; } }
+  .auth-brand{ margin:0 0 6px; line-height:0; animation:fadeUp .7s .1s var(--ease) both; }
+  .auth-logo{ display:block; width:min(210px,56vw); height:auto; margin:0 auto; filter:drop-shadow(0 10px 16px rgba(0,0,0,.25)); view-transition-name:auth-lamp; }
 </style>
 </head>
 <body>
@@ -116,38 +116,7 @@
 <div class="star" style="top:26%; left:6%;  animation-delay:1.8s;"></div>
 <div class="star" style="top:20%; left:70%; animation-delay:2.3s;"></div>
 
-<div class="lamp-wrap" id="lampWrap">
-  <svg class="lamp-svg" viewBox="0 0 200 220" width="130" height="143" aria-hidden="true">
-    <defs>
-      <radialGradient id="glowGrad" cx="50%" cy="50%" r="50%">
-        <stop offset="0%" stop-color="#fff0cf" stop-opacity="0.95"/>
-        <stop offset="55%" stop-color="#ffb347" stop-opacity="0.35"/>
-        <stop offset="100%" stop-color="#ffb347" stop-opacity="0"/>
-      </radialGradient>
-      <linearGradient id="shadeGrad" x1="0" y1="0" x2="1" y2="0">
-        <stop offset="0%" stop-color="#eccb92"/><stop offset="55%" stop-color="#caa46a"/><stop offset="100%" stop-color="#96723f"/>
-      </linearGradient>
-      <linearGradient id="poleGrad" x1="0" y1="0" x2="1" y2="0">
-        <stop offset="0%" stop-color="#4d3f28"/><stop offset="50%" stop-color="#3a2f1e"/><stop offset="100%" stop-color="#241d11"/>
-      </linearGradient>
-      <linearGradient id="baseGrad" x1="0" y1="0" x2="1" y2="0">
-        <stop offset="0%" stop-color="#3c311e"/><stop offset="50%" stop-color="#2c2416"/><stop offset="100%" stop-color="#18130a"/>
-      </linearGradient>
-    </defs>
-    <ellipse class="lamp-glow" cx="100" cy="92" rx="62" ry="62" fill="url(#glowGrad)"/>
-    <rect x="70" y="200" width="60" height="12" rx="6" fill="url(#baseGrad)"/>
-    <rect x="96" y="108" width="8" height="96" rx="4" fill="url(#poleGrad)"/>
-    <path d="M76 50 L124 50 L146 108 L54 108 Z" fill="url(#shadeGrad)"/>
-    <path d="M76 50 L124 50 L118 60 L82 60 Z" fill="#f3dcae"/>
-    <circle cx="100" cy="82" r="7" fill="#fff3d6"/>
-    <g class="pull-cord" id="pullCord" tabindex="0" role="button" aria-label="Pull to change the ambient light color">
-      <line id="cordLine" x1="119" y1="68" x2="119" y2="132" stroke="#d8c9a3" stroke-width="2" stroke-linecap="round"/>
-      <circle id="cordKnob" cx="119" cy="138" r="6.5" fill="#e8c46a" stroke="#a9803a" stroke-width="1.4"/>
-    </g>
-  </svg>
-</div>
-
-<h1 class="brand-title">Home <span>Tuition</span></h1>
+<h1 class="auth-brand"><img class="auth-logo" src="logo.png" width="220" height="217" alt="GenAlpha"></h1>
 
 <div class="subtitle-divider">
   <span class="line"></span><span class="dot"></span>
@@ -170,7 +139,7 @@
     <label class="field-label" for="parentContact">Registered Mobile Number</label>
     <div class="input-wrap">
       <i class="fa-solid fa-phone input-icon"></i>
-      <input type="tel" id="parentContact" name="parentContact" placeholder="Admission form wala mobile number" autocomplete="off">
+      <input type="tel" id="parentContact" name="parentContact" placeholder="Mobile number from the admission form" autocomplete="off">
     </div>
 
     <p class="dob-hint">Enter the same mobile number given as the contact number at admission. All children linked to that number will show automatically.</p>
@@ -185,74 +154,13 @@
 
 <script>
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const cord = document.getElementById('pullCord');
-  const lampSvgEl = document.querySelector('.lamp-svg');
 
-  const NEON_THEMES = [
-    { amber:'#ffb347', deep:'#ff8c42', shadow:'#d9691f', coral:'#ff6f61' },
-    { amber:'#c9a2ff', deep:'#a86bff', shadow:'#6f3fd6', coral:'#ff5ec4' },
-    { amber:'#6fe3e8', deep:'#29c4cc', shadow:'#1a8a90', coral:'#2fd6c0' },
-    { amber:'#96ef8a', deep:'#4ad966', shadow:'#2c9e46', coral:'#b6ff5e' },
-    { amber:'#ffa8d6', deep:'#ff6fae', shadow:'#d13d7a', coral:'#ff5e94' }
-  ];
-  let themeIndex = 0;
-  function applyNeon(i){
-    const t = NEON_THEMES[i];
-    const s = document.documentElement.style;
-    s.setProperty('--amber', t.amber);
-    s.setProperty('--amber-deep', t.deep);
-    s.setProperty('--amber-shadow', t.shadow);
-    s.setProperty('--coral', t.coral);
-  }
-  function cycleNeon(){ themeIndex = (themeIndex + 1) % NEON_THEMES.length; applyNeon(themeIndex); }
 
-  let dragging = false, startY = 0, downTime = 0, triggeredThisTouch = false;
-  const MAX_PULL = 40, TRIGGER_PULL = 16;
-  function svgScale(){ const r = lampSvgEl.getBoundingClientRect(); return r.height / lampSvgEl.viewBox.baseVal.height; }
-  function endDrag(e){
-    if (!dragging) return;
-    dragging = false;
-    cord.classList.remove('dragging');
-    const dy = e ? Math.max(0, Math.min((e.clientY - startY) / svgScale(), MAX_PULL)) : 0;
-    cord.style.transition = 'transform .6s cubic-bezier(.34,1.56,.64,1)';
-    cord.style.transform = 'translateY(0px)';
-    if (dy > TRIGGER_PULL){ cycleNeon(); triggeredThisTouch = true; }
-    setTimeout(() => {
-      cord.style.transition = ''; cord.style.transform = '';
-      if (!reduceMotion) cord.style.animation = 'cordSway 3.6s ease-in-out infinite';
-    }, 620);
-  }
-  cord.addEventListener('pointerdown', (e) => {
-    dragging = true; startY = e.clientY; downTime = Date.now(); triggeredThisTouch = false;
-    cord.classList.add('dragging'); cord.style.transition = 'none'; cord.style.animation = 'none';
-    try { cord.setPointerCapture(e.pointerId); } catch(err){}
-  });
-  cord.addEventListener('pointermove', (e) => {
-    if (!dragging) return;
-    const dy = Math.max(0, Math.min((e.clientY - startY) / svgScale(), MAX_PULL));
-    cord.style.transform = `translateY(${dy}px)`;
-  });
-  cord.addEventListener('pointerup', endDrag);
-  cord.addEventListener('pointercancel', endDrag);
-  cord.addEventListener('click', () => {
-    if (!triggeredThisTouch && Date.now() - downTime < 350) cycleNeon();
-    cord.blur();
-  });
-  cord.addEventListener('keydown', (e) => { if(e.key==='Enter'||e.key===' '){ e.preventDefault(); cycleNeon(); } });
-
-  // Appearance menu (System / Light / Dark) — persists across the whole site
+  // Appearance menu (System / Light / Dark) - persists across the whole site
   try { Appearance.renderMenu(document.getElementById('appearanceMount'), { variant: 'corner' }); } catch(e) {}
 
   if (!reduceMotion && window.matchMedia('(hover:hover)').matches){
-    const lampWrap = document.getElementById('lampWrap');
-    const lampSvg = lampWrap.querySelector('.lamp-svg');
     const card = document.getElementById('loginCard');
-    window.addEventListener('pointermove', (e) => {
-      const r = lampWrap.getBoundingClientRect();
-      const dx = (e.clientX - (r.left+r.width/2)) / window.innerWidth;
-      const dy = (e.clientY - (r.top+r.height/2)) / window.innerHeight;
-      lampSvg.style.transform = `rotateY(${dx*20}deg) rotateX(${-dy*16}deg)`;
-    });
     card.addEventListener('pointermove', (e) => {
       const r = card.getBoundingClientRect();
       const x = (e.clientX - r.left)/r.width - 0.5;
@@ -264,5 +172,7 @@
 </script>
 
 <script type="module" src="parent.js"></script>
+<nav class="legal-links" aria-label="Legal"><a href="my-portfolio.html">About Vivaan</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="cookies.html">Cookies</a><a href="refund.html">Refunds</a></nav>
+<script src="site.js"></script>
 </body>
 </html>

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en-IN">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https://firebasestorage.googleapis.com https://storage.googleapis.com https://*.googleusercontent.com; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://www.gstatic.com; object-src 'none'; base-uri 'self'; form-action 'self' mailto:">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="description" content="More admin tools and shortcuts.">
+<meta name="theme-color" content="#0e1326">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="stylesheet" href="site.css">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<script src="appearance.js"></script>
+<script src="session-timer.js"></script>
+<title>More - GenAlpha</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --navy-950:#0e1326; --navy-900:#161d3a; --navy-800:#232c56;
+    --cream:#fdf6e8; --paper:#f7f2e4;
+    --amber:#ffb347; --amber-deep:#ff8c42; --amber-shadow:#d9691f; --coral:#ff6f61;
+    --brand-yellow:#ffc72c; --brand-ink:#1c1c1c;
+    --ink:#241f14; --ink-soft:#6d644e; --ink-faint:#a89d84;
+    --green:#2fb87f; --green-bg:#e4f7ee;
+    --red:#e5584a; --red-bg:#fdeceb;
+    --blue:#4a7fd6; --blue-bg:#e9f0fd;
+    --purple:#8a6fe8; --purple-bg:#f0ecfd;
+    --teal:#22b8a4; --teal-bg:#e3f8f5;
+    --pink:#e2649e; --pink-bg:#fceaf3;
+    --radius-lg:24px; --radius-md:16px;
+    --surface-card:#ffffff; --surface-card-border:rgba(36,31,20,.06);
+    --surface-card-shadow:rgba(36,31,20,.07); --nav-surface:#ffffff;
+    --ease:cubic-bezier(.16,.84,.44,1);
+  }
+
+  html[data-theme="dark"]{
+    --cream:#1c2444; --paper:#161d3a;
+    --ink:#f3ecd9; --ink-soft:#b7bcdc; --ink-faint:#9199bb;
+    --green-bg:#173a2c; --red-bg:#3a1e1c; --blue-bg:#1c2c4a;
+    --purple-bg:#2a2456; --teal-bg:#173a38; --pink-bg:#3a2038;
+    --surface-card:rgba(255,255,255,.045); --surface-card-border:rgba(255,255,255,.1);
+    --surface-card-shadow:rgba(0,0,0,.35); --nav-surface:#1b2140;
+  }
+
+  *{ margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  body{ font-family:'Inter', sans-serif; background:var(--paper); color:var(--ink); }
+  h1{ font-family:'Fraunces', serif; font-weight:600; }
+  a{ text-decoration:none; color:inherit; }
+
+  .app-shell{ min-height:100vh; min-height:100dvh; }
+  .top-header{
+    background:linear-gradient(135deg, var(--navy-900) 0%, var(--navy-950) 100%); color:#f3ecd9;
+    padding:16px 16px 18px; padding-top:calc(16px + env(safe-area-inset-top,0px));
+    border-radius:0 0 28px 28px; display:flex; align-items:center; justify-content:space-between;
+  }
+  .top-header h1{ font-size:18px; }
+  .top-header-left{ display:flex; align-items:center; gap:10px; }
+  .header-icon-btn{ width:36px; height:36px; border-radius:50%; background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.16); color:#fff; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:13px; }
+  .header-actions{ display:flex; align-items:center; gap:8px; }
+
+  .content{ padding:20px 16px calc(112px + env(safe-area-inset-bottom,0px)); max-width:640px; margin:0 auto; }
+  .section-label{ font-size:11px; font-weight:700; letter-spacing:.4px; text-transform:uppercase; color:var(--ink-faint); margin:20px 4px 10px; }
+  .section-label:first-child{ margin-top:0; }
+
+  .more-grid{ display:grid; grid-template-columns:repeat(2, 1fr); gap:12px; }
+  .more-item{ display:flex; flex-direction:column; align-items:center; gap:9px; text-align:center; background:var(--surface-card); border:1px solid var(--surface-card-border); border-radius:var(--radius-md); padding:20px 12px; box-shadow:0 10px 22px var(--surface-card-shadow); transition:transform .15s var(--ease); }
+  .more-item:hover{ transform:translateY(-3px); }
+  .more-item .more-icon{ width:46px; height:46px; border-radius:15px; display:flex; align-items:center; justify-content:center; font-size:18px; }
+  .more-item span{ font-size:12.5px; font-weight:600; }
+  .more-icon.purple{ background:var(--purple-bg); color:var(--purple); }
+  .more-icon.blue{ background:var(--blue-bg); color:var(--blue); }
+  .more-icon.green{ background:var(--green-bg); color:var(--green); }
+  .more-icon.orange{ background:#fdf0e3; color:var(--amber-deep); }
+  .more-icon.teal{ background:var(--teal-bg); color:var(--teal); }
+  .more-icon.pink{ background:var(--pink-bg); color:var(--pink); }
+  .more-icon.red{ background:var(--red-bg); color:var(--red); }
+
+  .logout-row{ margin-top:24px; }
+  .logout-btn{ width:100%; display:flex; align-items:center; justify-content:center; gap:9px; border:1.5px solid var(--red); background:var(--red-bg); color:var(--red); font-family:inherit; font-weight:700; font-size:13.5px; padding:14px; border-radius:12px; cursor:pointer; }
+
+  .bottom-nav{ position:fixed; left:14px; right:14px; bottom:calc(14px + env(safe-area-inset-bottom,0px)); z-index:60; background:var(--nav-surface); border:1px solid var(--surface-card-border); border-radius:26px; box-shadow:0 16px 36px rgba(20,16,10,.2); display:flex; justify-content:space-around; padding:7px 4px; max-width:612px; margin-left:auto; margin-right:auto; }
+  .bn-item{ background:none; border:none; display:flex; flex-direction:column; align-items:center; gap:3px; padding:6px 4px; cursor:pointer; color:var(--ink-faint); flex:1; border-radius:16px; }
+  .bn-icon-wrap{ width:40px; height:28px; border-radius:14px; display:flex; align-items:center; justify-content:center; font-size:15px; }
+  .bn-label{ font-size:9.5px; font-weight:700; }
+  .bn-item.bn-active{ color:var(--amber-deep); }
+  .bn-item.bn-active .bn-icon-wrap{ background:var(--brand-yellow); color:var(--brand-ink); }
+</style>
+</head>
+<body>
+<div class="app-shell">
+
+  <header class="top-header">
+    <div class="top-header-left">
+      <button class="header-icon-btn" onclick="window.location.href='dashboard.html'" aria-label="Back"><i class="fa-solid fa-arrow-left"></i></button>
+      <h1>More</h1>
+    </div>
+    <div class="header-actions">
+      <div id="appearanceMount"></div>
+    </div>
+  </header>
+
+  <main class="content">
+
+    <div class="section-label">Academics</div>
+    <div class="more-grid">
+      <a href="teachers.html" class="more-item"><div class="more-icon blue"><i class="fa-solid fa-chalkboard-user"></i></div><span>Teachers</span></a>
+      <a href="attendance-overview.html" class="more-item"><div class="more-icon teal"><i class="fa-regular fa-square-check"></i></div><span>Attendance</span></a>
+      <a href="marks-management.html" class="more-item"><div class="more-icon purple"><i class="fa-solid fa-file-pen"></i></div><span>Marks / Exams</span></a>
+      <a href="publish-result.html" class="more-item"><div class="more-icon green"><i class="fa-solid fa-chart-column"></i></div><span>Results</span></a>
+    </div>
+
+    <div class="section-label">Communication</div>
+    <div class="more-grid">
+      <a href="notices.html" class="more-item"><div class="more-icon pink"><i class="fa-regular fa-bell"></i></div><span>Notice Board</span></a>
+      <a href="gallery-management.html" class="more-item"><div class="more-icon orange"><i class="fa-solid fa-images"></i></div><span>Gallery</span></a>
+    </div>
+
+    <div class="section-label">Settings</div>
+    <div class="more-grid">
+      <a href="school-profile.html" class="more-item"><div class="more-icon blue"><i class="fa-solid fa-building-columns"></i></div><span>Tuition Profile</span></a>
+      <a href="login-activity.html" class="more-item"><div class="more-icon purple"><i class="fa-solid fa-clock-rotate-left"></i></div><span>Login Activity</span></a>
+      <a href="change-password.html" class="more-item"><div class="more-icon teal"><i class="fa-solid fa-gear"></i></div><span>Settings</span></a>
+    </div>
+
+    <div class="logout-row">
+      <button type="button" class="logout-btn" onclick="adminLogout()"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</button>
+    </div>
+
+  </main>
+
+  <nav class="bottom-nav" id="bottomNav"></nav>
+</div>
+
+<script>
+  try { Appearance.renderMenu(document.getElementById('appearanceMount'), { variant: 'inline' }); } catch(e) {}
+</script>
+
+<script src="bottom-nav.js"></script>
+<script>
+  try {
+    BottomNav.init({
+      mountId: 'bottomNav',
+      tabs: [
+        { href: 'dashboard.html', icon: 'fa-house',             label: 'Home' },
+        { href: 'students.html',  icon: 'fa-user-group',        label: 'Students' },
+        { href: 'classes.html',   icon: 'fa-chalkboard',        label: 'Classes' },
+        { href: 'fee-management.html', icon: 'fa-indian-rupee-sign', label: 'Fees' },
+        { href: 'more.html',      icon: 'fa-grip',              label: 'More' }
+      ]
+    });
+  } catch(e) {}
+</script>
+
+<script>
+  try { SessionTimer.start({ flagKey: 'adminLoggedIn', loginUrl: 'admin.html' }); } catch(e) {}
+</script>
+<nav class="legal-links" aria-label="Legal"><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="cookies.html">Cookies</a><a href="refund.html">Refunds</a></nav>
+<script src="site.js"></script>
+</body>
+</html>

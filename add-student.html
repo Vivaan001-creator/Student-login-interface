@@ -1,11 +1,19 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en-IN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https://firebasestorage.googleapis.com https://storage.googleapis.com https://*.googleusercontent.com; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://www.gstatic.com; object-src 'none'; base-uri 'self'; form-action 'self' mailto:">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="description" content="Add a new student record.">
+<meta name="theme-color" content="#0e1326">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="stylesheet" href="site.css">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <script src="appearance.js"></script>
 <script src="session-timer.js"></script>
-<title>Add Student - Home Tuition</title>
+<title>Add Student - GenAlpha</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -14,64 +22,49 @@
   :root{
     --navy-950:#0e1326; --navy-900:#161d3a; --navy-800:#232c56;
     --paper:#f7f2e4; --amber:#ffb347; --amber-deep:#ff8c42; --amber-shadow:#d9691f; --coral:#ff6f61;
-    --ink:#241f14; --ink-soft:#7a715c; --ink-faint:#a89d84;
+    --ink:#241f14; --ink-soft:#6d644e; --ink-faint:#a89d84;
     --radius-lg:24px; --radius-md:16px;
     --surface-card:#ffffff; --surface-card-border:rgba(36,31,20,.06);
-    --surface-card-shadow:rgba(36,31,20,.07); --surface-hover:#eee3cc;
+    --surface-card-shadow:rgba(36,31,20,.07); --surface-hover:#eee3cc; --nav-surface:#ffffff;
+    --brand-yellow:#ffc72c; --brand-ink:#1c1c1c;
     --ease:cubic-bezier(.16,.84,.44,1);
   }
 
   html[data-theme="dark"]{
     --cream:#1c2444; --cream-dim:#232c56; --paper:#161d3a;
-    --ink:#f3ecd9; --ink-soft:#b7bcdc; --ink-faint:#7c84a8;
+    --ink:#f3ecd9; --ink-soft:#b7bcdc; --ink-faint:#9199bb;
     --green-bg:#173a2c; --red-bg:#3a1e1c; --blue-bg:#1c2c4a;
     --purple-bg:#2a2456; --teal-bg:#173a38; --pink-bg:#3a2038;
     --surface-card:rgba(255,255,255,.045); --surface-card-border:rgba(255,255,255,.1);
-    --surface-card-shadow:rgba(0,0,0,.35); --surface-hover:rgba(255,255,255,.07);
+    --surface-card-shadow:rgba(0,0,0,.35); --surface-hover:rgba(255,255,255,.07); --nav-surface:#1b2140;
   }
 
-  *{ margin:0; padding:0; box-sizing:border-box; }
+  *{ margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
   body{ font-family:'Inter', sans-serif; background:var(--paper); color:var(--ink); }
   h1,h2{ font-family:'Fraunces', serif; font-weight:600; }
   a{ text-decoration:none; color:inherit; }
 
-  .app{ display:flex; min-height:100vh; }
+  /* ============ APP SHELL (Android) ============ */
+  .app-shell{ min-height:100vh; min-height:100dvh; }
+  .top-header{
+    background:linear-gradient(135deg, var(--navy-900) 0%, var(--navy-950) 100%); color:#f3ecd9;
+    padding:16px 16px 18px; padding-top:calc(16px + env(safe-area-inset-top,0px));
+    border-radius:0 0 28px 28px; display:flex; align-items:center; justify-content:space-between; gap:10px;
+  }
+  .top-header-left{ display:flex; align-items:center; gap:10px; min-width:0; }
+  .header-icon-btn{ width:36px; height:36px; border-radius:50%; background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.16); color:#fff; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:13px; flex-shrink:0; }
+  .top-header h1{ font-family:'Fraunces', serif; font-size:16px; }
+  .top-header p{ font-size:11px; color:#b7bcdc; margin-top:1px; }
+  .header-actions{ display:flex; align-items:center; gap:8px; }
 
-  .sidebar{ width:78px; background:linear-gradient(180deg, var(--navy-900) 0%, var(--navy-950) 100%); color:#f3ecd9; display:flex; flex-direction:column; padding:20px 0; position:sticky; top:0; height:100vh; transition:width .3s var(--ease); z-index:40; overflow-y:auto; overflow-x:hidden; }
-  .sidebar.expanded{ width:242px; }
-  .menu-toggle{ background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); color:#f3ecd9; width:36px; height:36px; border-radius:10px; cursor:pointer; font-size:14px; margin:0 auto 22px; display:flex; align-items:center; justify-content:center; transition:background .2s var(--ease); flex-shrink:0; }
-  .menu-toggle:hover{ background:rgba(255,255,255,.12); }
-  .sidebar-brand{ display:flex; align-items:center; gap:12px; padding:0 20px; margin-bottom:26px; flex-shrink:0; }
-  .brand-icon{ min-width:38px; height:38px; border-radius:11px; background:linear-gradient(135deg, var(--amber) 0%, var(--coral) 100%); display:flex; align-items:center; justify-content:center; color:#241608; font-size:16px; box-shadow:0 6px 14px rgba(255,140,66,.3); }
-  .brand-text{ white-space:nowrap; opacity:0; transition:opacity .25s var(--ease) .1s; }
-  .sidebar.expanded .brand-text{ opacity:1; }
-  .brand-text h1{ font-size:16px; line-height:1; }
-  .brand-text h1 .accent{ color:var(--amber); }
-  .brand-text p{ font-size:10.5px; color:#b7bcdc; letter-spacing:.4px; text-transform:uppercase; margin-top:2px; }
-  .sidebar-nav{ display:flex; flex-direction:column; gap:3px; padding:0 12px; flex:1; }
-  .nav-link, .nav-parent{ display:flex; align-items:center; gap:14px; width:100%; border:none; background:none; cursor:pointer; padding:11px 12px; border-radius:11px; color:#c7cbe0; font-size:13px; font-weight:500; font-family:inherit; white-space:nowrap; transition:background .2s var(--ease), color .2s var(--ease); text-align:left; }
-  .nav-link i, .nav-parent i{ width:16px; text-align:center; font-size:14px; flex-shrink:0; }
-  .nav-link:hover, .nav-parent:hover{ background:rgba(255,255,255,.06); color:#fff; }
-  .nav-link.active{ background:rgba(255,179,71,.14); color:var(--amber); }
-  .link-text{ opacity:0; transition:opacity .2s var(--ease); }
-  .sidebar.expanded .link-text{ opacity:1; }
-  .chevron{ margin-left:auto; font-size:10px !important; transition:transform .25s var(--ease); opacity:0; }
-  .sidebar.expanded .chevron{ opacity:1; }
-  .nav-parent.expanded .chevron{ transform:rotate(180deg); }
-  .submenu{ display:flex; flex-direction:column; gap:2px; max-height:200px; overflow:hidden; transition:max-height .3s var(--ease), opacity .2s var(--ease); padding-left:14px; opacity:1; }
-  .submenu.collapsed{ max-height:0; opacity:0; }
-  .sub-link{ display:flex; align-items:center; gap:12px; padding:9px 12px; border-radius:10px; color:#a8adc9; font-size:12.5px; white-space:nowrap; transition:background .2s var(--ease), color .2s var(--ease); }
-  .sub-link i{ width:14px; text-align:center; font-size:12px; }
-  .sub-link:hover{ background:rgba(255,255,255,.05); color:#fff; }
-  .sub-link.active{ color:var(--amber); }
-  .sidebar:not(.expanded) .submenu{ display:none; }
-  .logout-link{ display:flex; align-items:center; gap:14px; margin:10px 12px 4px; padding:11px 12px; border-radius:11px; color:#e5584a; font-size:13px; font-weight:500; transition:background .2s var(--ease); flex-shrink:0; }
-  .logout-link i{ width:16px; text-align:center; }
-  .logout-link:hover{ background:rgba(229,88,74,.12); }
-  .sidebar-backdrop{ display:none; position:fixed; inset:0; background:rgba(14,19,38,.5); z-index:30; }
-  .sidebar-backdrop.active{ display:block; }
+  .bottom-nav{ position:fixed; left:14px; right:14px; bottom:calc(14px + env(safe-area-inset-bottom,0px)); z-index:60; background:var(--nav-surface); border:1px solid var(--surface-card-border); border-radius:26px; box-shadow:0 16px 36px rgba(20,16,10,.2); display:flex; justify-content:space-around; padding:7px 4px; max-width:612px; margin-left:auto; margin-right:auto; }
+  .bn-item{ background:none; border:none; display:flex; flex-direction:column; align-items:center; gap:3px; padding:6px 4px; cursor:pointer; color:var(--ink-faint); flex:1; border-radius:16px; }
+  .bn-icon-wrap{ width:40px; height:28px; border-radius:14px; display:flex; align-items:center; justify-content:center; font-size:15px; transition:background .2s var(--ease), color .2s var(--ease); }
+  .bn-label{ font-size:9.5px; font-weight:700; }
+  .bn-item.bn-active{ color:var(--amber-deep); }
+  .bn-item.bn-active .bn-icon-wrap{ background:var(--brand-yellow); color:var(--brand-ink); }
 
-  .main{ flex:1; min-width:0; padding:30px 30px 50px; max-width:820px; }
+  .main{ padding:18px 16px calc(112px + env(safe-area-inset-bottom,0px)); max-width:640px; margin:0 auto; }
   .page-topbar{ margin-bottom:22px; }
   .page-topbar h1{ font-size:clamp(22px,3.5vw,28px); }
   .page-topbar p{ font-size:13px; color:var(--ink-soft); margin-top:6px; }
@@ -99,7 +92,7 @@
   #uploadFilename{ font-size:12px; color:var(--ink-soft); }
 
   .form-actions{ display:flex; gap:12px; justify-content:flex-end; margin-top:28px; padding-top:22px; border-top:1px solid rgba(36,31,20,.07); }
-  .btn{ display:inline-flex; align-items:center; gap:8px; border:none; cursor:pointer; font-family:inherit; font-size:13.5px; font-weight:700; padding:12px 24px; border-radius:999px; transition:transform .15s var(--ease), box-shadow .15s var(--ease); }
+  .btn{ display:inline-flex; align-items:center; gap:8px; border:none; cursor:pointer; font-family:inherit; font-size:13.5px; font-weight:700; padding:12px 24px; border-radius:12px; transition:transform .15s var(--ease), box-shadow .15s var(--ease); }
   .btn-primary{ background:linear-gradient(135deg, var(--amber) 0%, var(--coral) 100%); color:#241608; box-shadow:0 4px 0 var(--amber-shadow), 0 12px 24px rgba(255,140,66,.28); }
   .btn-primary:hover{ transform:translateY(-2px); }
   .btn-primary:active{ transform:translateY(2px); box-shadow:0 2px 0 var(--amber-shadow); }
@@ -107,65 +100,29 @@
   .btn-secondary:hover{ background:#eee3cc; }
 
   @media (max-width:900px){
-    .sidebar{ position:fixed; left:0; top:0; width:0; padding-left:0; padding-right:0; }
-    .sidebar.expanded{ width:242px; padding-left:0; padding-right:0; }
-    .sidebar.expanded .sidebar-brand, .sidebar.expanded .sidebar-nav{ padding-left:12px; padding-right:12px; }
-    .menu-toggle{ position:fixed; top:16px; left:16px; z-index:50; margin:0; background:var(--navy-900); }
-    .main{ padding:70px 16px 40px; }
     .form-grid{ grid-template-columns:1fr; }
   }
   @media (prefers-reduced-motion: reduce){ *{ animation:none !important; transition:none !important; } }
 </style>
 </head>
 <body>
-<div class="app">
+<div class="app-shell">
 
-  <aside class="sidebar" id="sidebar">
-    <button class="menu-toggle" id="menuToggle" aria-label="Toggle Menu"><i class="fa-solid fa-bars"></i></button>
-    <div class="sidebar-brand">
-      <div class="brand-icon"><i class="fa-solid fa-lightbulb"></i></div>
-      <div class="brand-text"><h1><span class="accent">Home</span></h1><p>Tuition</p></div>
+  <header class="top-header">
+    <div class="top-header-left">
+      <button class="header-icon-btn" onclick="window.location.href='students.html'" aria-label="Back"><i class="fa-solid fa-arrow-left"></i></button>
+      <div>
+        <h1>Add Student</h1>
+        <p>Enter the new student's details</p>
+      </div>
     </div>
-    <nav class="sidebar-nav">
-      <a href="dashboard.html" class="nav-link"><i class="fa-solid fa-house"></i><span class="link-text">Dashboard</span></a>
-      <a href="classes.html" class="nav-link"><i class="fa-solid fa-chalkboard"></i><span class="link-text">All Classes</span></a>
-
-      <button class="nav-parent expanded" id="studentsToggle"><i class="fa-solid fa-user-group"></i><span class="link-text">Students</span><i class="fa-solid fa-chevron-down chevron"></i></button>
-      <div class="submenu" id="studentsSubmenu">
-        <a href="students.html" class="sub-link"><i class="fa-regular fa-user"></i> All Students</a>
-        <a href="add-student.html" class="sub-link active"><i class="fa-solid fa-circle-plus"></i> Add Student</a>
-      </div>
-
-      <button class="nav-parent" id="teachersToggle"><i class="fa-solid fa-chalkboard-user"></i><span class="link-text">Teachers</span><i class="fa-solid fa-chevron-down chevron"></i></button>
-      <div class="submenu collapsed" id="teachersSubmenu">
-        <a href="teachers.html" class="sub-link"><i class="fa-regular fa-user"></i> All Teachers</a>
-        <a href="add-teacher.html" class="sub-link"><i class="fa-solid fa-circle-plus"></i> Add Teacher</a>
-      </div>
-
-      <a href="attendance-overview.html" class="nav-link"><i class="fa-regular fa-square-check"></i><span class="link-text">Attendance</span></a>
-      <a href="#" class="nav-link"><i class="fa-solid fa-file-lines"></i><span class="link-text">Assignments</span></a>
-      <a href="marks-management.html" class="nav-link"><i class="fa-solid fa-file-pen"></i><span class="link-text">Exams</span></a>
-      <a href="publish-result.html" class="nav-link"><i class="fa-solid fa-chart-column"></i><span class="link-text">Results</span></a>
-      <a href="fee-management.html" class="nav-link"><i class="fa-solid fa-file-invoice-dollar"></i><span class="link-text">Fee Management</span></a>
-      <a href="notices.html" class="nav-link"><i class="fa-regular fa-bell"></i><span class="link-text">Notice Board</span></a>
-      <a href="gallery-management.html" class="nav-link"><i class="fa-solid fa-images"></i><span class="link-text">Gallery</span></a>
-      <a href="school-profile.html" class="nav-link"><i class="fa-solid fa-building-columns"></i><span class="link-text">Tuition Profile</span></a>
-      <a href="login-activity.html" class="nav-link"><i class="fa-solid fa-clock-rotate-left"></i><span class="link-text">Login Activity</span></a>
-      <a href="change-password.html" class="nav-link"><i class="fa-solid fa-gear"></i><span class="link-text">Settings</span></a>
-    </nav>
-    <a href="#" onclick="adminLogout()" class="logout-link"><i class="fa-solid fa-arrow-right-from-bracket"></i><span class="link-text">Logout</span></a>
-    <div style="display:flex; justify-content:center; margin:6px 0 4px;" id="appearanceMount"></div>
-  </aside>
-
-  <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+    <div class="header-actions">
+      <div id="appearanceMount"></div>
+      <button class="header-icon-btn" aria-label="Logout" onclick="adminLogout()"><i class="fa-solid fa-arrow-right-from-bracket"></i></button>
+    </div>
+  </header>
 
   <div class="main">
-    <a href="students.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Back to All Students</a>
-    <div class="page-topbar">
-      <h1>Add New Student</h1>
-      <p>Naye student ki details bharein. * se marked fields zaroori hain.</p>
-    </div>
-
     <form id="studentForm" class="form-card">
 
       <div class="form-section-title">Basic Details</div>
@@ -201,7 +158,7 @@
 
       <div class="form-section-title">Photo (optional)</div>
       <div class="photo-upload-row">
-        <label class="photo-upload-btn"><i class="fa-solid fa-camera"></i> Choose Photo<input type="file" id="photoUpload" accept="image/*" style="display:none;"></label>
+        <label class="photo-upload-btn"><i class="fa-solid fa-camera"></i> Choose Photo<input type="file" id="photoUpload" accept="image/*" style="display:none;" aria-label="Upload photo"></label>
         <span id="uploadFilename"></span>
       </div>
 
@@ -211,10 +168,29 @@
       </div>
     </form>
   </div>
+
+  <nav class="bottom-nav" id="bottomNav"></nav>
 </div>
 
 <script>
   try { Appearance.renderMenu(document.getElementById('appearanceMount'), { variant: 'inline' }); } catch(e) {}
+</script>
+
+<script src="bottom-nav.js"></script>
+<script>
+  try {
+    BottomNav.init({
+      mountId: 'bottomNav',
+      activeHref: 'students.html',
+      tabs: [
+        { href: 'dashboard.html', icon: 'fa-house',             label: 'Home' },
+        { href: 'students.html',  icon: 'fa-user-group',        label: 'Students' },
+        { href: 'classes.html',   icon: 'fa-chalkboard',        label: 'Classes' },
+        { href: 'fee-management.html', icon: 'fa-indian-rupee-sign', label: 'Fees' },
+        { href: 'more.html',      icon: 'fa-grip',              label: 'More' }
+      ]
+    });
+  } catch(e) {}
 </script>
 
 <script>
@@ -222,5 +198,7 @@
 </script>
 
 <script type="module" src="admin.js"></script>
+<nav class="legal-links" aria-label="Legal"><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="cookies.html">Cookies</a><a href="refund.html">Refunds</a></nav>
+<script src="site.js"></script>
 </body>
 </html>

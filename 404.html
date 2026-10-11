@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Page not found - GenAlpha</title>
+<meta name="description" content="The page you were looking for does not exist. Go back to the GenAlpha login page.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0e1326">
+<script>
+  // A 404 can be served from any depth, so work out the site root first and
+  // point the icon and links at it. On github.io the root is /<repo-name>/.
+  (function () {
+    var p = location.pathname.split("/");
+    var root = location.hostname.slice(-10) === ".github.io" && p[1] ? "/" + p[1] + "/" : "/";
+    document.write('<base href="' + root + '">');
+  })();
+</script>
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<style>
+  :root{ --bg:#fdf6e8; --card:#fff; --ink:#241f14; --soft:#5c5442; --line:rgba(36,31,20,.14); --accent:#9c4d0d; --on:#fff; --focus:#1f5fbf; }
+  @media (prefers-color-scheme: dark){ :root{ --bg:#0e1326; --card:#161d3a; --ink:#f3ecd9; --soft:#b7bcdc; --line:rgba(255,255,255,.16); --accent:#ffb347; --on:#1c1c1c; --focus:#8ab4ff; } }
+  *{ box-sizing:border-box; }
+  body{ margin:0; min-height:100vh; min-height:100dvh; display:flex; align-items:center; justify-content:center; padding:24px;
+    background:var(--bg); color:var(--ink); font:16px/1.6 Inter, system-ui, -apple-system, "Segoe UI", Arial, sans-serif; overflow-x:hidden; }
+  main{ width:100%; max-width:420px; background:var(--card); border:1px solid var(--line); border-radius:14px; padding:28px 22px; text-align:center; }
+  img{ width:72px; height:72px; object-fit:contain; }
+  h1{ font:600 26px/1.25 Georgia, serif; margin:14px 0 8px; }
+  p{ margin:0 0 20px; color:var(--soft); }
+  a.btn{ display:inline-block; min-height:44px; padding:12px 20px; border-radius:10px; background:var(--accent); color:var(--on); font-weight:700; text-decoration:none; }
+  a:focus-visible{ outline:3px solid var(--focus); outline-offset:2px; }
+</style>
+</head>
+<body>
+<main>
+  <img src="favicon.png" width="72" height="72" alt="GenAlpha logo">
+  <h1>We could not find that page</h1>
+  <p>The link may be old or mistyped. Head back to the login page and choose where you want to go.</p>
+  <a class="btn" href="login.html">Go to login</a>
+</main>
+</body>
+</html>

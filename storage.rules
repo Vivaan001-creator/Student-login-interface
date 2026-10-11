@@ -1,0 +1,34 @@
+rules_version = '2';
+
+// Photos are shown inside the app, so reading is public. Only the admin can
+// upload or delete, only images, and only up to 5 MB.
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function isAdmin() {
+      return request.auth != null
+        && request.auth.token.email == 'vivaan510399@gmail.com';
+    }
+
+    function isSmallImage() {
+      return request.resource.size < 5 * 1024 * 1024
+        && request.resource.contentType.matches('image/(jpeg|png|webp|gif)');
+    }
+
+    match /gallery/{file} {
+      allow read: if true;
+      allow create, update: if isAdmin() && isSmallImage();
+      allow delete: if isAdmin();
+    }
+
+    match /teacherPhotos/{file} {
+      allow read: if true;
+      allow create, update: if isAdmin() && isSmallImage();
+      allow delete: if isAdmin();
+    }
+
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

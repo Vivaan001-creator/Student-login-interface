@@ -12,7 +12,7 @@ import {
 // Used by parent.js (to render the month-by-month Due list on
 // the Parent Dashboard) AND pay-fee.js (to independently
 // recompute the exact amount for one period right before
-// writing a payment — never trusts an amount handed to it via
+// writing a payment - never trusts an amount handed to it via
 // a URL, always re-derives it from Firestore).
 // ==========================================================
 
@@ -25,14 +25,14 @@ const MONTH_NAMES = [
 // Admin's Add Student form saves student.class as the full
 // display text (e.g. "Class 3"), while a class document's own
 // id (used by homework.classId, fee structure, etc.) is usually
-// just "3" — this bridges the two everywhere it's needed.
+// just "3" - this bridges the two everywhere it's needed.
 export function classKeyOf(value) {
   return String(value || "").trim().toLowerCase().replace(/^class\s*/, "");
 }
 
 // Looks up a class document either by its exact id (fast path,
 // works once data is keyed consistently) or, failing that, by
-// scanning and normalizing every class id — so Fee Status still
+// scanning and normalizing every class id - so Fee Status still
 // works correctly even when a student's class is stored as
 // "Class 3" but the class document's id is "3".
 export async function findClassDoc(classValue) {
@@ -70,7 +70,7 @@ export function toISODate(value) {
 
 // Builds the list of billing periods from admission date through
 // the current period (inclusive), anchored to the admission
-// month — NOT the calendar month/quarter/year — so a mid-year
+// month - NOT the calendar month/quarter/year - so a mid-year
 // admission doesn't produce a lopsided first period.
 //
 // frequency: "Monthly" | "Quarterly" | "Annual"
@@ -92,7 +92,7 @@ export function generateBillingPeriods(admissionDateRaw, frequency, feeAmount) {
   if (totalMonthsElapsed <= 0) return [];
 
   // Sanity cap so a bad/very old admission date can't generate
-  // thousands of rows — 30 years of monthly periods is already
+  // thousands of rows - 30 years of monthly periods is already
   // far more than this app will ever need.
   const periodCount = Math.min(Math.ceil(totalMonthsElapsed / monthsPerPeriod), 360);
 
@@ -119,7 +119,7 @@ export function generateBillingPeriods(admissionDateRaw, frequency, feeAmount) {
 }
 
 // Walks the periods oldest-first and allocates the total amount
-// paid so far against them (FIFO) — this is what lets a single
+// paid so far against them (FIFO) - this is what lets a single
 // lump-sum payment automatically clear the oldest outstanding
 // period(s) without payments needing to be tagged to a specific
 // month up front.
@@ -152,10 +152,10 @@ export function allocateDueStatus(periods, totalPaid) {
 //  - explicitly verified (admin approved it), or
 //  - recorded directly by admin (source !== "parent_portal"),
 //    since admin only logs a payment after actually seeing the
-//    money (cash, bank transfer, etc.) — that's the school's
+//    money (cash, bank transfer, etc.) - that's the school's
 //    existing trust boundary, unchanged by this feature.
 // A parent simply clicking "Maine Payment Kar Diya" on the Pay
-// Now flow is NOT, by itself, proof that money moved — so those
+// Now flow is NOT, by itself, proof that money moved - so those
 // self-reports stay "pending" until admin confirms them, and are
 // deliberately excluded from the Paid/Due calculation until then.
 export function isPaymentVerified(pay) {

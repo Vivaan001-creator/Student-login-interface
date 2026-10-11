@@ -37,8 +37,13 @@ function escapeHtml(str) {
     .replaceAll('"', "&quot;");
 }
 
+// Safe value for use inside an inline onclick="..." attribute.
+function jsq(v) {
+  return escapeHtml(JSON.stringify(String(v === undefined || v === null ? "" : v)));
+}
+
 // ==========================================================
-// BUG FIX — class-key matching
+// BUG FIX - class-key matching
 //
 // Admin's "Add Student" form saves student.class as whatever
 // text the Class <select> shows (e.g. "Class 3"), while a
@@ -99,13 +104,13 @@ async function teacherLogin() {
 
     if (snap.empty) {
       await signOut(auth);
-      alert("Ye account Teacher ke roop mein register nahi hai. Admin se sampark karein.");
+      alert("This account is not registered as a teacher. Please contact the admin.");
       return;
     }
 
     const teacherDoc = snap.docs[0];
 
-    // Login tracking — same as the student side: a record admin can review,
+    // Login tracking - same as the student side: a record admin can review,
     // plus this account's own last-login shown on the teacher's dashboard.
     try {
       const teacherData = teacherDoc.data();
@@ -114,7 +119,7 @@ async function teacherLogin() {
       const previousLogin = teacherData.lastLogin
         ? (teacherData.lastLogin.toDate ? teacherData.lastLogin.toDate().toISOString() : new Date(teacherData.lastLogin).toISOString())
         : "";
-      sessionStorage.setItem("previousLogin", previousLogin);
+      localStorage.setItem("previousLogin", previousLogin);
 
       await addDoc(collection(db, "loginLogs"), {
         role: "teacher",
@@ -131,8 +136,8 @@ async function teacherLogin() {
       console.error("Login tracking failed:", logErr);
     }
 
-    sessionStorage.setItem("teacherLoggedIn", "true");
-    sessionStorage.setItem("teacherDocId", teacherDoc.id);
+    localStorage.setItem("teacherLoggedIn", "true");
+    localStorage.setItem("teacherDocId", teacherDoc.id);
 
     window.location.href = "teacher-dashboard.html";
 
@@ -165,7 +170,7 @@ const teacherPages = [
 const page = location.pathname;
 
 if (teacherPages.some((p) => page.includes(p))) {
-  if (sessionStorage.getItem("teacherLoggedIn") !== "true") {
+  if (localStorage.getItem("teacherLoggedIn") !== "true") {
     window.location.replace("teacher-login.html");
   }
 }
@@ -176,8 +181,8 @@ if (teacherPages.some((p) => page.includes(p))) {
 async function teacherLogout() {
   try {
     await signOut(auth);
-    sessionStorage.removeItem("teacherLoggedIn");
-    sessionStorage.removeItem("teacherDocId");
+    localStorage.removeItem("teacherLoggedIn");
+    localStorage.removeItem("teacherDocId");
     window.location.replace("teacher-login.html");
   } catch (error) {
     alert(error.message);
@@ -190,7 +195,7 @@ window.teacherLogout = teacherLogout;
 // ==========================
 async function teacherChangePassword() {
 
-  const teacherDocId = sessionStorage.getItem("teacherDocId");
+  const teacherDocId = localStorage.getItem("teacherDocId");
   if (!teacherDocId) return;
 
   try {
@@ -199,7 +204,7 @@ async function teacherChangePassword() {
 
     const email = snap.data().email;
     await sendPasswordResetEmail(auth, email);
-    alert("Password reset link bhej diya gaya hai: " + email);
+    alert("Password reset link sent to: " + email);
 
   } catch (error) {
     alert(error.message);
@@ -215,7 +220,7 @@ async function loadTeacherDashboard() {
 
   if (!location.pathname.includes("teacher-dashboard.html")) return;
 
-  const teacherDocId = sessionStorage.getItem("teacherDocId");
+  const teacherDocId = localStorage.getItem("teacherDocId");
   if (!teacherDocId) return;
 
   try {
@@ -231,7 +236,7 @@ async function loadTeacherDashboard() {
     setText("teacherSubjectText", t.subject);
     setText("teacherEmailText", t.email);
 
-    const previousLogin = sessionStorage.getItem("previousLogin");
+    const previousLogin = localStorage.getItem("previousLogin");
     if (previousLogin) {
       const dt = new Date(previousLogin);
       setText("dashLastLogin", dt.toLocaleString("en-IN", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }));
@@ -251,7 +256,7 @@ async function loadTeacherDashboard() {
       const classSnap = await getDocs(classQuery);
 
       if (classSnap.empty) {
-        classBox.innerHTML = `<p class="no-class-msg">Abhi koi class assign nahi hui hai — Admin se class assignment ke liye sampark karein.</p>`;
+        classBox.innerHTML = `<p class="no-class-msg">No class assigned yet. Contact the admin for class assignment.</p>`;
       } else {
         classBox.innerHTML = classSnap.docs.map((d) => {
           const c = d.data();
@@ -305,11 +310,11 @@ const classSubjects = {
   "Nursery": ["English", "Math", "Hindi", "Rhymes", "G.K"],
   "L.K.G": ["English", "Math", "Hindi", "Rhymes", "G.K"],
   "U.K.G": ["English", "Math", "Hindi", "Rhymes", "G.K"],
-  "1": ["English", "Math", "Hindi", "Computer", "E.V.S", "G.K"],
-  "2": ["English", "Math", "Hindi", "Computer", "E.V.S", "G.K"],
-  "3": ["English", "Math", "Hindi", "Computer", "E.V.S", "G.K"],
-  "4": ["English", "Math", "Hindi", "Computer", "E.V.S", "G.K"],
-  "5": ["English", "Math", "Hindi", "Computer", "E.V.S", "G.K"],
+  "1": ["Science", "Social Studies", "Hindi", "English", "Math"],
+  "2": ["Science", "Social Studies", "Hindi", "English", "Math"],
+  "3": ["Science", "Social Studies", "Hindi", "English", "Math"],
+  "4": ["Science", "Social Studies", "Hindi", "English", "Math"],
+  "5": ["Science", "Social Studies", "Hindi", "English", "Math"],
   "6": ["English", "Math", "Hindi", "Science", "Social Studies"],
   "7": ["English", "Math", "Hindi", "Science", "Social Studies"],
   "8": ["English", "Math", "Hindi", "Science", "Social Studies"],
@@ -317,8 +322,17 @@ const classSubjects = {
   "10": ["English", "Math", "Hindi", "Science", "Social Studies"]
 };
 
-const lowerClasses = ["Nursery", "L.K.G", "U.K.G", "1", "2", "3", "4", "5"];
-const DEFAULT_SUBJECTS = ["English", "Math", "Hindi", "Science", "G.K"];
+// BUG FIX: this used to list "1".."5" here too, which (a) gave
+// classes 1-5 the wrong max/pass marks (50/17, the Nursery-L.K.G-U.K.G
+// scale, instead of the correct 60/20) and, combined with the
+// classSubjects entries above having briefly drifted out of sync
+// with admin.js/result.js, meant a class like "4" was shown
+// Computer/E.V.S/G.K fields in the marks modal instead of the
+// Science/Social Studies the rest of the app expects - so those two
+// subjects could never actually be entered, and always showed as 0
+// on the result. Only Nursery/L.K.G/U.K.G use the 50/17 scale.
+const lowerClasses = ["Nursery", "L.K.G", "U.K.G"];
+const DEFAULT_SUBJECTS = ["English", "Math", "Hindi", "Science", "Social Studies"];
 
 const MONTHS = [
   "June 2026", "July 2026", "August 2026", "September 2026", "October 2026",
@@ -360,7 +374,7 @@ async function getMyContext() {
 
   if (myContextCache) return myContextCache;
 
-  const teacherDocId = sessionStorage.getItem("teacherDocId");
+  const teacherDocId = localStorage.getItem("teacherDocId");
   if (!teacherDocId) return null;
 
   const snap = await getDoc(doc(db, "teachers", teacherDocId));
@@ -371,7 +385,7 @@ async function getMyContext() {
 
   if (teacher.email) {
     // BUG FIX: this used to take only classSnap.docs[0], so a teacher
-    // assigned to several classes only ever saw the first one — every
+    // assigned to several classes only ever saw the first one - every
     // other class's students were silently dropped everywhere that
     // read ctx.myClass. Now we keep ALL matching classes.
     const classSnap = await getDocs(query(collection(db, "classes"), where("teacherEmail", "==", teacher.email)));
@@ -406,7 +420,7 @@ async function loadMyStudents() {
   const ctx = await getMyContext();
 
   if (!ctx || !ctx.myClasses || ctx.myClasses.length === 0) {
-    tableBody.innerHTML = `<tr><td colspan="5">Aapko abhi tak koi class assign nahi hui. Admin se sampark karein.</td></tr>`;
+    tableBody.innerHTML = `<tr><td colspan="5">No class has been assigned to you yet. Please contact the admin.</td></tr>`;
     showEmptyClassNote("noClassMsgStudents");
     return;
   }
@@ -418,7 +432,7 @@ async function loadMyStudents() {
   const studentDocs = await getStudentsInClasses(classIds);
 
   if (studentDocs.length === 0) {
-    tableBody.innerHTML = `<tr><td colspan="5">Aapki classes mein abhi koi student nahi hai.</td></tr>`;
+    tableBody.innerHTML = `<tr><td colspan="5">There are no students in your classes yet.</td></tr>`;
     return;
   }
 
@@ -436,7 +450,7 @@ async function loadMyStudents() {
       <td data-label="Father's Name">${escapeHtml(s.father || "-")}</td>
       <td data-label="Action">
         <div class="action-btns">
-          <button class="btn-view" onclick="openMarksFor('${docSnap.id}')">
+          <button class="btn-view" onclick="openMarksFor(${jsq(docSnap.id)})">
             <i class="fa-solid fa-pen-to-square"></i> Add Marks
           </button>
         </div>
@@ -487,7 +501,7 @@ async function loadMarksPage() {
   const ctx = await getMyContext();
 
   if (!ctx || !ctx.myClasses || ctx.myClasses.length === 0) {
-    tableBody.innerHTML = `<tr><td colspan="4">Aapko abhi tak koi class assign nahi hui.</td></tr>`;
+    tableBody.innerHTML = `<tr><td colspan="4">No class has been assigned to you yet.</td></tr>`;
     showEmptyClassNote("noClassMsgMarks");
     return;
   }
@@ -501,7 +515,7 @@ async function loadMarksPage() {
   tableBody.innerHTML = "";
 
   if (studentDocs.length === 0) {
-    tableBody.innerHTML = `<tr><td colspan="4">Aapki classes mein koi student nahi hai.</td></tr>`;
+    tableBody.innerHTML = `<tr><td colspan="4">There are no students in your classes.</td></tr>`;
     return;
   }
 
@@ -516,7 +530,7 @@ async function loadMarksPage() {
       <td data-label="Class">${escapeHtml(s.class || "-")}</td>
       <td data-label="Action">
         <div class="action-btns">
-          <button class="btn-edit" onclick="openMarksModal('${docSnap.id}', '${escapeHtml(s.name || "")}', '${escapeHtml(s.class || "")}')">
+          <button class="btn-edit" onclick="openMarksModal(${jsq(docSnap.id)}, ${jsq(s.name || "")}, ${jsq(s.class || "")})">
             <i class="fa-solid fa-pen-to-square"></i> Enter Marks
           </button>
         </div>
@@ -584,7 +598,7 @@ window.openMarksModal = openMarksModal;
 // ==========================
 // Publish Result (per-teacher, from the Marks modal)
 // Each teacher can publish/unpublish a student's result for
-// their own class right from marks entry, next to Save Marks —
+// their own class right from marks entry, next to Save Marks -
 // this used to live on the admin's Edit Student page.
 // ==========================
 let currentMarksPublishStatus = "unpublished";
@@ -646,7 +660,7 @@ async function toggleResultPublish() {
   try {
     await setDoc(doc(db, "students", currentMarksRoll), { publishStatus: newStatus }, { merge: true });
     updatePublishUI(newStatus);
-    alert(newStatus === "published" ? "Result published — the student can now see it." : "Result unpublished.");
+    alert(newStatus === "published" ? "Result published - the student can now see it." : "Result unpublished.");
   } catch (error) {
     console.error(error);
     alert(error.message);
@@ -706,7 +720,7 @@ async function saveTeacherMarks() {
   // Recorded alongside the marks so the admin's teacher-profile
   // "Recent Activities" feed can show a real "Updated Marks" entry
   // instead of having no way to attribute/date this action.
-  resultData.updatedBy = sessionStorage.getItem("teacherDocId") || "";
+  resultData.updatedBy = localStorage.getItem("teacherDocId") || "";
   resultData.updatedAt = serverTimestamp();
   resultData.studentRoll = currentMarksRoll;
 
@@ -783,7 +797,7 @@ async function renderAttendanceList(date) {
   const ctx = await getMyContext();
 
   if (!ctx || !ctx.myClasses || ctx.myClasses.length === 0) {
-    tableBody.innerHTML = `<tr><td colspan="4">Aapko abhi tak koi class assign nahi hui.</td></tr>`;
+    tableBody.innerHTML = `<tr><td colspan="4">No class has been assigned to you yet.</td></tr>`;
     showEmptyClassNote("noClassMsgAttendance");
     return;
   }
@@ -794,7 +808,7 @@ async function renderAttendanceList(date) {
   const studentDocs = await getStudentsInClasses(classIds);
 
   if (studentDocs.length === 0) {
-    tableBody.innerHTML = `<tr><td colspan="4">Aapki classes mein koi student nahi hai.</td></tr>`;
+    tableBody.innerHTML = `<tr><td colspan="4">There are no students in your classes.</td></tr>`;
     return;
   }
 
@@ -847,7 +861,7 @@ async function saveAttendance() {
   const date = document.getElementById("attendanceDate").value;
 
   if (!date) {
-    alert("Pehle date select karein.");
+    alert("Select a date first.");
     return;
   }
 
@@ -864,7 +878,7 @@ async function saveAttendance() {
       await setDoc(doc(db, "students", roll, "attendance", date), {
         status,
         studentRoll: roll,
-        markedBy: sessionStorage.getItem("teacherDocId") || "",
+        markedBy: localStorage.getItem("teacherDocId") || "",
         markedAt: serverTimestamp()
       });
 
@@ -918,21 +932,21 @@ async function loadHomeworkPage() {
       });
 
       // subjects vary by class (e.g. Nursery has Rhymes/G.K, not
-      // Computer/E.V.S) so the subject suggestions refresh whenever
-      // the selected class changes.
+      // Science/Social Studies) so the subject suggestions refresh
+      // whenever the selected class changes.
       classSelect.addEventListener("change", () => refreshSubjectsFor(classSelect.value));
       refreshSubjectsFor(classSelect.value);
 
     } else {
       const opt = document.createElement("option");
       opt.value = "";
-      opt.textContent = "Koi class assign nahi hai";
+      opt.textContent = "No class assigned";
       classSelect.appendChild(opt);
       refreshSubjectsFor(null);
     }
 
   } else {
-    // page has no class picker — fall back to a merged subject list
+    // page has no class picker - fall back to a merged subject list
     let subjects = DEFAULT_SUBJECTS;
     if (ctx && ctx.myClasses && ctx.myClasses.length > 0) {
       const merged = new Set();
@@ -967,7 +981,7 @@ async function loadHomeworkList() {
   const ctx = await getMyContext();
 
   if (!ctx || !ctx.myClasses || ctx.myClasses.length === 0) {
-    list.innerHTML = `<p class="result-empty-msg">Aapko abhi tak koi class assign nahi hui.</p>`;
+    list.innerHTML = `<p class="result-empty-msg">No class has been assigned to you yet.</p>`;
     return;
   }
 
@@ -985,7 +999,7 @@ async function loadHomeworkList() {
   });
 
   if (hwDocs.length === 0) {
-    list.innerHTML = `<p class="result-empty-msg">Abhi tak koi homework nahi diya gaya.</p>`;
+    list.innerHTML = `<p class="result-empty-msg">No homework has been given yet.</p>`;
     return;
   }
 
@@ -1003,11 +1017,11 @@ async function loadHomeworkList() {
         <span class="due">${escapeHtml(hw.dueDate || "")}</span>
       </div>
       <div class="homework-body">
-        <h4>${escapeHtml(hw.title || "Homework")} <small style="font-weight:500;color:var(--text-muted,#8a8fa3);">— ${escapeHtml(hw.className || hw.classId || "")}</small></h4>
+        <h4>${escapeHtml(hw.title || "Homework")} <small style="font-weight:500;color:var(--text-muted,#8a8fa3);">- ${escapeHtml(hw.className || hw.classId || "")}</small></h4>
         <p>${escapeHtml(hw.description || "")}</p>
       </div>
       <div class="action-btns">
-        <button class="btn-delete" onclick="deleteHomework('${docSnap.id}')">
+        <button class="btn-delete" onclick="deleteHomework(${jsq(docSnap.id)})">
           <i class="fa-solid fa-trash"></i>
         </button>
       </div>
@@ -1027,14 +1041,14 @@ async function addHomework() {
   const dueDate = document.getElementById("hwDueDate").value;
 
   if (!subject || !title || !dueDate) {
-    alert("Please fill Subject, Title aur Due Date.");
+    alert("Please fill Subject, Title and Due Date.");
     return;
   }
 
   const ctx = await getMyContext();
 
   if (!ctx || !ctx.myClasses || ctx.myClasses.length === 0) {
-    alert("Aapko abhi tak koi class assign nahi hui.");
+    alert("No class has been assigned to you yet.");
     return;
   }
 
@@ -1051,7 +1065,7 @@ async function addHomework() {
   }
 
   if (!targetClass) {
-    alert("Aap multiple classes ke teacher hain — pehle yeh batayein ki yeh homework kis class ke liye hai.");
+    alert("You teach more than one class. Please choose which class this homework is for.");
     return;
   }
 
@@ -1064,7 +1078,7 @@ async function addHomework() {
       title,
       description,
       dueDate,
-      postedBy: sessionStorage.getItem("teacherDocId") || "",
+      postedBy: localStorage.getItem("teacherDocId") || "",
       createdAt: serverTimestamp()
     });
 
@@ -1087,7 +1101,7 @@ window.addHomework = addHomework;
 
 async function deleteHomework(id) {
 
-  const confirmDelete = confirm("Yeh homework delete karna hai?");
+  const confirmDelete = confirm("Delete this homework?");
   if (!confirmDelete) return;
 
   try {

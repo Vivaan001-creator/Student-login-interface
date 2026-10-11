@@ -1,28 +1,36 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en-IN">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https://firebasestorage.googleapis.com https://storage.googleapis.com https://*.googleusercontent.com; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://www.gstatic.com; object-src 'none'; base-uri 'self'; form-action 'self' mailto:">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="description" content="View a student assessment result.">
+<meta name="theme-color" content="#0e1326">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="stylesheet" href="site.css">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script src="appearance.js"></script>
 <script src="session-timer.js"></script>
-<script src="month-picker.js"></script>
-<title>Home Tuition - Assessment Result</title>
+<title>Assessment Result - GenAlpha</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Dancing+Script:wght@600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
   :root{
-    --paper:#f7f2e4; --cream:#fdf6e8; --ink:#241f14; --ink-soft:#7a715c; --ink-faint:#a89d84;
+    --paper:#f7f2e4; --cream:#fdf6e8; --ink:#241f14; --ink-soft:#6d644e; --ink-faint:#a89d84;
     --amber:#ffb347; --amber-deep:#ff8c42; --amber-shadow:#d9691f; --coral:#ff6f61;
     --navy-900:#161d3a; --navy-950:#0e1326;
-    --green:#2fb87f; --green-bg:#e4f7ee; --red:#e5584a; --red-bg:#fdeceb;
+    --green:#1f8f5f; --green-bg:#e4f7ee; --red:#c0392b; --red-bg:#fdeceb;
     --radius-lg:24px; --radius-md:14px;
     --ease:cubic-bezier(.16,.84,.44,1);
     --surface-card:#ffffff; --surface-card-border:rgba(36,31,20,.06); --surface-card-shadow:rgba(36,31,20,.09);
   }
   html[data-theme="dark"]{
-    --paper:#161d3a; --cream:#1c2444; --ink:#f3ecd9; --ink-soft:#b7bcdc; --ink-faint:#7c84a8;
+    --green:#2fb87f; --red:#ff7b6e;
+    --paper:#161d3a; --cream:#1c2444; --ink:#f3ecd9; --ink-soft:#b7bcdc; --ink-faint:#9199bb;
     --green-bg:#173a2c; --red-bg:#3a1e1c;
     --surface-card:rgba(255,255,255,.045); --surface-card-border:rgba(255,255,255,.1); --surface-card-shadow:rgba(0,0,0,.35);
   }
@@ -39,8 +47,8 @@
   .result-header-actions{ display:flex; gap:8px; flex-wrap:wrap; }
   .result-header-actions button{
     display:inline-flex; align-items:center; gap:7px; border:none; cursor:pointer; font-family:inherit;
-    font-size:12.5px; font-weight:600; padding:10px 16px; border-radius:999px; background:#fff;
-    border:1.5px solid rgba(36,31,20,.09); color:var(--ink); transition:transform .15s var(--ease), border-color .15s var(--ease);
+    font-size:12.5px; font-weight:600; padding:10px 16px; border-radius:12px; background:var(--surface-card);
+    border:1.5px solid var(--surface-card-border); color:var(--ink); transition:transform .15s var(--ease), border-color .15s var(--ease);
   }
   .result-header-actions button:hover{ transform:translateY(-2px); border-color:var(--amber-deep); color:var(--amber-deep); }
   .result-header-actions button.danger{ color:var(--red); border-color:rgba(229,88,74,.25); }
@@ -54,7 +62,7 @@
   .profile-info{ display:grid; grid-template-columns:1fr 1fr; gap:6px 26px; flex:1; min-width:240px; }
   .profile-info p{ font-size:13px; color:var(--ink-soft); }
   .profile-info strong{ color:var(--ink); font-weight:600; }
-  .month-select{ border:1.5px solid rgba(36,31,20,.1); border-radius:8px; padding:4px 10px; font-size:12.5px; font-family:inherit; background:var(--paper); color:var(--ink); }
+  #monthLabel{ font-size:12.5px; }
 
   .section-title{ font-size:16px; margin-bottom:14px; }
 
@@ -73,20 +81,61 @@
 
   .comment-box{ background:var(--paper); border-radius:var(--radius-md); padding:16px 18px; font-size:13.5px; line-height:1.6; color:var(--ink); margin-bottom:26px; }
 
+  html[data-theme="dark"] .signature-mark{ color:var(--ink); }
   .signature-row{ text-align:right; padding-top:10px; }
   .signature-mark{ font-family:'Dancing Script', cursive; font-size:26px; color:var(--navy-900); }
   .signature-row p{ font-size:11.5px; color:var(--ink-soft); border-top:1px solid rgba(36,31,20,.12); display:inline-block; padding-top:4px; margin-top:2px; }
 
-  .result-footer{ text-align:center; font-size:12.5px; color:var(--ink-faint); margin-top:24px; }
+  .result-footer{ text-align:center; font-size:12.5px; color:var(--ink-soft); margin-top:24px; }
 
   @media print{
     body{ background:#fff; }
     .result-header-actions{ display:none; }
     .result-card{ box-shadow:none; border:none; }
+    #appearanceMount{ display:none !important; }
   }
   @media (max-width:640px){
     .profile-info{ grid-template-columns:1fr; }
     .result-card{ padding:24px 18px; }
+  }
+
+  /* ---------- Phones: every part of the result fits the screen width ---------- */
+  @media screen and (max-width:560px){
+    .result-page{ padding:14px 12px 40px; }
+    .result-header{ gap:12px; margin-bottom:16px; }
+    .result-header-text{ width:100%; }
+    .result-header-actions{ width:100%; display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+    .result-header-actions button{ width:100%; justify-content:center; min-height:44px; padding:10px 8px; }
+    .result-card{ padding:18px 14px; border-radius:18px; }
+
+    .profile-row{ gap:12px; padding-bottom:16px; margin-bottom:18px; }
+    .profile-avatar{ width:48px; height:48px; font-size:20px; }
+    .profile-info{ min-width:0; width:100%; flex-basis:100%; gap:0; }
+    .profile-info p{ display:flex; justify-content:space-between; gap:12px; padding:8px 0; border-bottom:1px solid rgba(36,31,20,.07); text-align:right; }
+    .profile-info p:last-child{ border-bottom:0; }
+    .profile-info p strong{ text-align:left; flex-shrink:0; }
+    .profile-info p span{ min-width:0; overflow-wrap:anywhere; }
+
+    /* Marks table becomes one card per subject */
+    .table-wrap{ overflow:visible; border:0; border-radius:0; }
+    table.marks-table, table.marks-table tbody{ display:block; width:100%; }
+    table.marks-table thead{ position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+    table.marks-table tr{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px 8px; background:var(--paper); border-radius:var(--radius-md); padding:12px 14px; margin-bottom:10px; }
+    table.marks-table td{ display:block; padding:0; border:0; min-width:0; font-size:14px; font-weight:600; }
+    table.marks-table td:nth-child(1){ grid-column:1 / 3; grid-row:1; font-size:15px; overflow-wrap:anywhere; }
+    table.marks-table td:nth-child(5){ grid-column:3; grid-row:1; justify-self:end; align-self:start; }
+    table.marks-table td[data-label]:nth-child(n+2):nth-child(-n+4)::before{
+      content:attr(data-label); display:block; font-size:10.5px; font-weight:600; text-transform:uppercase; letter-spacing:.4px; color:var(--ink-soft); margin-bottom:2px; }
+    table.marks-table td.empty-row{ grid-column:1 / -1; text-align:center; font-weight:400; font-size:13px; padding:8px 0 !important; }
+
+    .summary-grid{ grid-template-columns:1fr 1fr; gap:10px; }
+    .summary-card{ padding:14px 8px; }
+    .summary-value{ font-size:17px; overflow-wrap:anywhere; }
+    .comment-box{ padding:14px; }
+    .signature-mark{ font-size:22px; }
+  }
+  @media screen and (max-width:340px){
+    .result-header-actions{ grid-template-columns:1fr; }
   }
   @media (prefers-reduced-motion: reduce){ *{ animation:none !important; transition:none !important; } }
 </style>
@@ -119,7 +168,7 @@
         <p><strong>Roll No:</strong> <span id="studentRoll">-</span></p>
         <p><strong>Father's Name:</strong> <span id="fatherName">-</span></p>
         <p><strong>Section:</strong> <span id="studentSection">-</span></p>
-        <p><strong>Month:</strong> <select id="monthSelect" class="month-select"></select></p>
+        <p><strong>Month:</strong> <span id="monthLabel">-</span></p>
       </div>
     </div>
 
@@ -151,13 +200,12 @@
 </div>
 
 <script>
-  try { Appearance.renderMenu(document.getElementById('appearanceMount'), { variant: 'corner' }); } catch(e) {}
-  try { MonthPicker.enhance(document.getElementById('monthSelect')); } catch(e) {}
+  try { Appearance.renderMenu(document.getElementById('appearanceMount')); } catch(e) {}
 </script>
 
 <script>
   try {
-    const isParentSessionActive = sessionStorage.getItem('parentLoggedIn') === 'true';
+    const isParentSessionActive = localStorage.getItem('parentLoggedIn') === 'true';
     SessionTimer.start({
       flagKeys: ['parentLoggedIn', 'studentLoggedIn'],
       loginUrl: isParentSessionActive ? 'parent-login.html' : 'student-login.html'
@@ -166,5 +214,6 @@
 </script>
 
 <script type="module" src="result.js"></script>
+<script src="site.js"></script>
 </body>
 </html>

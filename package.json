@@ -1,0 +1,21 @@
+{
+  "name": "genalpha-app",
+  "version": "1.0.0",
+  "description": "GenAlpha — Home Tuition management system, packaged as an Android app with Capacitor.",
+  "private": true,
+  "scripts": {
+    "sync": "npx cap sync android",
+    "open:android": "npx cap open android",
+    "build:android": "cd android && ./gradlew assembleDebug",
+    "assets": "npx capacitor-assets generate --android"
+  },
+  "dependencies": {
+    "@capacitor/android": "^6.1.2",
+    "@capacitor/core": "^6.1.2",
+    "@capacitor/splash-screen": "^6.0.3"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^6.1.2",
+    "@capacitor/assets": "^3.0.5"
+  }
+}

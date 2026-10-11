@@ -1,22 +1,31 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en-IN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https://firebasestorage.googleapis.com https://storage.googleapis.com https://*.googleusercontent.com; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://www.gstatic.com; object-src 'none'; base-uri 'self'; form-action 'self' mailto:">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="description" content="Your results, attendance, homework and notices.">
+<meta name="theme-color" content="#0e1326">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="stylesheet" href="site.css">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <script src="appearance.js"></script>
 <script src="session-timer.js"></script>
 <script src="month-picker.js"></script>
-<title>My Dashboard - Home Tuition</title>
+<title>Student Dashboard - GenAlpha</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Baloo+2:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
   :root{
     --navy-950:#0e1326; --navy-900:#161d3a; --navy-800:#232c56;
-    --cream:#fdf6e8; --cream-dim:#f4e8d0; --paper:#f7f2e4;
+    --cream:#fdf6e8; --cream-dim:#f4e8d0; --paper:#fff8ec;
     --amber:#ffb347; --amber-deep:#ff8c42; --amber-shadow:#d9691f; --coral:#ff6f61;
-    --ink:#241f14; --ink-soft:#7a715c; --ink-faint:#a89d84;
+    --brand-yellow:#ffc72c; --brand-yellow-deep:#ffb300; --brand-ink:#1c1c1c;
+    --ink:#241f14; --ink-soft:#6d644e; --ink-faint:#a89d84;
     --green:#2fb87f; --green-bg:#e4f7ee;
     --red:#e5584a; --red-bg:#fdeceb;
     --blue:#4a7fd6; --blue-bg:#e9f0fd;
@@ -25,105 +34,135 @@
     --pink:#e2649e; --pink-bg:#fceaf3;
     --radius-lg:24px; --radius-md:16px; --radius-sm:12px;
     --surface-card:#ffffff; --surface-card-border:rgba(36,31,20,.06);
-    --surface-card-shadow:rgba(36,31,20,.07); --surface-hover:#eee3cc;
+    --surface-card-shadow:rgba(36,31,20,.07); --nav-surface:#ffffff;
     --ease:cubic-bezier(.16,.84,.44,1);
   }
 
   html[data-theme="dark"]{
-    --cream:#1c2444; --cream-dim:#232c56; --paper:#161d3a;
-    --ink:#f3ecd9; --ink-soft:#b7bcdc; --ink-faint:#7c84a8;
+    --cream:#1c2444; --cream-dim:#232c56; --paper:#12172c;
+    --ink:#f3ecd9; --ink-soft:#b7bcdc; --ink-faint:#9199bb;
     --green-bg:#173a2c; --red-bg:#3a1e1c; --blue-bg:#1c2c4a;
     --purple-bg:#2a2456; --teal-bg:#173a38; --pink-bg:#3a2038;
+    /* --surface-card stays translucent on purpose for regular cards
+       (a subtle frosted look over --paper). The bottom nav needs a
+       SOLID background instead - see --nav-surface - otherwise page
+       content behind it shows through the ~4.5% opacity white. */
     --surface-card:rgba(255,255,255,.045); --surface-card-border:rgba(255,255,255,.1);
-    --surface-card-shadow:rgba(0,0,0,.35); --surface-hover:rgba(255,255,255,.07);
+    --surface-card-shadow:rgba(0,0,0,.35); --nav-surface:#1b2140;
   }
 
-  *{ margin:0; padding:0; box-sizing:border-box; }
+  *{ margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html{ scroll-padding-top:env(safe-area-inset-top,0px); }
   body{ font-family:'Inter', sans-serif; background:var(--paper); color:var(--ink); }
   h1,h2,h3,h4{ font-family:'Fraunces', serif; font-weight:600; }
   a{ text-decoration:none; color:inherit; }
+  button{ font-family:inherit; }
   ::-webkit-scrollbar{ width:8px; height:8px; }
   ::-webkit-scrollbar-thumb{ background:rgba(36,31,20,.15); border-radius:8px; }
 
-  .app{ display:flex; min-height:100vh; }
+  /* ============ APP SHELL ============ */
+  .app-shell{ min-height:100vh; min-height:100dvh; display:flex; flex-direction:column; }
 
-  /* ============ SIDEBAR ============ */
-  .sidebar{
-    width:78px;
-    background:linear-gradient(180deg, var(--navy-900) 0%, var(--navy-950) 100%);
-    color:#f3ecd9; display:flex; flex-direction:column; padding:20px 0;
-    position:sticky; top:0; height:100vh; transition:width .3s var(--ease); z-index:40; overflow:hidden;
-  }
-  .sidebar.expanded{ width:230px; }
-  .menu-toggle{
-    background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); color:#f3ecd9;
-    width:36px; height:36px; border-radius:10px; cursor:pointer; font-size:14px;
-    margin:0 auto 22px; display:flex; align-items:center; justify-content:center; transition:background .2s var(--ease);
-  }
-  .menu-toggle:hover{ background:rgba(255,255,255,.12); }
-  .sidebar-brand{ display:flex; align-items:center; gap:12px; padding:0 20px; margin-bottom:30px; }
-  .brand-icon{ min-width:38px; height:38px; border-radius:11px; background:linear-gradient(135deg, var(--amber) 0%, var(--coral) 100%);
-    display:flex; align-items:center; justify-content:center; color:#241608; font-size:16px; box-shadow:0 6px 14px rgba(255,140,66,.3); }
-  .brand-text{ white-space:nowrap; opacity:0; transition:opacity .25s var(--ease) .1s; }
-  .sidebar.expanded .brand-text{ opacity:1; }
-  .brand-text h1{ font-size:16px; line-height:1; }
-  .brand-text h1 .accent{ color:var(--amber); }
-  .brand-text p{ font-size:10.5px; color:#b7bcdc; letter-spacing:.4px; text-transform:uppercase; margin-top:2px; }
-  .sidebar-nav{ display:flex; flex-direction:column; gap:4px; padding:0 14px; flex:1; }
-  .nav-link{ display:flex; align-items:center; gap:14px; padding:12px 12px; border-radius:12px; color:#c7cbe0; font-size:13.5px; font-weight:500; white-space:nowrap; transition:background .2s var(--ease), color .2s var(--ease); }
-  .nav-link i{ width:18px; text-align:center; font-size:15px; }
-  .nav-link:hover{ background:rgba(255,255,255,.06); color:#fff; }
-  .nav-link.active{ background:rgba(255,179,71,.14); color:var(--amber); }
-  .link-text{ opacity:0; transition:opacity .2s var(--ease); }
-  .sidebar.expanded .link-text{ opacity:1; }
-  .sidebar-backdrop{ display:none; position:fixed; inset:0; background:rgba(14,19,38,.5); z-index:30; }
-  .sidebar-backdrop.active{ display:block; }
-
-  /* ============ MAIN ============ */
-  .main{ flex:1; min-width:0; }
-  .dashboard-hero{
+  /* BUG FIX: this was `display:flex` directly on .top-header, which
+     put .top-header-left, .header-actions AND .streak-row into ONE
+     horizontal row - that's what squeezed the name down to "H..."
+     and pushed the streak chips off the right edge of the screen on
+     a real phone width. .top-header now just stacks its two rows
+     (.top-header-row, then .streak-row) vertically; the row itself
+     handles the left/right split. */
+  .top-header{
+    background:linear-gradient(135deg, var(--navy-900) 0%, var(--navy-950) 100%);
+    color:#f3ecd9; padding:16px 16px 20px;
+    padding-top:calc(16px + env(safe-area-inset-top,0px));
+    border-radius:0 0 28px 28px;
     position:relative; overflow:hidden;
-    background:radial-gradient(ellipse 120% 100% at 100% 0%, var(--navy-800) 0%, var(--navy-950) 70%);
-    color:#f3ecd9; padding:34px 30px 46px; display:flex; align-items:flex-start; justify-content:space-between; gap:20px; flex-wrap:wrap;
   }
-  .dashboard-hero::before{ content:''; position:absolute; top:-40px; right:60px; width:220px; height:220px;
-    background:radial-gradient(circle, rgba(255,179,71,.28) 0%, transparent 70%); filter:blur(4px); }
-  .topbar-left, .topbar-right{ position:relative; z-index:1; }
-  .topbar-left h1{ font-size:clamp(22px,3.5vw,28px); }
-  .topbar-left h1 span{ color:var(--amber); }
-  .topbar-left p{ font-size:13px; color:#b7bcdc; margin-top:6px; }
-  .admin-profile{ display:flex; align-items:center; gap:10px; background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.1); padding:8px 16px 8px 8px; border-radius:999px; }
-  .avatar{ width:32px; height:32px; border-radius:50%; background:linear-gradient(135deg, var(--amber), var(--coral)); display:flex; align-items:center; justify-content:center; color:#241608; font-size:13px; }
-  .admin-profile span{ font-size:12.5px; font-weight:600; }
+  .top-header::before{ content:''; position:absolute; top:-50px; right:-30px; width:180px; height:180px;
+    background:radial-gradient(circle, rgba(255,199,44,.25) 0%, transparent 70%); pointer-events:none; }
+  .top-header-row{ display:flex; align-items:center; justify-content:space-between; gap:10px; position:relative; z-index:1; }
+  .top-header-left{ display:flex; align-items:center; gap:10px; min-width:0; flex:1 1 auto; }
+  .avatar-badge{
+    min-width:48px; width:48px; height:48px; border-radius:16px;
+    background:linear-gradient(135deg, var(--brand-yellow) 0%, var(--amber-deep) 100%);
+    display:flex; align-items:center; justify-content:center; font-size:20px; color:var(--brand-ink);
+    box-shadow:0 6px 14px rgba(0,0,0,.25); flex-shrink:0;
+  }
+  .greeting-block{ min-width:0; }
+  .greeting{ font-family:'Baloo 2', sans-serif; font-size:17px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .greeting .accent{ color:var(--brand-yellow); }
+  .greeting-sub{ font-size:11.5px; color:#b7bcdc; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .header-actions{ display:flex; align-items:center; gap:8px; position:relative; z-index:2; flex-shrink:0; }
+  .header-icon-btn{
+    width:36px; height:36px; border-radius:50%; background:rgba(255,255,255,.1);
+    border:1px solid rgba(255,255,255,.16); color:#fff; display:flex; align-items:center; justify-content:center;
+    cursor:pointer; font-size:13px; transition:background .2s var(--ease);
+  }
+  .header-icon-btn:hover{ background:rgba(255,255,255,.18); }
 
-  .content{ padding:30px 30px 50px; max-width:1100px; margin:0 auto; margin-top:-26px; position:relative; z-index:2; }
+  .streak-row{ position:relative; z-index:1; display:flex; gap:10px; margin-top:16px; overflow-x:auto; padding-bottom:2px; }
+  .streak-chip{
+    flex:1 1 0; min-width:86px; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12);
+    border-radius:16px; padding:10px 12px; text-align:center;
+  }
+  .streak-chip .num{ font-family:'Baloo 2', sans-serif; font-size:17px; font-weight:700; color:var(--brand-yellow); }
+  .streak-chip .lbl{ font-size:10px; color:#c7cbe0; margin-top:1px; }
 
-  .card{ background:var(--surface-card); border:1px solid rgba(36,31,20,.06); border-radius:var(--radius-lg); padding:26px 24px; margin-bottom:22px; box-shadow:0 16px 36px rgba(36,31,20,.07); }
-  .card-title{ display:flex; align-items:center; gap:10px; margin-bottom:20px; }
-  .card-title i{ color:var(--amber-deep); font-size:16px; }
-  .card-title h2{ font-size:17px; }
-  .card-note{ font-size:13px; color:var(--ink-soft); margin:-12px 0 18px; }
+  .app-content{
+    flex:1; width:100%; max-width:640px; margin:0 auto;
+    padding:18px 16px calc(112px + env(safe-area-inset-bottom,0px));
+  }
+  .tab-panel{ animation:tabIn .25s var(--ease); }
+  @keyframes tabIn{ from{ opacity:0; transform:translateY(8px); } to{ opacity:1; transform:translateY(0); } }
 
-  .mini-stats-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(150px,1fr)); gap:14px; }
-  .mini-stat-card{ display:flex; align-items:center; gap:12px; background:var(--paper); border:1px solid rgba(36,31,20,.05); border-radius:var(--radius-md); padding:14px 16px;
-    transition:transform .15s ease-out, box-shadow .2s var(--ease); transform-style:preserve-3d; will-change:transform; }
+  /* ============ BOTTOM NAV ============ */
+  .bottom-nav{
+    position:fixed; left:14px; right:14px; bottom:calc(14px + env(safe-area-inset-bottom,0px));
+    z-index:60; background:var(--nav-surface); border:1px solid var(--surface-card-border);
+    border-radius:26px; box-shadow:0 16px 36px rgba(20,16,10,.2);
+    display:flex; justify-content:space-around; align-items:stretch; padding:7px 4px;
+    max-width:612px; margin:0 auto;
+  }
+  .bn-item{
+    background:none; border:none; display:flex; flex-direction:column; align-items:center; gap:3px;
+    padding:6px 4px; cursor:pointer; color:var(--ink-faint); flex:1; border-radius:16px;
+    transition:color .2s var(--ease);
+  }
+  .bn-icon-wrap{
+    width:40px; height:28px; border-radius:14px; display:flex; align-items:center; justify-content:center;
+    font-size:15px; transition:background .2s var(--ease), color .2s var(--ease), transform .2s var(--ease);
+  }
+  .bn-label{ font-size:9.5px; font-weight:700; letter-spacing:.1px; }
+  .bn-item.bn-active{ color:var(--amber-deep); }
+  .bn-item.bn-active .bn-icon-wrap{ background:var(--brand-yellow); color:var(--brand-ink); transform:translateY(-1px); }
+
+  /* ============ CARDS (shared with existing data logic) ============ */
+  .card{ background:var(--surface-card); border:1px solid var(--surface-card-border); border-radius:var(--radius-lg);
+    padding:22px 20px; margin-bottom:16px; box-shadow:0 12px 28px var(--surface-card-shadow); }
+  .card-title{ display:flex; align-items:center; gap:10px; margin-bottom:18px; }
+  .card-title .card-title-icon{ width:34px; height:34px; border-radius:11px; display:flex; align-items:center; justify-content:center;
+    background:var(--purple-bg); color:var(--purple); font-size:14px; flex-shrink:0; }
+  .card-title h2{ font-size:16px; }
+  .card-note{ font-size:12.5px; color:var(--ink-soft); margin:-10px 0 16px; }
+
+  .mini-stats-grid{ display:grid; grid-template-columns:repeat(2, 1fr); gap:12px; }
+  .mini-stat-card{ display:flex; align-items:center; gap:11px; background:var(--paper); border:1px solid var(--surface-card-border);
+    border-radius:var(--radius-md); padding:13px 14px; }
   .mini-stat-card.full-width{ grid-column:1 / -1; }
-  .mini-stat-card:hover{ box-shadow:0 12px 24px rgba(36,31,20,.1); }
-  .mini-stat-icon{ min-width:40px; height:40px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:15px; }
+  .mini-stat-icon{ min-width:38px; height:38px; border-radius:11px; display:flex; align-items:center; justify-content:center; font-size:14px; }
   .mini-stat-icon.purple{ background:var(--purple-bg); color:var(--purple); }
   .mini-stat-icon.blue{ background:var(--blue-bg); color:var(--blue); }
   .mini-stat-icon.green{ background:var(--green-bg); color:var(--green); }
   .mini-stat-icon.orange{ background:#fdf0e3; color:var(--amber-deep); }
   .mini-stat-icon.teal{ background:var(--teal-bg); color:var(--teal); }
   .mini-stat-icon.pink{ background:var(--pink-bg); color:var(--pink); }
-  .mini-stat-number{ font-size:15px; font-weight:700; }
-  .mini-stat-label{ font-size:11px; color:var(--ink-soft); margin-top:1px; }
+  .mini-stat-number{ font-size:14.5px; font-weight:700; }
+  .mini-stat-label{ font-size:10.5px; color:var(--ink-soft); margin-top:1px; }
 
   .field{ display:flex; flex-direction:column; gap:6px; }
   .field label{ font-size:12px; font-weight:600; color:var(--ink-soft); }
   .input-wrap.select-wrap{ position:relative; }
   .input-wrap select{
-    width:100%; appearance:none; background:var(--paper); border:1.5px solid rgba(36,31,20,.08);
+    width:100%; appearance:none; background:var(--paper); border:1.5px solid var(--surface-card-border);
     border-radius:12px; padding:11px 34px 11px 14px; font-size:13.5px; font-family:inherit; color:var(--ink); cursor:pointer;
     transition:border-color .2s var(--ease);
   }
@@ -132,95 +171,71 @@
 
   .btn-primary{
     display:inline-flex; align-items:center; gap:8px; border:none; cursor:pointer;
-    background:linear-gradient(135deg, var(--amber) 0%, var(--coral) 100%); color:#241608;
-    font-weight:700; font-size:13.5px; font-family:inherit; padding:12px 22px; border-radius:999px;
+    background:linear-gradient(135deg, var(--brand-yellow) 0%, var(--amber-deep) 100%); color:var(--brand-ink);
+    font-weight:700; font-size:13.5px; font-family:inherit; padding:13px 22px; border-radius:12px; width:100%; justify-content:center;
     box-shadow:0 4px 0 var(--amber-shadow), 0 10px 22px rgba(255,140,66,.28);
     transition:transform .15s var(--ease), box-shadow .15s var(--ease);
   }
-  .btn-primary:hover{ transform:translateY(-2px); box-shadow:0 6px 0 var(--amber-shadow), 0 14px 26px rgba(255,140,66,.34); }
   .btn-primary:active{ transform:translateY(2px); box-shadow:0 2px 0 var(--amber-shadow), 0 6px 14px rgba(255,140,66,.3); }
 
-  .table-wrapper{ overflow-x:auto; border-radius:var(--radius-md); border:1px solid rgba(36,31,20,.06); }
-  table.classes-table{ width:100%; border-collapse:collapse; font-size:13px; }
-  table.classes-table th{ text-align:left; background:var(--paper); color:var(--ink-soft); font-weight:600; font-size:11.5px; text-transform:uppercase; letter-spacing:.3px; padding:12px 16px; }
-  table.classes-table td{ padding:12px 16px; border-top:1px solid rgba(36,31,20,.05); }
-  .status-active{ background:var(--green-bg); color:var(--green); font-size:11.5px; font-weight:700; padding:4px 12px; border-radius:999px; }
-  .status-inactive{ background:var(--red-bg); color:var(--red); font-size:11.5px; font-weight:700; padding:4px 12px; border-radius:999px; }
+  .table-wrapper{ overflow-x:auto; border-radius:var(--radius-md); border:1px solid var(--surface-card-border); }
+  table.classes-table{ width:100%; border-collapse:collapse; font-size:12.5px; }
+  table.classes-table th{ text-align:left; background:var(--paper); color:var(--ink-soft); font-weight:600; font-size:10.5px; text-transform:uppercase; letter-spacing:.3px; padding:11px 14px; white-space:nowrap; }
+  table.classes-table td{ padding:11px 14px; border-top:1px solid var(--surface-card-border); }
+  .status-active{ background:var(--green-bg); color:var(--green); font-size:11px; font-weight:700; padding:4px 11px; border-radius:999px; white-space:nowrap; }
+  .status-inactive{ background:var(--red-bg); color:var(--red); font-size:11px; font-weight:700; padding:4px 11px; border-radius:999px; white-space:nowrap; }
 
   .result-empty-msg{ font-size:13px; color:var(--ink-soft); padding:14px 0; text-align:center; }
 
-  .notice-item{ display:flex; gap:14px; padding:16px 0; border-top:1px solid rgba(36,31,20,.06); }
+  .notice-item{ display:flex; gap:13px; padding:14px 0; border-top:1px solid var(--surface-card-border); }
   .notice-item:first-child{ border-top:none; padding-top:2px; }
-  .notice-tag{ display:flex; flex-direction:column; align-items:center; gap:4px; min-width:44px; color:var(--amber-deep); }
-  .notice-tag .date{ font-size:10px; color:var(--ink-soft); white-space:nowrap; }
-  .notice-body h4{ font-size:14px; margin-bottom:3px; }
-  .notice-body p{ font-size:12.5px; color:var(--ink-soft); line-height:1.5; }
+  .notice-tag{ display:flex; flex-direction:column; align-items:center; gap:4px; min-width:40px; color:var(--amber-deep); }
+  .notice-tag .date{ font-size:9.5px; color:var(--ink-soft); white-space:nowrap; }
+  .notice-body h4{ font-size:13.5px; margin-bottom:3px; }
+  .notice-body p{ font-size:12px; color:var(--ink-soft); line-height:1.5; }
 
-  .fee-student-summary{ display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:14px; background:var(--paper); border-radius:var(--radius-md); padding:18px 20px; margin-bottom:18px; }
-  .fee-student-who strong{ display:block; font-size:15px; }
-  .fee-student-who span{ font-size:12px; color:var(--ink-soft); }
-  .fee-student-amounts{ display:flex; align-items:center; gap:14px; font-size:13px; color:var(--ink-soft); flex-wrap:wrap; }
+  .fee-student-summary{ display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;
+    background:var(--paper); border-radius:var(--radius-md); padding:16px 18px; margin-bottom:16px; }
+  .fee-student-who strong{ display:block; font-size:14px; }
+  .fee-student-who span{ font-size:11.5px; color:var(--ink-soft); }
+  .fee-student-amounts{ display:flex; align-items:center; gap:12px; font-size:12.5px; color:var(--ink-soft); flex-wrap:wrap; }
   .fee-student-amounts span:first-child, .fee-student-amounts span:nth-child(2){ font-weight:600; color:var(--ink); }
 
-  .footer{ text-align:center; font-size:12px; color:var(--ink-faint); padding:20px 0 6px; }
-
-  @media (max-width:900px){
-    .sidebar{ position:fixed; left:0; top:0; width:0; padding-left:0; padding-right:0; }
-    .sidebar.expanded{ width:230px; padding-left:0; padding-right:0; }
-    .sidebar.expanded .sidebar-brand, .sidebar.expanded .sidebar-nav{ padding-left:14px; padding-right:14px; }
-    .menu-toggle{ position:fixed; top:16px; left:16px; z-index:50; margin:0; background:var(--navy-900); }
-    .content{ padding:22px 16px 40px; margin-top:-20px; }
-    .dashboard-hero{ padding:70px 20px 40px; }
-    .fee-student-summary{ flex-direction:column; align-items:flex-start; }
-  }
+  .footer{ text-align:center; font-size:11.5px; color:var(--ink-faint); padding:14px 0 4px; }
 
   @media (prefers-reduced-motion: reduce){ *{ animation:none !important; transition:none !important; } }
 </style>
 </head>
 <body>
-<div class="app">
+<div class="app-shell">
 
-  <aside class="sidebar" id="sidebar">
-    <button class="menu-toggle" id="menuToggle" aria-label="Toggle Menu"><i class="fa-solid fa-bars"></i></button>
-
-    <div class="sidebar-brand">
-      <div class="brand-icon"><i class="fa-solid fa-lightbulb"></i></div>
-      <div class="brand-text"><h1><span class="accent">Home</span></h1><p>Tuition</p></div>
-    </div>
-
-    <nav class="sidebar-nav">
-      <a href="student-dashboard.html" class="nav-link active"><i class="fa-solid fa-house"></i><span class="link-text">Dashboard</span></a>
-      <a href="#result-section" class="nav-link"><i class="fa-solid fa-chart-column"></i><span class="link-text">My Result</span></a>
-      <a href="#attendance-section" class="nav-link"><i class="fa-regular fa-square-check"></i><span class="link-text">Attendance</span></a>
-      <a href="#fees-section" class="nav-link"><i class="fa-solid fa-indian-rupee-sign"></i><span class="link-text">My Fees</span></a>
-      <a href="#notices-section" class="nav-link"><i class="fa-regular fa-bell"></i><span class="link-text">Notices</span></a>
-      <a href="student-login.html" class="nav-link" onclick="studentLogout(); return false;"><i class="fa-solid fa-arrow-right-from-bracket"></i><span class="link-text">Logout</span></a>
-    </nav>
-    <div style="display:flex; justify-content:center; margin:6px 0 4px;" id="appearanceMount"></div>
-  </aside>
-
-  <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
-
-  <div class="main">
-    <header class="dashboard-hero">
-      <div class="topbar-left">
-        <h1>Welcome, <span id="dashStudentName">Student</span></h1>
-        <p>Roll Number: <span id="dashStudentRoll">-</span> &nbsp;·&nbsp; Attendance: <span id="dashAttendance">-</span></p>
-        <p style="font-size:12px; color:#8991b8; margin-top:4px;"><i class="fa-solid fa-right-to-bracket"></i> Last login: <span id="dashLastLogin">-</span></p>
-      </div>
-      <div class="topbar-right">
-        <div class="admin-profile">
-          <div class="avatar"><i class="fa-solid fa-user-graduate"></i></div>
-          <span id="dashStudentClass">Class -</span>
+  <header class="top-header">
+    <div class="top-header-row">
+      <div class="top-header-left">
+        <div class="avatar-badge"><i class="fa-solid fa-user-graduate"></i></div>
+        <div class="greeting-block">
+          <div class="greeting">Hey, <span class="accent" id="dashStudentName">Student</span>!</div>
+          <div class="greeting-sub">Class <span id="dashStudentClass">-</span> &nbsp;·&nbsp; Roll <span id="dashStudentRoll">-</span></div>
         </div>
       </div>
-    </header>
+      <div class="header-actions">
+        <div id="appearanceMount"></div>
+        <button class="header-icon-btn" aria-label="Logout" onclick="studentLogout()"><i class="fa-solid fa-arrow-right-from-bracket"></i></button>
+      </div>
+    </div>
 
-    <main class="content" id="studentProfileBox">
+    <div class="streak-row">
+      <div class="streak-chip"><div class="num" id="dashAttendanceStreak">-</div><div class="lbl">Attendance</div></div>
+      <div class="streak-chip"><div class="num" id="dashLastLoginStreak">-</div><div class="lbl">Last Login</div></div>
+    </div>
+  </header>
 
-      <!-- Profile -->
-      <section class="card">
-        <div class="card-title"><i class="fa-solid fa-id-card"></i><h2>My Profile</h2></div>
+  <main class="app-content" id="studentProfileBox">
+
+    <!-- ================= HOME TAB ================= -->
+    <section class="tab-panel" data-tab-section="home">
+      <div class="card">
+        <div class="card-title"><span class="card-title-icon"><i class="fa-solid fa-id-card"></i></span><h2>My Profile</h2></div>
         <div class="mini-stats-grid">
           <div class="mini-stat-card"><div class="mini-stat-icon purple"><i class="fa-solid fa-id-badge"></i></div><div class="mini-stat-info"><div class="mini-stat-number" id="dashStudentRoll2">-</div><div class="mini-stat-label">Roll Number</div></div></div>
           <div class="mini-stat-card"><div class="mini-stat-icon blue"><i class="fa-solid fa-chalkboard"></i></div><div class="mini-stat-info"><div class="mini-stat-number" id="dashStudentClass2">-</div><div class="mini-stat-label">Class</div></div></div>
@@ -231,25 +246,19 @@
           <div class="mini-stat-card full-width"><div class="mini-stat-icon green"><i class="fa-solid fa-user"></i></div><div class="mini-stat-info"><div class="mini-stat-number" id="dashFatherName">-</div><div class="mini-stat-label">Father's Name</div></div></div>
           <div class="mini-stat-card full-width"><div class="mini-stat-icon pink"><i class="fa-solid fa-user"></i></div><div class="mini-stat-info"><div class="mini-stat-number" id="dashMotherName">-</div><div class="mini-stat-label">Mother's Name</div></div></div>
         </div>
-      </section>
+      </div>
 
-      <!-- Result -->
-      <section class="card" id="result-section">
-        <div class="card-title"><i class="fa-solid fa-file-lines"></i><h2>My Result</h2></div>
-        <p class="card-note">Select a month and tap the button to view your report card.</p>
-        <div class="field" style="max-width:260px;margin-bottom:18px;">
-          <label>Select Month</label>
-          <div class="input-wrap select-wrap"><select id="resultMonth"></select></div>
-        </div>
-        <button type="button" class="btn-primary" onclick="viewMyResult()"><i class="fa-solid fa-eye"></i> View My Result</button>
-      </section>
+      <footer class="footer"><nav class="footer-links" aria-label="Legal"><a href="my-portfolio.html">About Vivaan</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="cookies.html">Cookies</a><a href="refund.html">Refunds</a></nav><div>&copy; <span data-year>2026</span> GenAlpha</div></footer>
+<script src="site.js"></script>
+    </section>
 
-      <!-- Attendance -->
-      <section class="card" id="attendance-section">
-        <div class="card-title"><i class="fa-regular fa-square-check"></i><h2>My Attendance</h2></div>
+    <!-- ================= ATTENDANCE TAB ================= -->
+    <section class="tab-panel" data-tab-section="attendance" hidden>
+      <div class="card" id="attendance-section">
+        <div class="card-title"><span class="card-title-icon" style="background:var(--teal-bg); color:var(--teal);"><i class="fa-regular fa-square-check"></i></span><h2>My Attendance</h2></div>
         <div class="field" style="max-width:260px;margin-bottom:16px;">
           <label>Select Month</label>
-          <div class="input-wrap select-wrap"><select id="attendanceMonth"></select></div>
+          <div class="input-wrap select-wrap"><select id="attendanceMonth" aria-label="Attendance month"></select></div>
         </div>
         <div class="mini-stats-grid" id="attendanceSummaryBox" style="margin-bottom:18px;"></div>
         <div class="table-wrapper">
@@ -259,11 +268,26 @@
           </table>
         </div>
         <p id="attendanceEmptyMsg" class="result-empty-msg" style="display:none;"></p>
-      </section>
+      </div>
+    </section>
 
-      <!-- My Fees -->
-      <section class="card" id="fees-section">
-        <div class="card-title"><i class="fa-solid fa-indian-rupee-sign"></i><h2>My Fees</h2></div>
+    <!-- ================= RESULTS TAB ================= -->
+    <section class="tab-panel" data-tab-section="results" hidden>
+      <div class="card" id="result-section">
+        <div class="card-title"><span class="card-title-icon" style="background:var(--blue-bg); color:var(--blue);"><i class="fa-solid fa-file-lines"></i></span><h2>My Result</h2></div>
+        <p class="card-note">Select a month and tap the button to view your report card.</p>
+        <div class="field" style="margin-bottom:18px;">
+          <label>Select Month</label>
+          <div class="input-wrap select-wrap"><select id="resultMonth" aria-label="Result month"></select></div>
+        </div>
+        <button type="button" class="btn-primary" onclick="viewMyResult()"><i class="fa-solid fa-eye"></i> View My Result</button>
+      </div>
+    </section>
+
+    <!-- ================= FEES TAB ================= -->
+    <section class="tab-panel" data-tab-section="fees" hidden>
+      <div class="card" id="fees-section">
+        <div class="card-title"><span class="card-title-icon" style="background:#fdf0e3; color:var(--amber-deep);"><i class="fa-solid fa-indian-rupee-sign"></i></span><h2>My Fees</h2></div>
         <div id="feeSummaryBox"></div>
         <div class="table-wrapper">
           <table class="classes-table">
@@ -272,37 +296,42 @@
           </table>
         </div>
         <p id="feeEmptyMsg" class="result-empty-msg" style="display:none;"></p>
-      </section>
+      </div>
+    </section>
 
-      <!-- Notices -->
-      <section class="card" id="notices-section">
-        <div class="card-title"><i class="fa-regular fa-bell"></i><h2>Notice Board</h2></div>
+    <!-- ================= NOTICES TAB ================= -->
+    <section class="tab-panel" data-tab-section="notices" hidden>
+      <div class="card" id="notices-section">
+        <div class="card-title"><span class="card-title-icon" style="background:var(--pink-bg); color:var(--pink);"><i class="fa-regular fa-bell"></i></span><h2>Notice Board</h2></div>
         <div id="noticesList"></div>
         <p id="noticesEmptyMsg" class="result-empty-msg" style="display:none;"></p>
-      </section>
+      </div>
+    </section>
 
-      <footer class="footer">Made with care, one student at a time. © 2026 Home Tuition.</footer>
-    </main>
-  </div>
+  </main>
+
+  <nav class="bottom-nav" id="bottomNav"></nav>
 </div>
 
 <script>
   try { Appearance.renderMenu(document.getElementById('appearanceMount'), { variant: 'inline' }); } catch(e) {}
 </script>
 
+<script src="bottom-nav.js"></script>
 <script>
-  document.addEventListener('DOMContentLoaded', function(){
-    if (!window.matchMedia('(hover:hover)').matches || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    document.querySelectorAll('.mini-stat-card').forEach(card => {
-      card.addEventListener('pointermove', (e) => {
-        const r = card.getBoundingClientRect();
-        const x = (e.clientX - r.left)/r.width - 0.5;
-        const y = (e.clientY - r.top)/r.height - 0.5;
-        card.style.transform = `perspective(600px) rotateY(${x*8}deg) rotateX(${-y*8}deg) translateY(-2px)`;
-      });
-      card.addEventListener('pointerleave', () => { card.style.transform = ''; });
+  try {
+    BottomNav.init({
+      mountId: 'bottomNav',
+      default: 'home',
+      tabs: [
+        { id: 'home',       icon: 'fa-house',             label: 'Home' },
+        { id: 'attendance', icon: 'fa-calendar-check',    label: 'Attendance' },
+        { id: 'results',    icon: 'fa-file-lines',        label: 'Results' },
+        { id: 'fees',       icon: 'fa-indian-rupee-sign', label: 'Fees' },
+        { id: 'notices',    icon: 'fa-bell',              label: 'Notices' }
+      ]
     });
-  });
+  } catch(e) {}
 </script>
 
 <script>
@@ -316,6 +345,30 @@
 
 <script type="module" src="student.js"></script>
 <script>
+  // student.js writes attendance % / last-login into #dashAttendance and
+  // #dashLastLogin (legacy field IDs from the old layout). This build's
+  // header shows those same two facts as colourful "streak chips" instead -
+  // so we keep the two original elements as hidden nodes (student.js still
+  // finds and fills them) and mirror whatever they receive into the chips.
+  (function () {
+    const streakAtt = document.getElementById('dashAttendanceStreak');
+    const streakLogin = document.getElementById('dashLastLoginStreak');
+
+    const attHidden = document.createElement('span');
+    attHidden.id = 'dashAttendance';
+    attHidden.hidden = true;
+    document.body.appendChild(attHidden);
+    new MutationObserver(() => { if (streakAtt) streakAtt.textContent = attHidden.textContent || '-'; })
+      .observe(attHidden, { childList: true, characterData: true, subtree: true });
+
+    const loginHidden = document.createElement('span');
+    loginHidden.id = 'dashLastLogin';
+    loginHidden.hidden = true;
+    document.body.appendChild(loginHidden);
+    new MutationObserver(() => { if (streakLogin) streakLogin.textContent = loginHidden.textContent || '-'; })
+      .observe(loginHidden, { childList: true, characterData: true, subtree: true });
+  })();
+
   function viewMyResult() {
     const monthSelect = document.getElementById('resultMonth');
     const month = monthSelect && monthSelect.value;

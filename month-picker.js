@@ -1,15 +1,15 @@
 /* =========================================================
-   month-picker.js — turns an already-populated <select> of
+   month-picker.js - turns an already-populated <select> of
    "Month YYYY" options into a nicer calendar-style dropdown,
    grouped by year.
 
    The underlying <select> stays fully functional (same .value,
-   same 'change' event) — so any existing page script that reads
+   same 'change' event) - so any existing page script that reads
    or listens to it keeps working with ZERO changes. This is a
    pure visual enhancement, safe to add anywhere.
 
    Usage (after the page script that populates the select, or
-   any time — a MutationObserver keeps it in sync automatically):
+   any time - a MutationObserver keeps it in sync automatically):
        MonthPicker.enhance(document.getElementById('resultMonth'));
 ========================================================= */
 (function () {
@@ -132,7 +132,7 @@
     build();
     refreshLabel();
 
-    // page script may populate/change the <select> after (or repeatedly) — stay in sync
+    // page script may populate/change the <select> after (or repeatedly) - stay in sync
     new MutationObserver(() => { build(); refreshLabel(); }).observe(selectEl, { childList: true });
     selectEl.addEventListener('change', refreshLabel);
 
