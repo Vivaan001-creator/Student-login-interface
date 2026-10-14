@@ -116,68 +116,6 @@ service cloud.firestore {
         || (isTeacher() && resource.data.postedBy == myTeacherId());
     }
 
-    // ---------- Tests ----------
-    // A test is split in three so nothing sensitive is readable early:
-    //   tests          card details only (subject, time, marks, start time)
-    //   testQuestions  the questions and options, readable once the start time has passed
-    //   testKeys       the correct answers, readable once the start time has passed
-    // Students are not Firebase users yet, so "once the start time has passed" is the
-    // strongest gate available without a server. See SECURITY-REPORT.md.
-    function testLive(testId) {
-      let t = get(/databases/$(database)/documents/tests/$(testId)).data;
-      return t.status in ['published', 'closed'] && request.time >= t.startAt;
-    }
-
-    match /tests/{id} {
-      allow get: if isStaff() || resource.data.status in ['published', 'closed'];
-      allow list: if isStaff() || resource.data.status in ['published', 'closed'];
-      allow create: if isAdmin()
-        || (isTeacher() && request.resource.data.postedBy == myTeacherId()
-            && request.resource.data.status == 'published');
-      allow update: if isAdmin()
-        || (isTeacher() && resource.data.postedBy == myTeacherId()
-            && onlyChanges(['status'])
-            && request.resource.data.status in ['published', 'closed']);
-      allow delete: if isAdmin()
-        || (isTeacher() && resource.data.postedBy == myTeacherId());
-    }
-
-    match /testQuestions/{id} {
-      allow get: if isStaff() || testLive(id);
-      allow create: if isAdmin()
-        || (isTeacher() && request.resource.data.postedBy == myTeacherId());
-      allow delete: if isAdmin()
-        || (isTeacher() && resource.data.postedBy == myTeacherId());
-    }
-
-    match /testKeys/{id} {
-      allow get: if isStaff() || testLive(id);
-      allow create: if isAdmin()
-        || (isTeacher() && request.resource.data.postedBy == myTeacherId());
-      allow delete: if isAdmin()
-        || (isTeacher() && resource.data.postedBy == myTeacherId());
-    }
-
-    // One attempt per student, created once and never edited, so marks cannot be changed
-    // (marks are worked out from these answers and the key, never stored).
-    match /testAttempts/{aid} {
-      allow get: if true;
-      allow list: if isStaff();
-      allow create: if request.resource.data.keys().hasOnly(
-            ['testId', 'roll', 'studentName', 'classKey', 'answers', 'autoSubmitted', 'submittedAt'])
-          && aid == request.resource.data.testId + '_' + request.resource.data.roll
-          && request.resource.data.submittedAt == request.time
-          && request.resource.data.answers is map
-          && request.resource.data.answers.size() <= 200
-          && request.resource.data.studentName is string
-          && request.resource.data.studentName.size() <= 200
-          && exists(/databases/$(database)/documents/students/$(request.resource.data.roll))
-          && get(/databases/$(database)/documents/tests/$(request.resource.data.testId)).data.status == 'published'
-          && request.time >= get(/databases/$(database)/documents/tests/$(request.resource.data.testId)).data.startAt;
-      allow update: if false;
-      allow delete: if isStaff();
-    }
-
     // ---------- Teachers ----------
     match /teachers/{id} {
       allow read: if isStaff();
@@ -225,6 +163,54 @@ service cloud.firestore {
                ['name', 'father', 'mother', 'dob', 'gender', 'contactNumber',
                 'altContact', 'parentEmail', 'address', 'previousSchool']);
       allow update, delete: if isAdmin();
+    }
+
+    // ---------- Online MCQ tests ----------
+    // The question paper and answer key cannot be read before the start time
+    // (the server clock decides, not the phone). Submissions are create-only:
+    // a student can submit once, inside the test window, and never edit it.
+    // The score is not stored; it is computed from the submission + key.
+    match /tests/{testId} {
+      allow read: if true;
+      allow create: if isAdmin()
+        || (isTeacher() && request.resource.data.postedBy == myTeacherId());
+      allow update: if isAdmin();
+      allow delete: if isAdmin()
+        || (isTeacher() && resource.data.postedBy == myTeacherId());
+
+      match /paper/{id} {
+        allow read: if isStaff()
+          || request.time >= get(/databases/$(database)/documents/tests/$(testId)).data.startsAt;
+        allow write: if isStaff();
+      }
+
+      match /key/{id} {
+        allow read: if isStaff()
+          || request.time >= get(/databases/$(database)/documents/tests/$(testId)).data.startsAt;
+        allow write: if isStaff();
+      }
+
+      match /submissions/{roll} {
+        allow read: if true;
+        allow create: if request.resource.data.keys().hasOnly(
+              ['roll', 'name', 'classId', 'answers', 'leaves', 'submittedAt'])
+            && request.resource.data.roll == roll
+            && request.resource.data.name is string
+            && request.resource.data.name.size() <= 200
+            && request.resource.data.answers is list
+            && request.resource.data.answers.size() <= 200
+            && request.resource.data.leaves is number
+            && request.resource.data.submittedAt == request.time
+            && exists(/databases/$(database)/documents/students/$(roll))
+            && get(/databases/$(database)/documents/students/$(roll)).data.get('class', '')
+                 == get(/databases/$(database)/documents/tests/$(testId)).data.classId
+            && request.time >= get(/databases/$(database)/documents/tests/$(testId)).data.startsAt
+            && request.time <= get(/databases/$(database)/documents/tests/$(testId)).data.endsAt
+                 + duration.value(2, 'm');
+        // Staff may remove a submission (e.g. to allow a re-test).
+        allow delete: if isStaff();
+        allow update: if false;
+      }
     }
 
     // ---------- Activity log ----------

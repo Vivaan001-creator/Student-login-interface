@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en-IN">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://www.gstatic.com; object-src 'none'; base-uri 'self'; form-action 'self'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="theme-color" content="#0e1326">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<script src="appearance.js"></script>
+<script src="session-timer.js"></script>
+<title>Tests - GenAlpha</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="tests.css">
+<style>
+  body.in-exam .top-header, body.in-exam .bottom-nav{ display:none; }
+  body.in-exam .content{ padding-bottom:40px; }
+  .exam-body{ -webkit-user-select:none; user-select:none; }
+</style>
+</head>
+<body>
+<div class="app-shell">
+
+  <header class="top-header">
+    <div class="top-header-left">
+      <button class="header-icon-btn" id="backBtn" aria-label="Back"><i class="fa-solid fa-arrow-left"></i></button>
+      <div><h1 id="hdrTitle">Tests</h1><p id="hdrSub"></p></div>
+    </div>
+    <div class="header-actions"><div id="appearanceMount"></div></div>
+  </header>
+
+  <div class="exam-bar" id="examBar" hidden>
+    <div class="t" id="examTitle"></div>
+    <div class="exam-timer" id="examTimer">--:--</div>
+  </div>
+
+  <main class="content">
+
+    <!-- LIST -->
+    <section id="viewList">
+      <div id="listBody"><div class="empty">Loading...</div></div>
+    </section>
+
+    <!-- VERIFY -->
+    <section id="viewVerify" hidden>
+      <div class="note err" id="leaveNote" hidden><i class="fa-solid fa-triangle-exclamation"></i><span>You left the test screen. For fairness your verification and all your answers were erased. Please fill in your details again.</span></div>
+      <div class="card">
+        <div class="card-title">Verify yourself</div>
+        <div id="verifyTestInfo" style="margin-bottom:14px;"></div>
+        <div class="form-grid">
+          <div class="field full"><label>Your name <span class="req">*</span></label><input type="text" id="vName" autocomplete="off" maxlength="100"></div>
+          <div class="field full"><label>Father's name <span class="req">*</span></label><input type="text" id="vFather" autocomplete="off" maxlength="100"></div>
+          <div class="field"><label>Date of birth <span class="req">*</span></label><input type="date" id="vDob"></div>
+          <div class="field"><label>Mobile no. <span class="req">*</span></label><input type="tel" id="vMobile" inputmode="numeric" autocomplete="off" maxlength="15" placeholder="Registered mobile"></div>
+        </div>
+        <div class="note err" id="verifyErr" hidden></div>
+        <button class="btn btn-block" id="verifyBtn"><i class="fa-solid fa-shield-halved"></i> Verify &amp; Start Test</button>
+        <p class="hint" style="margin-top:12px;"><i class="fa-solid fa-circle-info"></i> Once the test opens, do not switch to another app, tab or screen. If you do, your verification and every answer will be erased and you will have to start again.</p>
+      </div>
+    </section>
+
+    <!-- EXAM -->
+    <section id="viewExam" class="exam-body" hidden>
+      <div class="progress"><div id="progBar"></div></div>
+      <div class="card">
+        <div style="font-size:12px;color:var(--ink-soft);font-weight:700;margin-bottom:10px;"><span id="qNo"></span> &middot; <span id="qMarks"></span></div>
+        <div class="q-text" id="qText"></div>
+        <div id="qOpts"></div>
+      </div>
+      <div class="row between" style="margin-bottom:14px;">
+        <button class="btn btn-ghost btn-sm" id="prevBtn"><i class="fa-solid fa-arrow-left"></i> Previous</button>
+        <button class="btn btn-ghost btn-sm" id="clearBtn">Clear</button>
+        <button class="btn btn-sm" id="nextBtn">Next <i class="fa-solid fa-arrow-right"></i></button>
+      </div>
+      <div class="card"><div class="card-title">Questions (<span id="ansCount">0</span> answered)</div><div class="palette" id="palette"></div></div>
+      <div class="note err" id="submitErr" hidden></div>
+      <button class="btn btn-block" id="submitBtn"><i class="fa-solid fa-paper-plane"></i> Submit Test</button>
+    </section>
+
+    <!-- REPORT -->
+    <section id="viewReport" hidden>
+      <div id="reportBody"><div class="empty">Loading...</div></div>
+    </section>
+
+    <footer class="footer">&copy; <span data-year>2026</span> GenAlpha</footer>
+  </main>
+
+  <nav class="bottom-nav" id="bottomNav"></nav>
+</div>
+
+<div class="modal-back" id="modalBack" hidden><div class="modal"><h3 id="mTitle"></h3><p id="mText"></p><div class="row" style="justify-content:flex-end;"><button class="btn btn-ghost btn-sm" id="mNo">Cancel</button><button class="btn btn-sm" id="mYes">OK</button></div></div></div>
+
+<script>try { Appearance.renderMenu(document.getElementById('appearanceMount'), { variant: 'inline' }); } catch(e) {}</script>
+<script src="bottom-nav.js"></script>
+<script>
+  // Student or parent - whichever is logged in.
+  try {
+    var isStu = localStorage.getItem('studentLoggedIn') === 'true';
+    BottomNav.init({
+      mountId: 'bottomNav',
+      tabs: [
+        { href: isStu ? 'student-dashboard.html' : 'parent-dashboard.html', icon: 'fa-house', label: 'Home' },
+        { href: 'tests.html', icon: 'fa-clipboard-question', label: 'Tests' }
+      ]
+    });
+  } catch(e) {}
+</script>
+<script>try { SessionTimer.start({ flagKeys: ['studentLoggedIn', 'parentLoggedIn'], loginUrl: 'student-login.html' }); } catch(e) {}</script>
+<script src="site.js"></script>
+
+<script type="module">
+import { db } from "./Firebase.js";
+import {
+  doc, getDoc, getDocs, setDoc, collection, query, where, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+import { esc, toDate, fmtDuration, fmtDateTime, fmtClock, testState, verifyDetails, grade, reportHTML, LETTERS } from "./tests-core.js";
+
+const $ = (id) => document.getElementById(id);
+const isStudent = localStorage.getItem("studentLoggedIn") === "true";
+const isParent = !isStudent && localStorage.getItem("parentLoggedIn") === "true";
+if (!isStudent && !isParent) { location.replace("student-login.html"); }
+const HOME = isStudent ? "student-dashboard.html" : "parent-dashboard.html";
+
+let student = null, roll = "";
+let tests = [], subs = {};          // subs: testId -> submission data (or null)
+let view = "list";
+let activeTest = null, paper = null;
+let examState = null;               // in-memory only: { answers, cur }
+let submitting = false;
+let tickTimer = null, examTimer = null;
+
+// ---------- helpers ----------
+function show(name) {
+  view = name;
+  for (const v of ["List", "Verify", "Exam", "Report"]) $("view" + v).hidden = (v.toLowerCase() !== name);
+  const inExam = name === "exam";
+  document.body.classList.toggle("in-exam", inExam);
+  $("examBar").hidden = !inExam;
+  const t = { list: ["Tests", student ? esc(student.name || roll) : ""], verify: ["Verification", ""], exam: ["", ""], report: ["Test Report", ""] }[name];
+  $("hdrTitle").textContent = t[0];
+  $("hdrSub").innerHTML = t[1];
+  window.scrollTo(0, 0);
+}
+
+function confirmModal(title, text, yesLabel = "OK", noLabel = "Cancel") {
+  return new Promise((res) => {
+    $("mTitle").textContent = title; $("mText").textContent = text; $("mYes").textContent = yesLabel; $("mNo").textContent = noLabel;
+    $("modalBack").hidden = false;
+    const done = (v) => { $("modalBack").hidden = true; $("mYes").onclick = $("mNo").onclick = null; res(v); };
+    $("mYes").onclick = () => done(true); $("mNo").onclick = () => done(false);
+  });
+}
+
+$("backBtn").onclick = () => {
+  if (view === "verify" || view === "report") { show("list"); renderList(); }
+  else location.href = HOME;
+};
+
+const leaveKey = (id) => "ga_test_leaves_" + id;
+function getLeaves(id) { try { return parseInt(sessionStorage.getItem(leaveKey(id))) || 0; } catch (_) { return 0; } }
+function addLeave(id) { try { sessionStorage.setItem(leaveKey(id), String(getLeaves(id) + 1)); } catch (_) {} }
+
+// ---------- load ----------
+async function init() {
+  try {
+    if (isStudent) {
+      roll = localStorage.getItem("studentRoll") || "";
+    } else {
+      roll = localStorage.getItem("parentActiveRoll") || "";
+      if (!roll) {
+        const contact = localStorage.getItem("parentContact");
+        const s = await getDocs(query(collection(db, "students"), where("contactNumber", "==", contact)));
+        roll = s.docs[0]?.id || "";
+      }
+    }
+    const snap = roll ? await getDoc(doc(db, "students", roll)) : null;
+    if (!snap || !snap.exists()) { $("listBody").innerHTML = '<div class="note err">Student record not found. Please log in again.</div>'; return; }
+    student = snap.data();
+    show("list");
+    await loadTests();
+  } catch (e) {
+    console.error(e);
+    $("listBody").innerHTML = `<div class="note err">Could not load tests: ${esc(e.message)}</div>`;
+  }
+}
+
+async function loadTests() {
+  const ts = await getDocs(query(collection(db, "tests"), where("classId", "==", student.class || "")));
+  tests = ts.docs.map((d) => ({ id: d.id, ...d.data() }))
+    .sort((a, b) => (toDate(b.startsAt)?.getTime() || 0) - (toDate(a.startsAt)?.getTime() || 0));
+  const results = await Promise.all(tests.map((t) =>
+    getDoc(doc(db, "tests", t.id, "submissions", roll)).then((s) => (s.exists() ? s.data() : null)).catch(() => null)));
+  subs = {}; tests.forEach((t, i) => subs[t.id] = results[i]);
+  renderList();
+}
+
+// ---------- list ----------
+function renderList() {
+  clearInterval(tickTimer);
+  renderedStates = {}; tests.forEach((t) => renderedStates[t.id] = testState(t));
+  const box = $("listBody");
+  if (!tests.length) { box.innerHTML = '<div class="card"><div class="empty">No tests have been published for your class yet.</div></div>'; return; }
+  box.innerHTML = tests.map((t) => {
+    const st = testState(t), sub = subs[t.id];
+    let chip, btn;
+    if (sub) {
+      chip = '<span class="test-chip chip-done">Submitted</span>';
+      btn = `<button class="arrow-btn" data-report="${esc(t.id)}" aria-label="View report"><i class="fa-solid fa-chart-simple"></i></button>`;
+    } else if (st === "upcoming") {
+      chip = `<span class="test-chip chip-upcoming">Starts in <span class="countdown" data-cd="${esc(t.id)}"></span></span>`;
+      btn = `<button class="arrow-btn" disabled aria-label="Not started yet"><i class="fa-solid fa-lock"></i></button>`;
+    } else if (st === "live") {
+      chip = '<span class="test-chip chip-live">Live now</span>';
+      btn = isStudent
+        ? `<button class="arrow-btn" data-start="${esc(t.id)}" aria-label="Start test"><i class="fa-solid fa-arrow-right"></i></button>`
+        : `<button class="arrow-btn" disabled aria-label="Student attempts the test"><i class="fa-solid fa-arrow-right"></i></button>`;
+    } else {
+      chip = '<span class="test-chip chip-ended">Closed - not attempted</span>';
+      btn = `<button class="arrow-btn" disabled aria-label="Closed"><i class="fa-solid fa-ban"></i></button>`;
+    }
+    return `<div class="test-card">
+      <div class="test-card-body">
+        <div class="test-subject">${esc(t.subject)}</div>
+        <div class="test-meta"><span><i class="fa-regular fa-clock"></i>${fmtDuration(t.durationMin)}</span><span><i class="fa-solid fa-star"></i>${t.totalMarks} marks</span></div>
+        <div class="test-when">${t.title ? esc(t.title) + " &middot; " : ""}${esc(fmtDateTime(toDate(t.startsAt)))}</div>
+        ${chip}
+      </div>${btn}</div>`;
+  }).join("") + (isParent ? '<p class="hint" style="text-align:center;">Tests are attempted by the student. Reports appear here once submitted.</p>' : "");
+
+  box.querySelectorAll("[data-start]").forEach((b) => b.onclick = () => openVerify(tests.find((t) => t.id === b.dataset.start)));
+  box.querySelectorAll("[data-report]").forEach((b) => b.onclick = () => openReport(tests.find((t) => t.id === b.dataset.report)));
+  tick();
+  tickTimer = setInterval(tick, 1000);
+}
+
+let renderedStates = {};
+function tick() {
+  if (view !== "list") return;
+  let changed = false;
+  document.querySelectorAll("[data-cd]").forEach((el) => {
+    const t = tests.find((x) => x.id === el.dataset.cd); if (!t) return;
+    const left = (toDate(t.startsAt)?.getTime() || 0) - Date.now();
+    if (left > 0) el.textContent = fmtClock(left);
+  });
+  // Re-render when a test starts or closes so the arrow unlocks / locks by itself.
+  for (const t of tests) if (renderedStates[t.id] !== testState(t)) changed = true;
+  if (changed) renderList();
+}
+
+// ---------- verification ----------
+function openVerify(t, fromLeave = false) {
+  activeTest = t; paper = null; examState = null;
+  ["vName", "vFather", "vDob", "vMobile"].forEach((id) => $(id).value = "");
+  $("verifyErr").hidden = true;
+  $("leaveNote").hidden = !fromLeave;
+  $("verifyTestInfo").innerHTML = `<div class="test-subject">${esc(t.subject)}</div>
+    <div class="test-meta"><span><i class="fa-regular fa-clock"></i>${fmtDuration(t.durationMin)}</span><span><i class="fa-solid fa-star"></i>${t.totalMarks} marks</span><span><i class="fa-solid fa-list-check"></i>${t.questionCount} Qs</span></div>
+    <div class="test-when">Ends at ${esc(fmtDateTime(toDate(t.endsAt)))}</div>`;
+  show("verify");
+}
+
+function verifyErr(msg) { const n = $("verifyErr"); n.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i><span></span>'; n.lastChild.textContent = msg; n.hidden = false; }
+
+$("verifyBtn").onclick = async () => {
+  $("verifyErr").hidden = true;
+  const typed = { name: $("vName").value, father: $("vFather").value, dob: $("vDob").value, mobile: $("vMobile").value };
+  if (!typed.name.trim() || !typed.father.trim() || !typed.dob || !typed.mobile.trim()) return verifyErr("Please fill in all four details.");
+  if (!verifyDetails(student, typed)) return verifyErr("The details do not match our records. Check the spelling, date of birth and the mobile number registered with the school.");
+  if (testState(activeTest) !== "live") { await refreshAfterBlock(); return; }
+  $("verifyBtn").disabled = true;
+  try {
+    const existing = await getDoc(doc(db, "tests", activeTest.id, "submissions", roll));
+    if (existing.exists()) { subs[activeTest.id] = existing.data(); show("list"); renderList(); return; }
+    const p = await getDoc(doc(db, "tests", activeTest.id, "paper", "main"));
+    if (!p.exists()) return verifyErr("The question paper could not be found. Ask your teacher.");
+    paper = p.data().questions;
+    startExam();
+  } catch (e) {
+    console.error(e);
+    verifyErr(e.code === "permission-denied" ? "The test has not opened yet. Please wait for the start time." : "Could not open the test: " + e.message);
+  } finally { $("verifyBtn").disabled = false; }
+};
+
+async function refreshAfterBlock() {
+  verifyErr("This test is not open right now.");
+  setTimeout(() => { show("list"); renderList(); }, 1500);
+}
+
+// ---------- exam ----------
+function startExam() {
+  examState = { answers: new Array(paper.length).fill(-1), cur: 0 };
+  submitting = false;
+  $("submitErr").hidden = true;
+  $("examTitle").textContent = activeTest.subject;
+  show("exam");
+  renderQuestion();
+  clearInterval(examTimer);
+  examTimer = setInterval(examTick, 500);
+  examTick();
+}
+
+function examTick() {
+  if (view !== "exam") return;
+  const left = (toDate(activeTest.endsAt)?.getTime() || 0) - Date.now();
+  const el = $("examTimer");
+  el.textContent = fmtClock(left);
+  el.classList.toggle("low", left < 5 * 60000);
+  if (left <= 0 && !submitting) doSubmit(true);
+}
+
+function renderQuestion() {
+  const { answers, cur } = examState, q = paper[cur];
+  $("qNo").textContent = `Question ${cur + 1} of ${paper.length}`;
+  $("qMarks").textContent = `${q.marks} mark${q.marks === 1 ? "" : "s"}`;
+  $("qText").textContent = q.q;
+  $("qOpts").innerHTML = q.options.map((o, i) => `<button type="button" class="opt ${answers[cur] === i ? "sel" : ""}" data-o="${i}"><span class="k">${LETTERS[i]}</span><span>${esc(o)}</span></button>`).join("");
+  $("progBar").style.width = ((cur + 1) / paper.length * 100) + "%";
+  $("prevBtn").disabled = cur === 0;
+  $("nextBtn").disabled = cur === paper.length - 1;
+  $("palette").innerHTML = answers.map((a, i) => `<button type="button" class="pal ${a >= 0 ? "ans" : ""} ${i === cur ? "cur" : ""}" data-p="${i}">${i + 1}</button>`).join("");
+  $("ansCount").textContent = answers.filter((a) => a >= 0).length;
+}
+
+$("qOpts").addEventListener("click", (e) => {
+  const b = e.target.closest("[data-o]"); if (!b || !examState) return;
+  examState.answers[examState.cur] = +b.dataset.o; renderQuestion();
+});
+$("palette").addEventListener("click", (e) => {
+  const b = e.target.closest("[data-p]"); if (!b || !examState) return;
+  examState.cur = +b.dataset.p; renderQuestion();
+});
+$("prevBtn").onclick = () => { if (examState.cur > 0) { examState.cur--; renderQuestion(); } };
+$("nextBtn").onclick = () => { if (examState.cur < paper.length - 1) { examState.cur++; renderQuestion(); } };
+$("clearBtn").onclick = () => { examState.answers[examState.cur] = -1; renderQuestion(); };
+
+$("submitBtn").onclick = async () => {
+  const unanswered = examState.answers.filter((a) => a < 0).length;
+  const ok = await confirmModal("Submit test?",
+    unanswered ? `${unanswered} question${unanswered > 1 ? "s are" : " is"} not answered. You cannot change answers after submitting.` : "You cannot change your answers after submitting.", "Submit");
+  if (ok) doSubmit(false);
+};
+
+async function doSubmit(auto) {
+  if (submitting || !examState) return;
+  submitting = true; $("submitBtn").disabled = true; $("submitErr").hidden = true;
+  const t = activeTest;
+  try {
+    await setDoc(doc(db, "tests", t.id, "submissions", roll), {
+      roll, name: student.name || student.studentName || roll, classId: t.classId,
+      answers: examState.answers, leaves: getLeaves(t.id), submittedAt: serverTimestamp()
+    });
+    clearInterval(examTimer);
+    const saved = await getDoc(doc(db, "tests", t.id, "submissions", roll));
+    subs[t.id] = saved.data();
+    examState = null;
+    await openReport(t);
+  } catch (e) {
+    console.error(e);
+    submitting = false; $("submitBtn").disabled = false;
+    const n = $("submitErr");
+    n.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i><span></span>';
+    n.lastChild.textContent = (e.code === "permission-denied" ? "Submission was rejected - the test time may be over. " : "Could not submit (check your internet). ") + "Tap Submit again to retry.";
+    n.hidden = false;
+    if (auto) clearInterval(examTimer);
+  }
+}
+
+// ---------- anti-cheat: leaving the test screen wipes verification + answers ----------
+function onLeave() {
+  if (view !== "exam" || submitting || !examState) return;
+  addLeave(activeTest.id);
+  const t = activeTest;
+  clearInterval(examTimer);
+  examState = null; paper = null;           // answers erased
+  if (testState(t) !== "live") { show("list"); renderList(); return; }
+  openVerify(t, true);                      // verification erased - details must be entered again
+}
+document.addEventListener("visibilitychange", () => { if (document.hidden) onLeave(); });
+window.addEventListener("pagehide", onLeave);
+window.addEventListener("blur", onLeave);
+document.addEventListener("contextmenu", (e) => { if (view === "exam") e.preventDefault(); });
+document.addEventListener("copy", (e) => { if (view === "exam") e.preventDefault(); });
+
+// ---------- report ----------
+async function openReport(t) {
+  activeTest = t; show("report");
+  const body = $("reportBody");
+  body.innerHTML = '<div class="empty">Loading report...</div>';
+  try {
+    const [p, k, s] = await Promise.all([
+      getDoc(doc(db, "tests", t.id, "paper", "main")),
+      getDoc(doc(db, "tests", t.id, "key", "main")),
+      getDoc(doc(db, "tests", t.id, "submissions", roll))
+    ]);
+    if (!s.exists()) { body.innerHTML = '<div class="note err">No submission found for this test.</div>'; return; }
+    const res = grade(p.data().questions, k.data().answers, s.data().answers || []);
+    body.innerHTML = reportHTML(t, { name: student.name || student.studentName || roll, roll }, res, toDate(s.data().submittedAt))
+      + `<button class="btn btn-ghost btn-block" id="repBack"><i class="fa-solid fa-arrow-left"></i> Back to tests</button>`;
+    $("repBack").onclick = () => { show("list"); renderList(); };
+  } catch (e) {
+    console.error(e);
+    body.innerHTML = `<div class="note err">Could not load the report: ${esc(e.message)}</div>`;
+  }
+}
+
+init();
+</script>
+</body>
+</html>

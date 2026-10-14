@@ -2,28 +2,28 @@
 <html lang="en-IN">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https://firebasestorage.googleapis.com https://storage.googleapis.com https://*.googleusercontent.com; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://www.gstatic.com; object-src 'none'; base-uri 'self'; form-action 'self' mailto:">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://www.gstatic.com; object-src 'none'; base-uri 'self'; form-action 'self'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#0e1326">
 <meta name="robots" content="noindex, nofollow">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="tests-base.css">
-<link rel="stylesheet" href="tests.css">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <script src="appearance.js"></script>
 <script src="session-timer.js"></script>
 <title>Tests - GenAlpha</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="tests.css">
 </head>
 <body>
 <div class="app-shell">
+
   <header class="top-header">
     <div class="top-header-left">
-      <button class="header-icon-btn" onclick="window.location.href='teacher-dashboard.html'" aria-label="Back"><i class="fa-solid fa-arrow-left"></i></button>
-      <div><h1>Tests</h1><p>Create MCQ tests and see reports</p></div>
+      <button class="header-icon-btn" id="backBtn" aria-label="Back"><i class="fa-solid fa-arrow-left"></i></button>
+      <div><h1 id="hdrTitle">Tests</h1><p id="hdrSub">Create and publish MCQ tests</p></div>
     </div>
     <div class="header-actions">
       <div id="appearanceMount"></div>
@@ -31,108 +31,352 @@
   </header>
 
   <main class="content">
-    <div class="t-info" id="noClass" hidden>No class has been assigned to you yet. Contact the admin about class-teacher assignment.</div>
 
-    <!-- LIST -->
-    <div id="listView">
-      <button type="button" class="t-btn full" id="newBtn" style="margin-bottom:16px;"><i class="fa-solid fa-plus"></i> Create new test</button>
-      <div class="t-box">
-        <h2>My tests</h2>
-        <div id="testList"><div class="loading-state"><div class="spinner"></div>Loading...</div></div>
+    <!-- ========== VIEW: LIST ========== -->
+    <section id="viewList">
+      <div class="note" id="noClassNote" hidden><i class="fa-solid fa-circle-info"></i><span>No class has been assigned to you yet. Contact the admin about class-teacher assignment.</span></div>
+      <button class="btn btn-block" id="newTestBtn" style="margin-bottom:18px;"><i class="fa-solid fa-plus"></i> Create New Test</button>
+      <div class="card">
+        <div class="card-title">My Tests</div>
+        <div id="testList"><div class="empty">Loading...</div></div>
       </div>
-    </div>
+    </section>
 
-    <!-- CREATE -->
-    <div id="createView" hidden>
-      <div class="t-box">
-        <h2>New test</h2>
-        <div class="t-row">
-          <div class="t-field"><label for="fClass">Class</label><select id="fClass"></select></div>
-          <div class="t-field"><label for="fSubject">Subject</label><input id="fSubject" type="text" placeholder="e.g. Maths" maxlength="60"></div>
+    <!-- ========== VIEW: CREATE ========== -->
+    <section id="viewCreate" hidden>
+      <div class="card">
+        <div class="card-title">Test Details</div>
+        <div class="form-grid">
+          <div class="field"><label>Class <span class="req">*</span></label><select id="fClass"></select></div>
+          <div class="field"><label>Subject <span class="req">*</span></label><input type="text" id="fSubject" placeholder="e.g. Mathematics" maxlength="60"></div>
+          <div class="field full"><label>Test name <span style="font-weight:500;color:var(--ink-soft)">(optional)</span></label><input type="text" id="fTitle" placeholder="e.g. Unit Test 1 - Algebra" maxlength="100"></div>
+          <div class="field"><label>Test date <span class="req">*</span></label><input type="date" id="fDate"></div>
+          <div class="field"><label>Start time <span class="req">*</span></label><input type="time" id="fTime"></div>
+          <div class="field"><label>Duration - hours</label><input type="number" id="fHours" min="0" max="5" value="1"></div>
+          <div class="field"><label>Duration - minutes</label><input type="number" id="fMins" min="0" max="59" value="0"></div>
+          <div class="field"><label>Number of MCQ questions <span class="req">*</span></label><input type="number" id="fCount" min="1" max="100" value="10"></div>
+          <div class="field"><label>Marks per question <span class="req">*</span></label><input type="number" id="fMarks" min="0.5" step="0.5" value="1"></div>
         </div>
-        <div class="t-field"><label for="fTitle">Test name <span style="font-weight:500;color:var(--ink-soft);">(optional)</span></label><input id="fTitle" type="text" placeholder="e.g. Unit Test 1" maxlength="100"></div>
-        <div class="t-field"><label for="fStart">Start date and time</label><input id="fStart" type="datetime-local"></div>
-        <div class="t-row">
-          <div class="t-field"><label for="fHours">Duration - hours</label><input id="fHours" type="number" min="0" max="5" value="1" inputmode="numeric"></div>
-          <div class="t-field"><label for="fMins">Duration - minutes</label><input id="fMins" type="number" min="0" max="59" value="0" inputmode="numeric"></div>
-        </div>
-        <div class="t-field"><label for="fMarks">Marks for each question</label><input id="fMarks" type="number" min="0.5" step="0.5" value="1" inputmode="decimal"></div>
+        <button class="btn btn-ghost btn-sm" id="applyCountBtn"><i class="fa-solid fa-rotate"></i> Set question count &amp; marks</button>
+        <p class="hint" style="margin-top:10px;">You can still change marks for any single question below. Select the radio button beside the correct option.</p>
       </div>
 
-      <div class="t-box">
-        <h2>Questions</h2>
-        <div class="t-hint">Fill the question and four options, then tap the circle next to the correct option.</div>
-        <div id="qBuilder"></div>
-        <button type="button" class="t-btn ghost full" id="addQBtn"><i class="fa-solid fa-plus"></i> Add question</button>
-        <div class="t-hint" style="margin-top:12px;font-weight:700;" id="totalLine"></div>
-      </div>
+      <div id="qList"></div>
 
-      <div class="t-error" id="createError" hidden></div>
-      <div style="display:flex;gap:10px;">
-        <button type="button" class="t-btn ghost" id="cancelBtn" style="flex:1;">Cancel</button>
-        <button type="button" class="t-btn" id="publishBtn" style="flex:2;"><i class="fa-solid fa-upload"></i> Publish test</button>
+      <div class="row between" style="margin-bottom:12px;">
+        <button class="btn btn-ghost btn-sm" id="addQBtn"><i class="fa-solid fa-plus"></i> Add question</button>
+        <div style="font-weight:700;font-size:13px;">Total: <span id="totalMarks">0</span> marks &middot; <span id="totalQ">0</span> questions</div>
       </div>
-    </div>
+      <div class="note" id="createErr" hidden></div>
+      <div class="row">
+        <button class="btn" id="publishBtn"><i class="fa-solid fa-paper-plane"></i> Publish Test</button>
+        <button class="btn btn-ghost" id="cancelBtn">Cancel</button>
+      </div>
+      <p class="hint" style="margin-top:12px;">A published test cannot be edited. If something is wrong, delete it and publish again.</p>
+    </section>
 
-    <!-- REPORT -->
-    <div id="reportView" hidden>
-      <button type="button" class="t-btn ghost small" id="backListBtn" style="margin-bottom:12px;"><i class="fa-solid fa-arrow-left"></i> All tests</button>
-      <div class="t-box">
-        <div style="font-weight:800;font-size:18px;" id="repSubject"></div>
-        <div class="t-hint" id="repMeta"></div>
-        <div class="t-sum">
-          <div><b id="repSubmitted"></b><span>Submitted</span></div>
-          <div><b id="repPending"></b><span>Not yet</span></div>
-          <div><b id="repAvg"></b><span>Average</span></div>
-        </div>
-      </div>
-      <div class="t-box">
-        <h2>Student reports</h2>
-        <div style="overflow-x:auto;"><table class="t-table"><thead><tr><th>Student</th><th>Marks</th><th>%</th><th></th></tr></thead><tbody id="repRows"></tbody></table></div>
-      </div>
-      <div class="t-box" id="pendingBox" hidden>
-        <h2>Not submitted</h2>
-        <div id="pendingList" style="font-size:13px;line-height:1.8;"></div>
-      </div>
-    </div>
+    <!-- ========== VIEW: RESULTS ========== -->
+    <section id="viewResults" hidden>
+      <div id="resultsBody"></div>
+    </section>
+
+    <!-- ========== VIEW: ONE STUDENT'S REPORT ========== -->
+    <section id="viewReport" hidden>
+      <button class="btn btn-ghost btn-sm" id="reportBackBtn" style="margin-bottom:14px;"><i class="fa-solid fa-arrow-left"></i> All results</button>
+      <div id="reportBody"></div>
+    </section>
+
+    <footer class="footer">&copy; <span data-year>2026</span> GenAlpha</footer>
   </main>
 
   <nav class="bottom-nav" id="bottomNav"></nav>
 </div>
 
-<div class="t-overlay" id="confirmBox" hidden>
-  <div class="t-modal">
-    <h3 id="confirmTitle"></h3>
-    <p id="confirmText"></p>
-    <div class="btns">
-      <button type="button" class="t-btn ghost" id="confirmNo">Cancel</button>
-      <button type="button" class="t-btn" id="confirmYes">OK</button>
-    </div>
-  </div>
-</div>
+<div class="modal-back" id="modalBack" hidden><div class="modal"><h3 id="mTitle"></h3><p id="mText"></p><div class="row" style="justify-content:flex-end;"><button class="btn btn-ghost btn-sm" id="mNo">Cancel</button><button class="btn btn-sm" id="mYes">OK</button></div></div></div>
 
-<script>
-  try { Appearance.renderMenu(document.getElementById('appearanceMount'), { variant: 'inline' }); } catch(e) {}
-</script>
+<script>try { Appearance.renderMenu(document.getElementById('appearanceMount'), { variant: 'inline' }); } catch(e) {}</script>
 <script src="bottom-nav.js"></script>
 <script>
   try {
     BottomNav.init({
       mountId: 'bottomNav',
       tabs: [
-        { href: 'teacher-dashboard.html',  icon: 'fa-house',              label: 'Home' },
-        { href: 'teacher-attendance.html', icon: 'fa-calendar-check',     label: 'Attendance' },
-        { href: 'teacher-homework.html',   icon: 'fa-file-lines',         label: 'Homework' },
+        { href: 'teacher-dashboard.html',  icon: 'fa-house',          label: 'Home' },
+        { href: 'teacher-attendance.html', icon: 'fa-calendar-check', label: 'Attendance' },
+        { href: 'teacher-homework.html',   icon: 'fa-file-lines',     label: 'Homework' },
+        { href: 'teacher-marks.html',      icon: 'fa-pen-to-square',  label: 'Marks' },
         { href: 'teacher-tests.html',      icon: 'fa-clipboard-question', label: 'Tests' },
-        { href: 'teacher-marks.html',      icon: 'fa-pen-to-square',      label: 'Marks' },
-        { href: 'teacher-students.html',   icon: 'fa-user-group',         label: 'Students' }
+        { href: 'teacher-students.html',   icon: 'fa-user-group',     label: 'Students' }
       ]
     });
   } catch(e) {}
 </script>
-<script>
-  try { SessionTimer.start({ flagKey: 'teacherLoggedIn', loginUrl: 'teacher-login.html' }); } catch(e) {}
+<script>try { SessionTimer.start({ flagKey: 'teacherLoggedIn', loginUrl: 'teacher-login.html' }); } catch(e) {}</script>
+<script src="site.js"></script>
+
+<script type="module">
+import { db, auth } from "./Firebase.js";
+import {
+  doc, getDoc, getDocs, setDoc, addDoc, deleteDoc, collection, query, where, serverTimestamp, Timestamp
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+import { esc, toDate, fmtDuration, fmtDateTime, testState, grade, reportHTML, LETTERS } from "./tests-core.js";
+
+const $ = (id) => document.getElementById(id);
+const teacherId = localStorage.getItem("teacherDocId") || "";
+if (localStorage.getItem("teacherLoggedIn") !== "true" || !teacherId) { location.replace("teacher-login.html"); }
+
+let myClasses = [];
+let questions = [];      // builder state: { q, options:[4], correct:-1, marks }
+let currentTest = null;  // test shown in results view
+let resultRows = [];     // submissions of currentTest with computed grade
+let currentPaper = null, currentKey = null;
+let view = "list";
+
+function show(name) {
+  view = name;
+  for (const v of ["List", "Create", "Results", "Report"]) $("view" + v).hidden = (v.toLowerCase() !== name);
+  const t = { list: ["Tests", "Create and publish MCQ tests"], create: ["New Test", "Design questions and marks"], results: ["Results", currentTest ? currentTest.subject : ""], report: ["Student Report", currentTest ? currentTest.subject : ""] }[name];
+  $("hdrTitle").textContent = t[0]; $("hdrSub").textContent = t[1];
+  window.scrollTo(0, 0);
+}
+
+$("backBtn").onclick = () => {
+  if (view === "report") show("results");
+  else if (view !== "list") show("list");
+  else location.href = "teacher-dashboard.html";
+};
+
+function confirmModal(title, text, yesLabel = "OK") {
+  return new Promise((res) => {
+    $("mTitle").textContent = title; $("mText").textContent = text; $("mYes").textContent = yesLabel;
+    $("modalBack").hidden = false;
+    const done = (v) => { $("modalBack").hidden = true; $("mYes").onclick = $("mNo").onclick = null; res(v); };
+    $("mYes").onclick = () => done(true); $("mNo").onclick = () => done(false);
+  });
+}
+
+// ---------------- context ----------------
+async function loadContext() {
+  await auth.authStateReady();
+  const snap = await getDoc(doc(db, "teachers", teacherId));
+  if (!snap.exists()) return;
+  const email = snap.data().email;
+  if (email) {
+    const cs = await getDocs(query(collection(db, "classes"), where("teacherEmail", "==", email)));
+    myClasses = cs.docs.map((d) => ({ id: d.id, ...d.data() }));
+  }
+  $("fClass").innerHTML = myClasses.map((c) => `<option value="${esc(c.id)}">${esc(c.className || c.id)}</option>`).join("");
+  $("noClassNote").hidden = myClasses.length > 0;
+  $("newTestBtn").disabled = myClasses.length === 0;
+}
+
+// ---------------- list ----------------
+async function loadList() {
+  const box = $("testList");
+  box.innerHTML = '<div class="empty">Loading...</div>';
+  try {
+    const snap = await getDocs(query(collection(db, "tests"), where("postedBy", "==", teacherId)));
+    const tests = snap.docs.map((d) => ({ id: d.id, ...d.data() }))
+      .sort((a, b) => (toDate(b.startsAt)?.getTime() || 0) - (toDate(a.startsAt)?.getTime() || 0));
+    if (!tests.length) { box.innerHTML = '<div class="empty">No tests yet. Tap "Create New Test".</div>'; return; }
+    const counts = await Promise.all(tests.map((t) => getDocs(collection(db, "tests", t.id, "submissions")).then((s) => s.size).catch(() => 0)));
+    box.innerHTML = tests.map((t, i) => {
+      const st = testState(t);
+      const chip = { upcoming: ["chip-upcoming", "Upcoming"], live: ["chip-live", "Live now"], ended: ["chip-ended", "Ended"] }[st];
+      return `<div class="test-card">
+        <div class="test-card-body">
+          <div class="test-subject">${esc(t.subject)}${t.title ? ` <span style="font-weight:500;font-size:12px;color:var(--ink-soft)">- ${esc(t.title)}</span>` : ""}</div>
+          <div class="test-meta"><span><i class="fa-regular fa-clock"></i>${fmtDuration(t.durationMin)}</span><span><i class="fa-solid fa-star"></i>${t.totalMarks} marks</span><span><i class="fa-solid fa-list-check"></i>${t.questionCount} Qs</span></div>
+          <div class="test-when">${esc(t.className || "")} &middot; ${esc(fmtDateTime(toDate(t.startsAt)))}</div>
+          <span class="test-chip ${chip[0]}">${chip[1]}</span> <span class="test-chip chip-done">${counts[i]} submitted</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <button class="btn btn-sm" data-results="${esc(t.id)}"><i class="fa-solid fa-chart-column"></i> Results</button>
+          <button class="btn btn-danger btn-sm" data-del="${esc(t.id)}"><i class="fa-solid fa-trash"></i></button>
+        </div>
+      </div>`;
+    }).join("");
+    box.querySelectorAll("[data-results]").forEach((b) => b.onclick = () => openResults(tests.find((t) => t.id === b.dataset.results)));
+    box.querySelectorAll("[data-del]").forEach((b) => b.onclick = () => deleteTest(tests.find((t) => t.id === b.dataset.del)));
+  } catch (e) {
+    console.error(e);
+    box.innerHTML = `<div class="note err">Could not load tests: ${esc(e.message)}</div>`;
+  }
+}
+
+async function deleteTest(t) {
+  if (!await confirmModal("Delete this test?", "The test, its questions and ALL student submissions/reports will be permanently deleted.", "Delete")) return;
+  try {
+    const subs = await getDocs(collection(db, "tests", t.id, "submissions"));
+    await Promise.all(subs.docs.map((d) => deleteDoc(d.ref)));
+    await deleteDoc(doc(db, "tests", t.id, "paper", "main"));
+    await deleteDoc(doc(db, "tests", t.id, "key", "main"));
+    await deleteDoc(doc(db, "tests", t.id));
+    await loadList();
+  } catch (e) { console.error(e); alert(e.message); }
+}
+
+// ---------------- builder ----------------
+function blankQ(marks) { return { q: "", options: ["", "", "", ""], correct: -1, marks }; }
+function defaultMarks() { const m = parseFloat($("fMarks").value); return m > 0 ? m : 1; }
+
+function renderQuestions() {
+  $("qList").innerHTML = questions.map((q, i) => `
+    <div class="q-card" data-i="${i}">
+      <div class="q-head"><span>Question ${i + 1}</span><button class="btn btn-danger btn-sm" data-rm="${i}" aria-label="Remove question"><i class="fa-solid fa-xmark"></i></button></div>
+      <textarea rows="2" data-f="q" placeholder="Type the question" maxlength="1000">${esc(q.q)}</textarea>
+      ${q.options.map((o, oi) => `<div class="opt-row"><input type="radio" name="c${i}" data-f="c" data-o="${oi}" ${q.correct === oi ? "checked" : ""} aria-label="Option ${LETTERS[oi]} is correct"><input type="text" data-f="o" data-o="${oi}" placeholder="Option ${LETTERS[oi]}" maxlength="300" value="${esc(o)}"></div>`).join("")}
+      <div class="q-foot">Marks: <input type="number" data-f="m" min="0.5" step="0.5" value="${q.marks}"></div>
+    </div>`).join("");
+  updateTotals();
+}
+
+function updateTotals() {
+  $("totalQ").textContent = questions.length;
+  $("totalMarks").textContent = Math.round(questions.reduce((s, q) => s + (Number(q.marks) || 0), 0) * 100) / 100;
+}
+
+$("qList").addEventListener("input", (e) => {
+  const card = e.target.closest(".q-card"); if (!card) return;
+  const q = questions[+card.dataset.i], f = e.target.dataset.f;
+  if (f === "q") q.q = e.target.value;
+  else if (f === "o") q.options[+e.target.dataset.o] = e.target.value;
+  else if (f === "m") { q.marks = parseFloat(e.target.value) || 0; updateTotals(); }
+});
+$("qList").addEventListener("change", (e) => {
+  const card = e.target.closest(".q-card"); if (!card) return;
+  if (e.target.dataset.f === "c") questions[+card.dataset.i].correct = +e.target.dataset.o;
+});
+$("qList").addEventListener("click", (e) => {
+  const b = e.target.closest("[data-rm]"); if (!b) return;
+  questions.splice(+b.dataset.rm, 1); renderQuestions();
+});
+
+$("applyCountBtn").onclick = () => {
+  const n = Math.min(100, Math.max(1, parseInt($("fCount").value) || 1)), m = defaultMarks();
+  while (questions.length < n) questions.push(blankQ(m));
+  if (questions.length > n) questions.length = n;
+  questions.forEach((q) => q.marks = m);
+  renderQuestions();
+};
+$("addQBtn").onclick = () => { questions.push(blankQ(defaultMarks())); $("fCount").value = questions.length; renderQuestions(); };
+
+$("newTestBtn").onclick = () => {
+  questions = []; $("createErr").hidden = true;
+  ["fSubject", "fTitle", "fDate", "fTime"].forEach((id) => $(id).value = "");
+  $("fHours").value = 1; $("fMins").value = 0; $("fCount").value = 10; $("fMarks").value = 1;
+  $("applyCountBtn").click();
+  show("create");
+};
+$("cancelBtn").onclick = () => show("list");
+
+function showErr(msg) { const n = $("createErr"); n.className = "note err"; n.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i><span></span>'; n.lastChild.textContent = msg; n.hidden = false; n.scrollIntoView({ behavior: "smooth", block: "center" }); }
+
+$("publishBtn").onclick = async () => {
+  $("createErr").hidden = true;
+  const classId = $("fClass").value, cls = myClasses.find((c) => c.id === classId);
+  const subject = $("fSubject").value.trim(), title = $("fTitle").value.trim();
+  const date = $("fDate").value, time = $("fTime").value;
+  const durationMin = (parseInt($("fHours").value) || 0) * 60 + (parseInt($("fMins").value) || 0);
+  if (!cls) return showErr("Choose a class.");
+  if (!subject) return showErr("Enter the subject.");
+  if (!date || !time) return showErr("Choose the test date and start time.");
+  if (durationMin < 1) return showErr("Duration must be at least 1 minute.");
+  if (!questions.length) return showErr("Add at least one question.");
+  const startsAt = new Date(`${date}T${time}`);
+  if (isNaN(startsAt.getTime())) return showErr("Invalid date or time.");
+  if (startsAt.getTime() < Date.now()) return showErr("Start time must be in the future.");
+  for (let i = 0; i < questions.length; i++) {
+    const q = questions[i], n = i + 1;
+    if (!q.q.trim()) return showErr(`Question ${n}: question text is empty.`);
+    if (q.options.some((o) => !o.trim())) return showErr(`Question ${n}: fill all four options.`);
+    if (q.correct < 0) return showErr(`Question ${n}: select the correct option.`);
+    if (!(Number(q.marks) > 0)) return showErr(`Question ${n}: marks must be more than 0.`);
+  }
+  const totalMarks = Math.round(questions.reduce((s, q) => s + Number(q.marks), 0) * 100) / 100;
+  const endsAt = new Date(startsAt.getTime() + durationMin * 60000);
+
+  $("publishBtn").disabled = true;
+  let testRef = null;
+  try {
+    await auth.authStateReady();
+    testRef = await addDoc(collection(db, "tests"), {
+      subject, title, classId, className: cls.className || cls.id,
+      durationMin, totalMarks, questionCount: questions.length,
+      startsAt: Timestamp.fromDate(startsAt), endsAt: Timestamp.fromDate(endsAt),
+      postedBy: teacherId, createdAt: serverTimestamp()
+    });
+    await setDoc(doc(db, "tests", testRef.id, "paper", "main"), {
+      questions: questions.map((q) => ({ q: q.q.trim(), options: q.options.map((o) => o.trim()), marks: Number(q.marks) }))
+    });
+    await setDoc(doc(db, "tests", testRef.id, "key", "main"), { answers: questions.map((q) => q.correct) });
+    show("list"); await loadList();
+  } catch (e) {
+    console.error(e);
+    if (testRef) { try { await deleteDoc(testRef); } catch (_) {} }
+    showErr("Could not publish: " + e.message);
+  } finally { $("publishBtn").disabled = false; }
+};
+
+// ---------------- results ----------------
+async function openResults(t) {
+  currentTest = t; show("results");
+  const body = $("resultsBody");
+  body.innerHTML = '<div class="empty">Loading...</div>';
+  try {
+    const [paperSnap, keySnap, subSnap, stuSnap] = await Promise.all([
+      getDoc(doc(db, "tests", t.id, "paper", "main")),
+      getDoc(doc(db, "tests", t.id, "key", "main")),
+      getDocs(collection(db, "tests", t.id, "submissions")),
+      getDocs(query(collection(db, "students"), where("class", "==", t.classId)))
+    ]);
+    currentPaper = paperSnap.data()?.questions || [];
+    currentKey = keySnap.data()?.answers || [];
+    resultRows = subSnap.docs.map((d) => {
+      const s = d.data();
+      return { roll: d.id, sub: s, res: grade(currentPaper, currentKey, s.answers || []) };
+    }).sort((a, b) => b.res.score - a.res.score);
+    const submitted = new Set(resultRows.map((r) => r.roll));
+    const pending = stuSnap.docs.filter((d) => !submitted.has(d.id)).map((d) => ({ roll: d.id, name: d.data().name || d.data().studentName || d.id }));
+
+    const avg = resultRows.length ? Math.round(resultRows.reduce((s, r) => s + r.res.score, 0) / resultRows.length * 10) / 10 : 0;
+    const top = resultRows[0]?.res.score ?? 0;
+    body.innerHTML = `
+      <div class="card">
+        <div class="card-title">${esc(t.subject)}${t.title ? " - " + esc(t.title) : ""}</div>
+        <div class="test-when" style="margin:-8px 0 14px;">${esc(t.className || "")} &middot; ${esc(fmtDateTime(toDate(t.startsAt)))} &middot; ${fmtDuration(t.durationMin)} &middot; ${t.totalMarks} marks</div>
+        <div class="stat-grid">
+          <div class="stat g"><b>${resultRows.length}</b><span>Submitted</span></div>
+          <div class="stat n"><b>${avg}</b><span>Average</span></div>
+          <div class="stat r"><b>${top}</b><span>Highest</span></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Submitted (${resultRows.length})</div>
+        ${resultRows.length ? `<div class="table-wrapper"><table class="tbl"><thead><tr><th>#</th><th>Student</th><th>Roll</th><th>Marks</th><th>%</th><th>C / W / S</th><th>Left screen</th></tr></thead><tbody>
+          ${resultRows.map((r, i) => `<tr class="clickable" data-roll="${esc(r.roll)}"><td>${i + 1}</td><td><b>${esc(r.sub.name || r.roll)}</b></td><td>${esc(r.roll)}</td><td><b>${r.res.score}</b> / ${r.res.total}</td><td>${r.res.pct}%</td><td>${r.res.correct} / ${r.res.wrong} / ${r.res.skipped}</td><td>${r.sub.leaves ? `<span class="pill pill-red">${r.sub.leaves}x</span>` : '<span class="pill pill-green">0</span>'}</td></tr>`).join("")}
+        </tbody></table></div><p class="hint" style="margin-top:10px;">C = correct, W = wrong, S = skipped. Tap a row to open that student's full report.</p>` : '<div class="empty">No submissions yet.</div>'}
+      </div>
+      <div class="card">
+        <div class="card-title">Not submitted (${pending.length})</div>
+        ${pending.length ? pending.map((p) => `<div style="padding:8px 0;border-top:1px solid rgba(36,31,20,.06);font-size:13px;"><b>${esc(p.name)}</b> <span style="color:var(--ink-soft)">&middot; Roll ${esc(p.roll)}</span></div>`).join("") : '<div class="empty">Everyone has submitted.</div>'}
+      </div>`;
+    body.querySelectorAll("tr[data-roll]").forEach((tr) => tr.onclick = () => openReport(tr.dataset.roll));
+  } catch (e) {
+    console.error(e);
+    body.innerHTML = `<div class="note err">Could not load results: ${esc(e.message)}</div>`;
+  }
+}
+
+function openReport(roll) {
+  const r = resultRows.find((x) => x.roll === roll); if (!r) return;
+  $("reportBody").innerHTML = reportHTML(currentTest, { name: r.sub.name || roll, roll }, r.res, toDate(r.sub.submittedAt));
+  show("report");
+}
+$("reportBackBtn").onclick = () => show("results");
+
+await loadContext();
+await loadList();
 </script>
-<script type="module" src="teacher-tests.js"></script>
 </body>
 </html>

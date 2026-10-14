@@ -12,7 +12,6 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="stylesheet" href="site.css">
 <link rel="stylesheet" href="notify.css">
-<link rel="stylesheet" href="tests.css">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <script src="appearance.js"></script>
 <script src="session-timer.js"></script>
@@ -253,6 +252,12 @@
 
     <!-- ================= HOME TAB ================= -->
     <section class="tab-panel" data-tab-section="home">
+      <a href="tests.html" class="card" style="display:flex;align-items:center;gap:14px;">
+        <span class="card-title-icon" style="background:var(--yellow-bg,#fff4d6);color:var(--amber-deep);width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="fa-solid fa-clipboard-question"></i></span>
+        <span style="flex:1;"><b style="display:block;font-size:15px;">MCQ Tests</b><small style="color:var(--ink-soft);">See your child's test reports</small></span>
+        <i class="fa-solid fa-chevron-right" style="color:var(--ink-faint);"></i>
+      </a>
+
       <div class="card">
         <div class="card-title"><span class="card-title-icon"><i class="fa-solid fa-id-card"></i></span><h2>Child Profile</h2><a class="profile-edit-btn" href="parent-edit-profile.html" aria-label="Edit profile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></a></div>
         <div id="profileRequestBanner" class="request-banner" role="status" hidden></div>
@@ -306,14 +311,6 @@
       </div>
     </section>
 
-    <!-- ================= TESTS TAB ================= -->
-    <section class="tab-panel" data-tab-section="tests" hidden>
-      <div class="card" id="tests-section">
-        <div class="card-title"><span class="card-title-icon" style="background:var(--purple-bg); color:var(--purple);"><i class="fa-solid fa-clipboard-question"></i></span><h2>Tests</h2></div>
-        <div id="testsList"></div>
-      </div>
-    </section>
-
     <!-- ================= FEES TAB ================= -->
     <section class="tab-panel" data-tab-section="fees" hidden>
       <div class="card" id="fees-section">
@@ -358,7 +355,6 @@
         { id: 'home',       icon: 'fa-house',             label: 'Home' },
         { id: 'attendance', icon: 'fa-calendar-check',    label: 'Attendance' },
         { id: 'homework',   icon: 'fa-file-lines',        label: 'Homework' },
-        { id: 'tests',      icon: 'fa-clipboard-question', label: 'Tests' },
         { id: 'fees',       icon: 'fa-indian-rupee-sign', label: 'Fees' },
         { id: 'notices',    icon: 'fa-bell',              label: 'Notices' }
       ]
@@ -385,10 +381,6 @@
     window.location.href = 'result.html';
   }
   window.viewMyResult = viewMyResult;
-</script>
-<script type="module" src="tests-list.js" data-tests-role="parent"></script>
-<script>
-  try { var t = sessionStorage.getItem("gaOpenTab"); if (t) { sessionStorage.removeItem("gaOpenTab"); setTimeout(function(){ BottomNav.go(t); }, 0); } } catch(e) {}
 </script>
 <script type="module" src="notify.js" data-notify-role="parent"></script>
 </body>
