@@ -9,7 +9,9 @@
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
 <link rel="stylesheet" href="site.css">
+<link rel="stylesheet" href="notify.css">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <script src="appearance.js"></script>
 <script src="session-timer.js"></script>
@@ -234,6 +236,11 @@
 
     <!-- ================= HOME TAB ================= -->
     <section class="tab-panel" data-tab-section="home">
+      <a href="student-tests.html" id="testsCard" class="card" style="display:flex;align-items:center;gap:14px;text-decoration:none;color:inherit;">
+        <span class="card-title-icon" style="background:#fdf0e3;color:var(--amber-deep);flex-shrink:0;"><i class="fa-solid fa-clipboard-question"></i></span>
+        <span style="flex:1;min-width:0;"><strong style="display:block;font-size:15px;">Tests</strong><span style="font-size:12.5px;color:var(--ink-soft);">Take tests and see your reports</span></span>
+        <i class="fa-solid fa-chevron-right" style="color:var(--ink-faint);"></i>
+      </a>
       <div class="card">
         <div class="card-title"><span class="card-title-icon"><i class="fa-solid fa-id-card"></i></span><h2>My Profile</h2></div>
         <div class="mini-stats-grid">
@@ -378,5 +385,6 @@
   }
   window.viewMyResult = viewMyResult;
 </script>
+<script type="module" src="notify.js" data-notify-role="student"></script>
 </body>
 </html>

@@ -1,0 +1,101 @@
+{
+  "version": "2026.10.14",
+  "releases": [
+    {
+      "version": "2026.10.14",
+      "date": "2026-10-14",
+      "title": "Online MCQ tests",
+      "notes": [
+        "Teachers can design and publish MCQ tests with start time, duration and marks.",
+        "Students verify their details, take the test on time, and see correct and wrong answers after submitting.",
+        "Test reports are visible to the student, the parents and the teacher."
+      ]
+    },
+    {
+      "version": "2026.10.13",
+      "date": "2026-10-13",
+      "title": "Notifications and profile editing",
+      "notes": [
+        "Notification bell on the student and parent dashboards. A blinking red dot means a new notice or update.",
+        "Edit your profile with the pencil icon. Parent changes are approved by the tuition office first.",
+        "Login Activity: delete one record, or clear them all.",
+        "Mother's name now shows in the child profile."
+      ]
+    }
+  ],
+  "features": [
+    {
+      "id": "notif-bell",
+      "roles": [
+        "student",
+        "parent"
+      ],
+      "target": "#gaBell",
+      "title": "Notifications",
+      "text": "New notices and app updates show up here. A blinking red dot means something new."
+    },
+    {
+      "id": "edit-profile-parent",
+      "roles": [
+        "parent"
+      ],
+      "target": ".profile-edit-btn",
+      "title": "Edit your child's profile",
+      "text": "Tap the pencil to update details like mobile number, email and address. The tuition office approves the change."
+    },
+    {
+      "id": "edit-profile-teacher",
+      "roles": [
+        "teacher"
+      ],
+      "target": ".profile-edit-btn",
+      "title": "Edit your profile",
+      "text": "Tap the pencil to update your phone, email, address and other details."
+    },
+    {
+      "id": "edit-profile-admin",
+      "roles": [
+        "admin"
+      ],
+      "target": "a.header-icon-btn[href='admin-edit-profile.html']",
+      "title": "Edit your profile",
+      "text": "Tap the pencil to update your name, phone and contact details."
+    },
+    {
+      "id": "profile-requests-admin",
+      "roles": [
+        "admin"
+      ],
+      "target": "a[href='profile-requests.html']",
+      "title": "Profile requests",
+      "text": "Approve or reject profile changes that parents ask for."
+    },
+    {
+      "id": "tests-student",
+      "roles": [
+        "student"
+      ],
+      "target": "#testsCard",
+      "title": "Tests",
+      "text": "Open your tests here. The arrow opens when the start time comes."
+    },
+    {
+      "id": "tests-parent",
+      "roles": [
+        "parent"
+      ],
+      "target": "#testsCard",
+      "title": "Test reports",
+      "text": "See your child's test marks and answers here."
+    },
+    {
+      "id": "tests-teacher",
+      "roles": [
+        "teacher"
+      ],
+      "target": "#testsCard",
+      "title": "Tests",
+      "text": "Design MCQ tests, publish them, and see every student's marks."
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+# GitHub Pages (Jekyll) reads this file. Everything listed here is NOT published
+# on the website. These files stay in the repo for you, but visitors cannot open
+# them. Do not add a ".nojekyll" file, or this list stops working.
+exclude:
+  - SECURITY-REPORT.md
+  - TESTS-FEATURE.md
+  - HOW-TO-ANNOUNCE-UPDATES.md
+  - firestore.rules
+  - storage.rules
+  - firebase.json
+  - package.json
+  - capacitor.config.json
+  - icon.png
+  - splash.png
+  - splash-dark.png
+  - wordmark.png
+  - logo-original.png
+  - favicon-original.png
+  - unused-assistant.html
+  - unused-coming-soon.html
+  - unused-home.js
+  - node_modules
+  - android

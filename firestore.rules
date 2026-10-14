@@ -116,13 +116,74 @@ service cloud.firestore {
         || (isTeacher() && resource.data.postedBy == myTeacherId());
     }
 
+    // ---------- Online tests (MCQ) ----------
+    // tests/{id}                      : public details (title, subject, start, duration, marks).
+    // testQuestions/{id}, testKeys/{id}: questions and answer key. Readable only after the
+    //                                   test start time (server clock), so nothing leaks early.
+    // tests/{id}/submissions/{roll}   : one per student. Create-only, so no second attempt.
+    // KNOWN LIMIT: students are not Firebase users, so the answer key must be readable by the
+    // browser at submit time and the score is worked out in the browser. See TESTS-FEATURE.md.
+    function ownsTest(testId) {
+      return isAdmin()
+        || (isTeacher()
+            && get(/databases/$(database)/documents/tests/$(testId)).data.postedBy == myTeacherId());
+    }
+
+    match /tests/{testId} {
+      allow read: if true;
+      allow create: if isAdmin()
+        || (isTeacher() && request.resource.data.postedBy == myTeacherId());
+      allow update: if false;
+      allow delete: if ownsTest(testId);
+
+      match /submissions/{roll} {
+        allow get: if true;
+        allow list: if isStaff();
+        allow create: if request.resource.data.keys().hasOnly(
+              ['roll', 'studentName', 'className', 'answers', 'score', 'total',
+               'correct', 'wrong', 'skipped', 'auto', 'submittedAt'])
+          && request.resource.data.roll == roll
+          && request.resource.data.submittedAt == request.time
+          && request.resource.data.answers is list
+          && request.resource.data.answers.size() <= 100
+          && request.resource.data.score is number
+          && request.resource.data.total is number
+          && request.resource.data.score >= 0
+          && request.resource.data.score <= request.resource.data.total
+          && request.resource.data.studentName is string
+          && request.resource.data.studentName.size() <= 200
+          && exists(/databases/$(database)/documents/students/$(roll))
+          && request.time >= get(/databases/$(database)/documents/tests/$(testId)).data.startAt
+          && request.time <= get(/databases/$(database)/documents/tests/$(testId)).data.endAt
+               + duration.value(3, 'm');
+        allow update: if false;
+        allow delete: if ownsTest(testId);
+      }
+    }
+
+    match /testQuestions/{testId} {
+      allow read: if isStaff()
+        || request.time >= get(/databases/$(database)/documents/tests/$(testId)).data.startAt;
+      allow create, update, delete: if ownsTest(testId);
+    }
+
+    match /testKeys/{testId} {
+      allow read: if isStaff()
+        || request.time >= get(/databases/$(database)/documents/tests/$(testId)).data.startAt;
+      allow create, update, delete: if ownsTest(testId);
+    }
+
     // ---------- Teachers ----------
     match /teachers/{id} {
       allow read: if isStaff();
       allow create, delete: if isAdmin();
+      // A teacher may update login tracking and their own profile details only.
+      // Email, status, subject, ID and class assignment stay admin-only.
       allow update: if isAdmin()
         || (isTeacher() && myTeacherId() == id
-            && onlyChanges(['lastLogin', 'loginCount']));
+            && onlyChanges(['lastLogin', 'loginCount',
+                'name', 'phone', 'contactEmail', 'dob', 'gender', 'address',
+                'qualification', 'experience', 'summary']));
     }
 
     // Access record the rules use to recognise a teacher. Keyed by email.
@@ -130,6 +191,35 @@ service cloud.firestore {
       allow read: if isAdmin()
         || (signedIn() && request.auth.token.email == email);
       allow write: if isAdmin();
+    }
+
+    // ---------- Profile change requests from parents ----------
+    // Parents are not Firebase users, so they cannot edit a student record. They
+    // send a request, and only the admin can approve it and change the record.
+    match /profileRequests/{id} {
+      // A parent reads only the request they created (the id is unguessable).
+      allow get: if true;
+      allow list: if isAdmin();
+      allow create: if request.resource.data.keys().hasOnly(
+            ['roll', 'studentName', 'changes', 'previous', 'status', 'createdAt', 'requestedBy'])
+          && request.resource.data.status == 'pending'
+          && request.resource.data.requestedBy == 'parent'
+          && request.resource.data.createdAt == request.time
+          && request.resource.data.roll is string
+          && request.resource.data.roll.size() <= 50
+          && exists(/databases/$(database)/documents/students/$(request.resource.data.roll))
+          && request.resource.data.studentName is string
+          && request.resource.data.studentName.size() <= 200
+          && request.resource.data.changes is map
+          && request.resource.data.changes.size() > 0
+          && request.resource.data.changes.keys().hasOnly(
+               ['name', 'father', 'mother', 'dob', 'gender', 'contactNumber',
+                'altContact', 'parentEmail', 'address', 'previousSchool'])
+          && request.resource.data.previous is map
+          && request.resource.data.previous.keys().hasOnly(
+               ['name', 'father', 'mother', 'dob', 'gender', 'contactNumber',
+                'altContact', 'parentEmail', 'address', 'previousSchool']);
+      allow update, delete: if isAdmin();
     }
 
     // ---------- Activity log ----------

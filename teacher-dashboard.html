@@ -9,7 +9,9 @@
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
 <link rel="stylesheet" href="site.css">
+<link rel="stylesheet" href="notify.css">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script src="appearance.js"></script>
 <script src="session-timer.js"></script>
@@ -139,6 +141,7 @@
   .action-icon.blue{ background:var(--blue-bg); color:var(--blue); }
   .action-icon.purple{ background:var(--purple-bg); color:var(--purple); }
   .action-icon.teal{ background:var(--teal-bg); color:var(--teal); }
+  .action-icon.orange{ background:#fdf0e3; color:var(--amber-deep); }
   .action-icon.pink{ background:var(--pink-bg); color:var(--pink); }
   .action-text h3{ font-size:14px; margin-bottom:2px; }
   .action-text p{ font-size:12px; color:var(--ink-soft); }
@@ -200,7 +203,7 @@
 
       <!-- Profile -->
       <section class="card">
-        <div class="card-title"><i class="fa-solid fa-id-card"></i><h2>My Profile</h2></div>
+        <div class="card-title"><i class="fa-solid fa-id-card"></i><h2>My Profile</h2><a class="profile-edit-btn" href="teacher-edit-profile.html" aria-label="Edit profile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></a></div>
         <div class="mini-stats-grid">
           <div class="mini-stat-card"><div class="mini-stat-icon purple"><i class="fa-solid fa-book"></i></div><div class="mini-stat-info"><div class="mini-stat-number" id="teacherSubjectText">-</div><div class="mini-stat-label">Subject</div></div></div>
           <div class="mini-stat-card"><div class="mini-stat-icon blue"><i class="fa-solid fa-graduation-cap"></i></div><div class="mini-stat-info"><div class="mini-stat-number" id="teacherQualificationText">-</div><div class="mini-stat-label">Qualification</div></div></div>
@@ -232,6 +235,11 @@
           <a href="teacher-homework.html" class="action-item">
             <div class="action-icon teal"><i class="fa-solid fa-file-lines"></i></div>
             <div class="action-text"><h3>Upload Homework</h3><p>Share homework with your class</p></div>
+            <i class="fa-solid fa-chevron-right arrow"></i>
+          </a>
+          <a href="teacher-tests.html" class="action-item" id="testsCard">
+            <div class="action-icon orange"><i class="fa-solid fa-clipboard-question"></i></div>
+            <div class="action-text"><h3>Tests</h3><p>Design MCQ tests and see results</p></div>
             <i class="fa-solid fa-chevron-right arrow"></i>
           </a>
           <a href="#" class="action-item coming-soon-card">
@@ -289,5 +297,6 @@
 </script>
 
 <script type="module" src="teacher.js"></script>
+<script type="module" src="notify.js" data-notify-role="teacher"></script>
 </body>
 </html>
