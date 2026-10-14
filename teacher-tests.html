@@ -4,37 +4,135 @@
 <meta charset="UTF-8">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https://firebasestorage.googleapis.com https://storage.googleapis.com https://*.googleusercontent.com; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://www.gstatic.com; object-src 'none'; base-uri 'self'; form-action 'self' mailto:">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<meta name="description" content="Design and publish MCQ tests.">
 <meta name="theme-color" content="#0e1326">
 <meta name="robots" content="noindex, nofollow">
-<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
-<link rel="apple-touch-icon" href="apple-touch-icon.png">
-<link rel="manifest" href="manifest.webmanifest">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="tests-base.css">
+<link rel="stylesheet" href="tests.css">
+<script src="appearance.js"></script>
+<script src="session-timer.js"></script>
 <title>Tests - GenAlpha</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="site.css">
-<link rel="stylesheet" href="tests.css">
-<script src="appearance.js"></script>
-<script src="session-timer.js"></script>
 </head>
-<body data-role="teacher">
-<header class="top-header">
-  <div class="top-header-left">
-    <a class="header-icon-btn" href="teacher-dashboard.html" aria-label="Back"><i class="fa-solid fa-arrow-left"></i></a>
-    <div><h1>Tests</h1><p>Design and publish MCQ tests</p></div>
+<body>
+<div class="app-shell">
+  <header class="top-header">
+    <div class="top-header-left">
+      <button class="header-icon-btn" onclick="window.location.href='teacher-dashboard.html'" aria-label="Back"><i class="fa-solid fa-arrow-left"></i></button>
+      <div><h1>Tests</h1><p>Create MCQ tests and see reports</p></div>
+    </div>
+    <div class="header-actions">
+      <div id="appearanceMount"></div>
+    </div>
+  </header>
+
+  <main class="content">
+    <div class="t-info" id="noClass" hidden>No class has been assigned to you yet. Contact the admin about class-teacher assignment.</div>
+
+    <!-- LIST -->
+    <div id="listView">
+      <button type="button" class="t-btn full" id="newBtn" style="margin-bottom:16px;"><i class="fa-solid fa-plus"></i> Create new test</button>
+      <div class="t-box">
+        <h2>My tests</h2>
+        <div id="testList"><div class="loading-state"><div class="spinner"></div>Loading...</div></div>
+      </div>
+    </div>
+
+    <!-- CREATE -->
+    <div id="createView" hidden>
+      <div class="t-box">
+        <h2>New test</h2>
+        <div class="t-row">
+          <div class="t-field"><label for="fClass">Class</label><select id="fClass"></select></div>
+          <div class="t-field"><label for="fSubject">Subject</label><input id="fSubject" type="text" placeholder="e.g. Maths" maxlength="60"></div>
+        </div>
+        <div class="t-field"><label for="fTitle">Test name <span style="font-weight:500;color:var(--ink-soft);">(optional)</span></label><input id="fTitle" type="text" placeholder="e.g. Unit Test 1" maxlength="100"></div>
+        <div class="t-field"><label for="fStart">Start date and time</label><input id="fStart" type="datetime-local"></div>
+        <div class="t-row">
+          <div class="t-field"><label for="fHours">Duration - hours</label><input id="fHours" type="number" min="0" max="5" value="1" inputmode="numeric"></div>
+          <div class="t-field"><label for="fMins">Duration - minutes</label><input id="fMins" type="number" min="0" max="59" value="0" inputmode="numeric"></div>
+        </div>
+        <div class="t-field"><label for="fMarks">Marks for each question</label><input id="fMarks" type="number" min="0.5" step="0.5" value="1" inputmode="decimal"></div>
+      </div>
+
+      <div class="t-box">
+        <h2>Questions</h2>
+        <div class="t-hint">Fill the question and four options, then tap the circle next to the correct option.</div>
+        <div id="qBuilder"></div>
+        <button type="button" class="t-btn ghost full" id="addQBtn"><i class="fa-solid fa-plus"></i> Add question</button>
+        <div class="t-hint" style="margin-top:12px;font-weight:700;" id="totalLine"></div>
+      </div>
+
+      <div class="t-error" id="createError" hidden></div>
+      <div style="display:flex;gap:10px;">
+        <button type="button" class="t-btn ghost" id="cancelBtn" style="flex:1;">Cancel</button>
+        <button type="button" class="t-btn" id="publishBtn" style="flex:2;"><i class="fa-solid fa-upload"></i> Publish test</button>
+      </div>
+    </div>
+
+    <!-- REPORT -->
+    <div id="reportView" hidden>
+      <button type="button" class="t-btn ghost small" id="backListBtn" style="margin-bottom:12px;"><i class="fa-solid fa-arrow-left"></i> All tests</button>
+      <div class="t-box">
+        <div style="font-weight:800;font-size:18px;" id="repSubject"></div>
+        <div class="t-hint" id="repMeta"></div>
+        <div class="t-sum">
+          <div><b id="repSubmitted"></b><span>Submitted</span></div>
+          <div><b id="repPending"></b><span>Not yet</span></div>
+          <div><b id="repAvg"></b><span>Average</span></div>
+        </div>
+      </div>
+      <div class="t-box">
+        <h2>Student reports</h2>
+        <div style="overflow-x:auto;"><table class="t-table"><thead><tr><th>Student</th><th>Marks</th><th>%</th><th></th></tr></thead><tbody id="repRows"></tbody></table></div>
+      </div>
+      <div class="t-box" id="pendingBox" hidden>
+        <h2>Not submitted</h2>
+        <div id="pendingList" style="font-size:13px;line-height:1.8;"></div>
+      </div>
+    </div>
+  </main>
+
+  <nav class="bottom-nav" id="bottomNav"></nav>
+</div>
+
+<div class="t-overlay" id="confirmBox" hidden>
+  <div class="t-modal">
+    <h3 id="confirmTitle"></h3>
+    <p id="confirmText"></p>
+    <div class="btns">
+      <button type="button" class="t-btn ghost" id="confirmNo">Cancel</button>
+      <button type="button" class="t-btn" id="confirmYes">OK</button>
+    </div>
   </div>
-  <div class="header-actions"><div id="appearanceMount"></div></div>
-</header>
-<main id="app"></main>
-<footer class="footer"><nav class="footer-links" aria-label="Legal"><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="cookies.html">Cookies</a><a href="refund.html">Refunds</a></nav><div>&copy; <span data-year>2026</span> GenAlpha</div></footer>
-<script src="site.js"></script>
+</div>
+
 <script>
   try { Appearance.renderMenu(document.getElementById('appearanceMount'), { variant: 'inline' }); } catch(e) {}
+</script>
+<script src="bottom-nav.js"></script>
+<script>
+  try {
+    BottomNav.init({
+      mountId: 'bottomNav',
+      tabs: [
+        { href: 'teacher-dashboard.html',  icon: 'fa-house',              label: 'Home' },
+        { href: 'teacher-attendance.html', icon: 'fa-calendar-check',     label: 'Attendance' },
+        { href: 'teacher-homework.html',   icon: 'fa-file-lines',         label: 'Homework' },
+        { href: 'teacher-tests.html',      icon: 'fa-clipboard-question', label: 'Tests' },
+        { href: 'teacher-marks.html',      icon: 'fa-pen-to-square',      label: 'Marks' },
+        { href: 'teacher-students.html',   icon: 'fa-user-group',         label: 'Students' }
+      ]
+    });
+  } catch(e) {}
+</script>
+<script>
   try { SessionTimer.start({ flagKey: 'teacherLoggedIn', loginUrl: 'teacher-login.html' }); } catch(e) {}
 </script>
-<script type="module" src="tests.js"></script>
+<script type="module" src="teacher-tests.js"></script>
 </body>
 </html>

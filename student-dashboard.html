@@ -12,6 +12,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="stylesheet" href="site.css">
 <link rel="stylesheet" href="notify.css">
+<link rel="stylesheet" href="tests.css">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <script src="appearance.js"></script>
 <script src="session-timer.js"></script>
@@ -236,11 +237,6 @@
 
     <!-- ================= HOME TAB ================= -->
     <section class="tab-panel" data-tab-section="home">
-      <a href="student-tests.html" id="testsCard" class="card" style="display:flex;align-items:center;gap:14px;text-decoration:none;color:inherit;">
-        <span class="card-title-icon" style="background:#fdf0e3;color:var(--amber-deep);flex-shrink:0;"><i class="fa-solid fa-clipboard-question"></i></span>
-        <span style="flex:1;min-width:0;"><strong style="display:block;font-size:15px;">Tests</strong><span style="font-size:12.5px;color:var(--ink-soft);">Take tests and see your reports</span></span>
-        <i class="fa-solid fa-chevron-right" style="color:var(--ink-faint);"></i>
-      </a>
       <div class="card">
         <div class="card-title"><span class="card-title-icon"><i class="fa-solid fa-id-card"></i></span><h2>My Profile</h2></div>
         <div class="mini-stats-grid">
@@ -291,6 +287,14 @@
       </div>
     </section>
 
+    <!-- ================= TESTS TAB ================= -->
+    <section class="tab-panel" data-tab-section="tests" hidden>
+      <div class="card" id="tests-section">
+        <div class="card-title"><span class="card-title-icon" style="background:var(--purple-bg); color:var(--purple);"><i class="fa-solid fa-clipboard-question"></i></span><h2>Tests</h2></div>
+        <div id="testsList"></div>
+      </div>
+    </section>
+
     <!-- ================= FEES TAB ================= -->
     <section class="tab-panel" data-tab-section="fees" hidden>
       <div class="card" id="fees-section">
@@ -334,6 +338,7 @@
         { id: 'home',       icon: 'fa-house',             label: 'Home' },
         { id: 'attendance', icon: 'fa-calendar-check',    label: 'Attendance' },
         { id: 'results',    icon: 'fa-file-lines',        label: 'Results' },
+        { id: 'tests',      icon: 'fa-clipboard-question', label: 'Tests' },
         { id: 'fees',       icon: 'fa-indian-rupee-sign', label: 'Fees' },
         { id: 'notices',    icon: 'fa-bell',              label: 'Notices' }
       ]
@@ -384,6 +389,10 @@
     window.location.href = 'result.html';
   }
   window.viewMyResult = viewMyResult;
+</script>
+<script type="module" src="tests-list.js" data-tests-role="student"></script>
+<script>
+  try { var t = sessionStorage.getItem("gaOpenTab"); if (t) { sessionStorage.removeItem("gaOpenTab"); setTimeout(function(){ BottomNav.go(t); }, 0); } } catch(e) {}
 </script>
 <script type="module" src="notify.js" data-notify-role="student"></script>
 </body>

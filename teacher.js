@@ -139,6 +139,7 @@ async function teacherLogin() {
     localStorage.setItem("teacherLoggedIn", "true");
     localStorage.setItem("teacherDocId", teacherDoc.id);
 
+    alert("Login successful. Welcome back!");
     window.location.href = "teacher-dashboard.html";
 
   } catch (error) {
@@ -164,7 +165,8 @@ const teacherPages = [
   "teacher-students.html",
   "teacher-marks.html",
   "teacher-attendance.html",
-  "teacher-homework.html"
+  "teacher-homework.html",
+  "teacher-tests.html"
 ];
 
 const page = location.pathname;

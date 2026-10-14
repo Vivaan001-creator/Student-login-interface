@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en-IN">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https://firebasestorage.googleapis.com https://storage.googleapis.com https://*.googleusercontent.com; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://www.gstatic.com; object-src 'none'; base-uri 'self'; form-action 'self' mailto:">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="theme-color" content="#0e1326">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="tests-base.css">
+<link rel="stylesheet" href="tests.css">
+<script src="appearance.js"></script>
+<title>Test - GenAlpha</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="app-shell">
+
+  <!-- Normal header (hidden while the questions are on screen) -->
+  <header class="top-header" id="normalHeader">
+    <div class="top-header-left">
+      <button class="header-icon-btn" id="backBtn" aria-label="Back"><i class="fa-solid fa-arrow-left"></i></button>
+      <div><h1 id="hdrSubject">Test</h1><p id="hdrSub">GenAlpha</p></div>
+    </div>
+  </header>
+
+  <!-- Sticky bar while the test is running -->
+  <div class="t-topbar" id="testBar" hidden>
+    <div><div style="font-weight:800;" id="barSubject"></div><div style="font-size:11px;color:#b7bcdc;" id="barCount"></div></div>
+    <div class="t-timer" id="timer">--:--</div>
+  </div>
+
+  <main class="content no-nav">
+
+    <div id="sLoading" class="loading-state"><div class="spinner"></div>Loading test...</div>
+
+    <div id="sMsg" hidden>
+      <div class="t-box" style="text-align:center;">
+        <h2 id="msgTitle"></h2>
+        <p id="msgBody" style="font-size:13.5px;color:var(--ink-soft);line-height:1.6;"></p>
+        <div id="msgCountdown" class="t-countdown" style="font-size:16px;margin-top:10px;"></div>
+        <button class="t-btn" id="msgBtn" style="margin-top:16px;" hidden></button>
+      </div>
+    </div>
+
+    <div id="sVerify" hidden>
+      <div class="t-box">
+        <h2>Verify your details</h2>
+        <div class="t-info" id="verifyIntro"></div>
+        <div class="t-error" id="verifyError" hidden></div>
+        <form id="verifyForm" autocomplete="off" novalidate>
+          <div class="t-field"><label for="vName">Student name</label><input id="vName" type="text" autocomplete="off" placeholder="Your full name"></div>
+          <div class="t-field"><label for="vFather">Father's name</label><input id="vFather" type="text" autocomplete="off" placeholder="Father's full name"></div>
+          <div class="t-field"><label for="vDob">Date of birth</label><input id="vDob" type="date"></div>
+          <div class="t-field"><label for="vMobile">Mobile number</label><input id="vMobile" type="tel" inputmode="numeric" autocomplete="off" placeholder="Registered mobile number"></div>
+          <button type="submit" class="t-btn full" id="verifyBtn">Verify and start test</button>
+        </form>
+      </div>
+    </div>
+
+    <div id="sTest" hidden>
+      <div id="qWrap"></div>
+      <div class="t-error" id="submitError" hidden></div>
+      <button type="button" class="t-btn full" id="submitBtn"><i class="fa-solid fa-paper-plane"></i> Submit test</button>
+    </div>
+
+  </main>
+</div>
+
+<div class="t-overlay" id="confirmBox" hidden>
+  <div class="t-modal">
+    <h3>Submit the test?</h3>
+    <p id="confirmText"></p>
+    <div class="btns">
+      <button type="button" class="t-btn ghost" id="confirmNo">Go back</button>
+      <button type="button" class="t-btn" id="confirmYes">Submit</button>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="student-test.js"></script>
+</body>
+</html>

@@ -6,9 +6,10 @@
       "date": "2026-10-14",
       "title": "Online MCQ tests",
       "notes": [
-        "Teachers can design and publish MCQ tests with start time, duration and marks.",
-        "Students verify their details, take the test on time, and see correct and wrong answers after submitting.",
-        "Test reports are visible to the student, the parents and the teacher."
+        "Teachers can publish MCQ tests with a start time, duration and marks.",
+        "Students take the test from the new Tests tab after verifying their details.",
+        "Marks and the full correct/wrong report show to the student and parent right after submitting.",
+        "Teachers see every student's marks for each test."
       ]
     },
     {
@@ -75,27 +76,27 @@
       "roles": [
         "student"
       ],
-      "target": "#testsCard",
+      "target": "[data-bn-tab='tests']",
       "title": "Tests",
-      "text": "Open your tests here. The arrow opens when the start time comes."
+      "text": "Your tests are here. The arrow opens when the test time starts."
     },
     {
       "id": "tests-parent",
       "roles": [
         "parent"
       ],
-      "target": "#testsCard",
-      "title": "Test reports",
-      "text": "See your child's test marks and answers here."
+      "target": "[data-bn-tab='tests']",
+      "title": "Tests",
+      "text": "See your child's tests and open the full report after they submit."
     },
     {
       "id": "tests-teacher",
       "roles": [
         "teacher"
       ],
-      "target": "#testsCard",
+      "target": "a[href='teacher-tests.html']",
       "title": "Tests",
-      "text": "Design MCQ tests, publish them, and see every student's marks."
+      "text": "Create and publish MCQ tests, and see every student's report."
     }
   ]
 }

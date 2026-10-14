@@ -37,12 +37,32 @@ Until then, treat student data as readable by anyone technical, and do not store
 - Every page: Content-Security-Policy meta tag, referrer policy, `noindex` on private pages, favicon, descriptions, consistent titles, legal links in the footer.
 - New: `privacy.html`, `terms.html`, `cookies.html`, `refund.html`, `404.html`.
 - `student-register.html`: removed the placeholder number (now uses 917970500551), added a parent/guardian consent checkbox, validation and inline messages.
-- Unused files renamed with an `unused-` prefix: `unused-assistant.html`, `unused-coming-soon.html`, `unused-home.js`. Nothing links to them. Because the project is now one flat folder, GitHub Pages WILL publish them, so delete them from the repo if you do not need them.
+- Unused files renamed with an `unused-` prefix: `unused-assistant.html`, `unused-coming-soon.html`, `unused-home.js`. Nothing links to them. `_config.yml` tells GitHub Pages not to publish them, nor this report, the rules files, `package.json`, `capacitor.config.json` or the original images. Do not add a `.nojekyll` file or that list stops working. If your repo is published by a GitHub Action instead of the default branch build, `_config.yml` is ignored, so check that `SECURITY-REPORT.md` is not reachable on your site.
 - Accessibility: every form control has a label, keyboard focus is always visible, browser pop-up alerts are replaced by on-page messages (success and error), teacher phone numbers and emails are tap-to-call and tap-to-email. Text contrast was checked automatically on every page in light and dark mode (empty-data state) and now passes. Fixed along the way: invisible text on form cards in dark mode, faint footer and bottom-nav labels, and an unreadable teacher signature in dark mode on the result page.
 - Style: button corners are no longer pill shaped, purple gradients in `admin.css` are solid colours, em dashes removed.
-- Images: login logo reduced from 396 KB to 178 KB. Originals are `logo-original.png` and `favicon-original.png` (delete them from the repo if you do not need them online).
+- Images: login logo reduced from 396 KB to 178 KB. Originals are `logo-original.png` and `favicon-original.png` (excluded from the website by `_config.yml`).
 - Mobile (admin): the dashboard had its page padding wiped out by a later CSS rule, so everything touched the screen edges; fixed, with a 2x2 stats grid. List cards no longer overflow their box, class teacher and payment history cells are tidy. All 19 admin pages were run against realistic mock data at 360 and 320 px wide, light and dark, with a check that no element sticks out past the screen.
-- Mobile: two-column forms stack on phones. All 40 pages tested at 360 px wide with no sideways scrolling (logged-in pages tested with empty data).
+- Edit profile (pencil icon):
+  - Teacher: pencil on My Profile opens `teacher-edit-profile.html`. Saves directly. A teacher can change only name, mobile, contact email, date of birth, gender, address, qualification, experience and "about". Login email, status, subject, ID and class assignment stay with the admin (the rules enforce this).
+  - Admin: pencil in the top-right of the dashboard header opens `admin-edit-profile.html`. Saved in `appMeta/adminProfile` (readable and writable only by the admin) and the dashboard greets you by that name. The login email is fixed because the rules recognise the admin by it.
+  - Parent: pencil on Child Profile opens `parent-edit-profile.html` with the child's full profile, parent names, registered mobile, alternate mobile, email and address, plus a consent checkbox. **Changes are sent as a request and the admin approves them in Profile Requests** (`profile-requests.html`, linked from the dashboard and More, with a pending count). This is deliberate: parents are not real Firebase users, so anyone who knows a roll number could otherwise change a child's mobile number or date of birth, which are the login details. Approving applies the change; rejecting leaves the record alone and the parent sees the reason on their dashboard.
+  - Limits: a parent can have one pending request at a time; requests can be spammed (no rate limit is possible without a backend); the parent sees the status of the latest request only on the same browser; teacher name changes do not rewrite names already stored in class records. Changing a parent mobile number means logging in with the new number after approval.
+  - Add and edit student forms (admin) have new Alternate Mobile and Parent Email fields so approved data is visible and not lost.
+- Notifications (new):
+  - A Yes / No prompt asks for notification permission once, before the browser's own prompt. No is remembered for 7 days.
+  - Student and parent dashboards have a bell at the top. A blinking red dot (also on the Notices tab) means a new notice or app update. Opening the bell lists updates and notices, marks them seen and clears the dot.
+  - New features are highlighted once per device with a glowing ring and a NEW tag, then go back to normal. Teachers and admins get a "What's new" bar under the header.
+  - How you announce an update: edit `whats-new.json` and upload it with your files (steps in `HOW-TO-ANNOUNCE-UPDATES.md`). Open apps check for it every 5 minutes. New notices are stamped with an upload time (`createdAt`) so devices know what is new.
+  - Files: `notify.js`, `notify.css`, `sw.js` (service worker), `manifest.webmanifest` and two icons (lets the site be added to the Home Screen, which iPhones need for notifications).
+  - Tested in a real browser with a real service worker notification: permission Yes and No, remembering the choice, highlight once, dot blink, panel, update banner, and a phone notification when the app is in the background.
+  - **Limit: no push to a closed phone.** Notifications arrive only while the app or tab is open or in the background. Waking a phone with the app fully closed needs Firebase Cloud Messaging plus a Cloud Function (Blaze plan) and a web push key. That is not built. In the Android app build (Capacitor), system notifications need a Capacitor notification plugin; the bell, red dot and highlights work there already.
+- Mobile: two-column forms stack on phones. All 41 pages load at 360 px wide with no sideways scrolling. Teacher, student and parent pages were also run against mock data at 360 and 320 px, light and dark.
+- Logins: all four roles (student, parent, teacher, admin) now show a success message and the message survives the redirect to the dashboard. Parent logins are now recorded in Login Activity (before, only student, teacher and admin were). Admin login now waits up to 2.5 seconds for its log to be sent, so leaving the page no longer cancels it.
+- Login Activity: each record has a Delete button, and Clear All Records removes every record (not just the 200 shown), both with a confirmation. A Parent Logins count and badge were added.
+- Parent dashboard: Mother's Name added to the child profile.
+- Contrast: re-checked with realistic data loaded (the earlier check ran on empty pages and missed table buttons and status badges). Fixed Edit, View, Delete, status badges, subject chips and similar. Zero failures on the pages tested, light and dark.
+- Rules audit (repeated after adding profile requests and teacher self-edit): every Firestore read and write in the code was compared with `firestore.rules`. They match, including the exact fields written for login logs, parent payment reports, homework and login tracking.
+- Release build: `package.json` has a new `build:android:release` script. The existing `build:android` makes a debug build, which should not be shipped; a release build must be signed with your own keystore.
 
 ## 4. What you must do (in this order)
 
@@ -67,7 +87,7 @@ I could not run the rules in the Firebase emulator here. Step 5 is not optional.
 - Rate limiting: there is none on the student and parent login (it cannot be done in static files). Firebase limits admin and teacher attempts.
 - Custom domain: add a `CNAME` file and DNS records, then turn on Enforce HTTPS in GitHub Pages settings.
 - The app text mixes English and romanised Hindi.
-- Not checked: text over gradient or image backgrounds (the automatic check skips them), text that only appears once real data loads, image rights (the logo is the only photo-like asset), and whether every button works with real data.
+- Not checked: text over gradient or image backgrounds (the automatic check skips them), image rights (the logo is the only photo-like asset), the add and edit pop-up forms on admin pages, and anything that depends on your real database contents. Tests used a fake in-memory Firebase, not your live project.
 - Not changed: the colourful gradient in your logo itself.
 
 ## 6. Legal pages: please confirm
@@ -76,3 +96,9 @@ I could not run the rules in the Firebase emulator here. Step 5 is not optional.
 - Business details: only your email is listed. Add a postal address or phone if you want them shown.
 - DPDP: the main obligations start on 14 May 2027. Records of children under 18 need verifiable parental consent, with an exemption for educational institutions in limited cases. Whether that exemption covers a private tutor is a question for a lawyer.
 - Check that your Firebase project's data location (shown in Firestore settings) is described correctly in the privacy page.
+
+## Tests feature (added 2026-10-14)
+
+- Questions and the answer key are stored in separate documents and Firestore rules block reading them before the test start time. After the start time they are readable by anyone who knows the API, because students are not Firebase users. A technical student could read the key during the test. The fix is the same as for login: Firebase Auth for students plus a Cloud Function that grades on submit (Blaze plan).
+- An attempt is created once and cannot be edited. Marks are never stored; they are worked out from the saved answers and the key.
+- The "leave the screen and everything is erased" rule and the timer run in the browser. They stop honest mistakes and casual cheating, not a determined one.
