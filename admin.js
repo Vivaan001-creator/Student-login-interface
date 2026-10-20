@@ -123,8 +123,14 @@ async function adminLogin() {
         // Login tracking runs in the background AFTER we've already
         // committed to redirecting - a slow/hung Firestore call must
         // never be able to block or freeze the login itself.
-        recordAdminLoginTracking();
+        // Wait for the log to be sent (at most 2.5 seconds) so leaving the
+        // page does not cancel it, but never let a slow network block login.
+        await Promise.race([
+            recordAdminLoginTracking(),
+            new Promise((resolve) => setTimeout(resolve, 2500))
+        ]);
 
+        alert("Login successful. Welcome back!");
         window.location.href="dashboard.html";
 
     } catch (error) {
@@ -499,6 +505,10 @@ async function loadStudent() {
 
     document.getElementById("studentName").value = student.name || "";
     document.getElementById("fatherName").value = student.father || "";
+    const altField = document.getElementById("altContact");
+    if (altField) altField.value = student.altContact || "";
+    const emailField = document.getElementById("parentEmail");
+    if (emailField) emailField.value = student.parentEmail || "";
     document.getElementById("attendance").value = student.attendance || "";
 
     const motherField = document.getElementById("motherName");
@@ -707,6 +717,8 @@ async function saveStudent() {
         dob: document.getElementById("dob")?.value || "",
         gender: document.getElementById("gender")?.value || "",
         contactNumber: document.getElementById("contactNumber")?.value || "",
+        altContact: document.getElementById("altContact")?.value || "",
+        parentEmail: document.getElementById("parentEmail")?.value || "",
         address: document.getElementById("address")?.value || "",
         admissionDate: document.getElementById("admissionDate")?.value || "",
         previousSchool: document.getElementById("previousSchool")?.value || "",
@@ -818,6 +830,8 @@ async function addStudent() {
       dob,
       gender,
       contactNumber,
+      altContact: document.getElementById("altContact")?.value.trim() || "",
+      parentEmail: document.getElementById("parentEmail")?.value.trim() || "",
       address,
       admissionDate,
       previousSchool,
@@ -1049,24 +1063,23 @@ async function loadLoginActivity() {
     const tableBody = document.getElementById("loginActivityTable");
     if (!tableBody) return;
 
-    tableBody.innerHTML = `<tr><td colspan="4">Loading login activity...</td></tr>`;
+    tableBody.innerHTML = `<tr><td colspan="5">Loading login activity...</td></tr>`;
+
+    const clearBtn = document.getElementById("clearAllLoginsBtn");
+    const countLabel = document.getElementById("logCountLabel");
+    const setBox = (id, value) => { const el = document.getElementById(id); if (el) el.textContent = String(value); };
 
     try {
         const q = query(collection(db, "loginLogs"), orderBy("timestamp", "desc"), limit(200));
         const snap = await getDocs(q);
 
-        const totalBox = document.getElementById("totalLogins");
-        const studentBox = document.getElementById("studentLoginCount");
-        const teacherBox = document.getElementById("teacherLoginCount");
-        const adminBox = document.getElementById("adminLoginCount");
-        let studentCount = 0, teacherCount = 0, adminCount = 0;
+        let studentCount = 0, parentCount = 0, teacherCount = 0, adminCount = 0;
 
         if (snap.empty) {
-            tableBody.innerHTML = `<tr><td colspan="4">No login activity recorded yet.</td></tr>`;
-            if (totalBox) totalBox.textContent = "0";
-            if (studentBox) studentBox.textContent = "0";
-            if (teacherBox) teacherBox.textContent = "0";
-            if (adminBox) adminBox.textContent = "0";
+            tableBody.innerHTML = `<tr><td colspan="5">No login activity recorded yet.</td></tr>`;
+            ["totalLogins", "studentLoginCount", "parentLoginCount", "teacherLoginCount", "adminLoginCount"].forEach((id) => setBox(id, 0));
+            if (clearBtn) clearBtn.disabled = true;
+            if (countLabel) countLabel.textContent = "No records";
             return;
         }
 
@@ -1075,6 +1088,7 @@ async function loadLoginActivity() {
         snap.forEach((docSnap) => {
             const log = docSnap.data();
             if (log.role === "student") studentCount++;
+            else if (log.role === "parent") parentCount++;
             else if (log.role === "teacher") teacherCount++;
             else if (log.role === "admin") adminCount++;
 
@@ -1083,29 +1097,124 @@ async function loadLoginActivity() {
                 ? dt.toLocaleString("en-IN", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" })
                 : "Just now";
 
-            const roleBadgeClass = log.role === "student" ? "status-active" : log.role === "teacher" ? "status-pending" : "status-admin";
+            const roleBadgeClass = log.role === "student" ? "status-active"
+                : log.role === "parent" ? "status-parent"
+                : log.role === "teacher" ? "status-pending"
+                : "status-admin";
 
             const row = document.createElement("tr");
             row.innerHTML = `
                 <td data-label="Role"><span class="${roleBadgeClass}">${escapeHtmlAdmin(log.role || "-")}</span></td>
                 <td data-label="Name">${escapeHtmlAdmin(log.name || log.refId || "-")}</td>
                 <td data-label="Details">${escapeHtmlAdmin(log.class ? "Class " + log.class : (log.subject || "-"))}</td>
-                <td data-label="Date &amp; Time">${dtLabel}</td>
+                <td data-label="Date &amp; Time">${escapeHtmlAdmin(dtLabel)}</td>
+                <td data-label="Action"><button type="button" class="btn-delete" data-log-id="${escapeHtmlAdmin(docSnap.id)}">Delete</button></td>
             `;
             tableBody.appendChild(row);
         });
 
-        if (totalBox) totalBox.textContent = String(snap.size);
-        if (studentBox) studentBox.textContent = String(studentCount);
-        if (teacherBox) teacherBox.textContent = String(teacherCount);
-        if (adminBox) adminBox.textContent = String(adminCount);
+        setBox("totalLogins", snap.size);
+        setBox("studentLoginCount", studentCount);
+        setBox("parentLoginCount", parentCount);
+        setBox("teacherLoginCount", teacherCount);
+        setBox("adminLoginCount", adminCount);
+        if (clearBtn) clearBtn.disabled = false;
+        if (countLabel) countLabel.textContent = snap.size + (snap.size === 1 ? " record" : " records") + (snap.size >= 200 ? " (latest 200 shown)" : "");
 
     } catch (error) {
         console.error("Could not load login activity:", error);
-        tableBody.innerHTML = `<tr><td colspan="4">Could not load login activity.</td></tr>`;
+        tableBody.innerHTML = `<tr><td colspan="5">Could not load login activity.</td></tr>`;
     }
 }
+
+// Delete one record. One click handler for the whole table.
+const loginActivityBody = document.getElementById("loginActivityTable");
+if (loginActivityBody) {
+    loginActivityBody.addEventListener("click", async (event) => {
+        const btn = event.target.closest("button[data-log-id]");
+        if (!btn) return;
+        if (!confirm("Delete this login record? This cannot be undone.")) return;
+        btn.disabled = true;
+        try {
+            await deleteDoc(doc(db, "loginLogs", btn.getAttribute("data-log-id")));
+            alert("Login record deleted.");
+            loadLoginActivity();
+        } catch (error) {
+            console.error(error);
+            btn.disabled = false;
+            alert("Could not delete the record. Please try again.");
+        }
+    });
+}
+
+// Delete every record, not just the 200 on screen.
+const clearAllLoginsBtn = document.getElementById("clearAllLoginsBtn");
+if (clearAllLoginsBtn) {
+    clearAllLoginsBtn.addEventListener("click", async () => {
+        if (!confirm("Delete ALL login records? This removes every record permanently and cannot be undone.")) return;
+        clearAllLoginsBtn.disabled = true;
+        const originalLabel = clearAllLoginsBtn.textContent;
+        clearAllLoginsBtn.textContent = "Deleting...";
+        try {
+            let deleted = 0;
+            // Work in batches of 200 until nothing is left.
+            for (;;) {
+                const batch = await getDocs(query(collection(db, "loginLogs"), limit(200)));
+                if (batch.empty) break;
+                for (let i = 0; i < batch.docs.length; i += 20) {
+                    const chunk = batch.docs.slice(i, i + 20);
+                    await Promise.all(chunk.map((d) => deleteDoc(doc(db, "loginLogs", d.id))));
+                    deleted += chunk.length;
+                }
+            }
+            alert(deleted + (deleted === 1 ? " login record deleted." : " login records deleted."));
+        } catch (error) {
+            console.error(error);
+            alert("Could not delete all records. Some may remain. Please try again.");
+        } finally {
+            clearAllLoginsBtn.textContent = originalLabel;
+            loadLoginActivity();
+        }
+    });
+}
+
 loadLoginActivity();
+
+
+// ==========================
+// Admin profile name on the dashboard, and the pending profile request count
+// ==========================
+async function applyAdminProfile() {
+    const chipName = document.querySelector(".role-chip span");
+    const welcomeName = document.querySelector(".top-header-left h1 span");
+    if (!chipName && !welcomeName) return;
+    try {
+        const snap = await getDoc(doc(db, "appMeta", "adminProfile"));
+        const name = snap.exists() ? String(snap.data().name || "").trim() : "";
+        if (!name) return;
+        if (chipName) chipName.textContent = name;
+        if (welcomeName) welcomeName.textContent = name.split(" ")[0];
+    } catch (e) {
+        console.error("Could not load the admin profile:", e);
+    }
+}
+applyAdminProfile();
+
+async function loadProfileRequestBadge() {
+    const badge = document.getElementById("profileRequestBadge");
+    if (!badge) return;
+    try {
+        const snap = await getDocs(query(collection(db, "profileRequests"), where("status", "==", "pending")));
+        if (snap.size > 0) {
+            badge.textContent = String(snap.size);
+            badge.hidden = false;
+            badge.setAttribute("aria-label", snap.size + " pending");
+        }
+    } catch (e) {
+        console.error("Could not count profile requests:", e);
+    }
+}
+loadProfileRequestBadge();
 
 // ==========================
 // Dashboard Clock
@@ -3145,7 +3254,8 @@ async function saveNotice() {
     if (editingNoticeId) {
       await setDoc(doc(db, "notices", editingNoticeId), noticeData, { merge: true });
     } else {
-      await addDoc(collection(db, "notices"), noticeData);
+      // createdAt is the upload time. Devices use it to tell which notices are new.
+      await addDoc(collection(db, "notices"), { ...noticeData, createdAt: serverTimestamp() });
     }
 
     closeNoticeModal();
