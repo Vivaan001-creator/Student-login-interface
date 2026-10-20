@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en-IN">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https://firebasestorage.googleapis.com https://storage.googleapis.com https://*.googleusercontent.com; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://www.gstatic.com; object-src 'none'; base-uri 'self'; form-action 'self' mailto:">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Take Test - GenAlpha</title>
+<meta name="description" content="Answer the multiple choice questions before the time ends.">
+<meta name="theme-color" content="#0e1326">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="edit-profile.css">
+<link rel="stylesheet" href="site.css">
+<link rel="stylesheet" href="tests.css">
+<script src="appearance.js"></script>
+<script src="session-timer.js"></script>
+<script>SessionTimer.start({ flagKeys: ['studentLoggedIn'], loginUrl: "student-login.html" });</script>
+
+</head>
+<body class="ep">
+<header class="ep-bar">
+  
+  <div class="ep-title"><h1 id="pageTitle">Online Test</h1><p id="pageSub">Do not leave this screen during the test</p></div>
+  <div id="appearanceMount"></div>
+</header>
+<main class="ep-main" id="main">
+  <div id="pageLoading" class="ep-loading" role="status">Loading...</div>
+
+  <section id="blocked" class="ep-notice warn" hidden role="status">
+    <strong id="blockedTitle"></strong><span id="blockedText"></span>
+    <div class="ep-actions" style="margin-top:12px"><a class="ep-btn primary" href="student-tests.html">Back to tests</a></div>
+  </section>
+
+  <form id="verifyForm" novalidate hidden>
+    <section class="ep-card" aria-labelledby="vt">
+      <h2 id="vt">Verify it is you</h2>
+      <p class="ep-hint" id="vInfo"></p>
+      <div id="vNotice" class="tt-warn err" role="alert" hidden></div>
+      <div class="ep-field" id="w_name"><label for="f_name">Your name <span class="req" aria-hidden="true">*</span></label>
+        <input type="text" id="f_name" autocomplete="off" required aria-describedby="e_name"><p class="ep-error" id="e_name" role="alert"></p></div>
+      <div class="ep-field" id="w_father"><label for="f_father">Father's name <span class="req" aria-hidden="true">*</span></label>
+        <input type="text" id="f_father" autocomplete="off" required aria-describedby="e_father"><p class="ep-error" id="e_father" role="alert"></p></div>
+      <div class="ep-field" id="w_dob"><label for="f_dob">Date of birth <span class="req" aria-hidden="true">*</span></label>
+        <input type="date" id="f_dob" required aria-describedby="e_dob"><p class="ep-error" id="e_dob" role="alert"></p></div>
+      <div class="ep-field" id="w_mobile"><label for="f_mobile">Registered mobile number <span class="req" aria-hidden="true">*</span></label>
+        <input type="tel" id="f_mobile" inputmode="numeric" maxlength="14" autocomplete="off" required aria-describedby="e_mobile"><p class="ep-error" id="e_mobile" role="alert"></p></div>
+      <div class="tt-warn"><strong>Rules</strong><br>Once the questions appear, do not switch to another app or tab, and do not go back. If you do, your answers and this verification are erased and you must fill in the details again. The timer keeps running.</div>
+      <p class="ep-error" id="e_form" role="alert"></p>
+      <div class="ep-actions"><a class="ep-btn" href="student-tests.html">Cancel</a><button type="submit" class="ep-btn primary" id="verifyBtn">Verify and start</button></div>
+    </section>
+  </form>
+
+  <div id="testView" hidden>
+    <div class="tt-bar" role="group" aria-label="Test status"><div><div class="tt-progress" id="progress"></div></div><div class="tt-timer" id="timer" role="timer" aria-live="off">--:--</div></div>
+    <div id="questions" style="margin-top:14px"></div>
+    <div class="ep-actions"><button type="button" class="ep-btn primary" id="submitBtn">Submit test</button></div>
+  </div>
+
+  <div id="resultView" hidden>
+    <div class="ep-notice" role="status"><strong>Test submitted</strong><span id="resultNote"></span></div>
+    <div id="resultBody"></div>
+    <div class="ep-actions" style="margin-top:6px"><a class="ep-btn primary" href="student-tests.html">Back to tests</a></div>
+  </div>
+</main>
+<script src="site.js"></script>
+<script type="module" src="take-test.js"></script>
+</body>
+</html>

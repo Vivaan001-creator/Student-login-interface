@@ -9,6 +9,7 @@
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
 <link rel="stylesheet" href="site.css">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <script src="appearance.js"></script>
@@ -177,7 +178,7 @@
     <header class="page-topbar">
       <div class="page-topbar-left">
         <h1>Login Activity</h1>
-        <p>Every student, teacher and admin login - newest first.</p>
+        <p>Every student, parent, teacher and admin login - newest first.</p>
       </div>
     </header>
 
@@ -185,14 +186,20 @@
       <div class="mini-stats-grid" style="margin-bottom:22px;">
         <div class="mini-stat-card"><div class="mini-stat-icon purple"><i class="fa-solid fa-clock-rotate-left"></i></div><div class="mini-stat-info"><div class="mini-stat-number" id="totalLogins">0</div><div class="mini-stat-label">Total Logins (recent)</div></div></div>
         <div class="mini-stat-card"><div class="mini-stat-icon blue"><i class="fa-solid fa-user-graduate"></i></div><div class="mini-stat-info"><div class="mini-stat-number" id="studentLoginCount">0</div><div class="mini-stat-label">Student Logins</div></div></div>
+        <div class="mini-stat-card"><div class="mini-stat-icon pink"><i class="fa-solid fa-people-roof"></i></div><div class="mini-stat-info"><div class="mini-stat-number" id="parentLoginCount">0</div><div class="mini-stat-label">Parent Logins</div></div></div>
         <div class="mini-stat-card"><div class="mini-stat-icon orange"><i class="fa-solid fa-chalkboard-user"></i></div><div class="mini-stat-info"><div class="mini-stat-number" id="teacherLoginCount">0</div><div class="mini-stat-label">Teacher Logins</div></div></div>
         <div class="mini-stat-card"><div class="mini-stat-icon green"><i class="fa-solid fa-user-tie"></i></div><div class="mini-stat-info"><div class="mini-stat-number" id="adminLoginCount">0</div><div class="mini-stat-label">Admin Logins</div></div></div>
       </div>
 
+      <div class="log-toolbar">
+        <span class="log-count" id="logCountLabel" aria-live="polite"></span>
+        <button type="button" class="btn-clear-all" id="clearAllLoginsBtn" disabled>Clear All Records</button>
+      </div>
+
       <div class="table-wrapper">
         <table class="classes-table">
-          <thead><tr><th>Role</th><th>Name</th><th>Details</th><th>Date &amp; Time</th></tr></thead>
-          <tbody id="loginActivityTable"><tr><td colspan="4"><div class="loading-state"><div class="spinner"></div>Loading login activity...</div></td></tr></tbody>
+          <thead><tr><th>Role</th><th>Name</th><th>Details</th><th>Date &amp; Time</th><th>Action</th></tr></thead>
+          <tbody id="loginActivityTable"><tr><td colspan="5"><div class="loading-state"><div class="spinner"></div>Loading login activity...</div></td></tr></tbody>
         </table>
       </div>
     </section>
@@ -201,7 +208,8 @@
       <div class="quick-tips-text">
         <h3><i class="fa-solid fa-location-dot"></i> About This Page</h3>
         <ul>
-          <li>Shows the most recent 200 logins across students, teachers, and admin.</li>
+          <li>Shows the most recent 200 logins across students, parents, teachers and admin.</li>
+          <li>Use Delete to remove one record, or Clear All Records to remove every record at once. Deleted records cannot be brought back.</li>
           <li>Each account's dashboard also shows its own last-login time.</li>
           <li>A login is only recorded once the account successfully signs in.</li>
         </ul>

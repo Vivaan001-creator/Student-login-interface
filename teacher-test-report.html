@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en-IN">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https://firebasestorage.googleapis.com https://storage.googleapis.com https://*.googleusercontent.com; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://www.gstatic.com; object-src 'none'; base-uri 'self'; form-action 'self' mailto:">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Test Results - GenAlpha</title>
+<meta name="description" content="Marks of every student who submitted this test.">
+<meta name="theme-color" content="#0e1326">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="edit-profile.css">
+<link rel="stylesheet" href="site.css">
+<link rel="stylesheet" href="tests.css">
+<script src="appearance.js"></script>
+<script src="session-timer.js"></script>
+<script>SessionTimer.start({ flagKey: 'teacherLoggedIn', loginUrl: "teacher-login.html" });</script>
+
+</head>
+<body class="ep">
+<header class="ep-bar">
+  <a class="ep-back" href="teacher-tests.html" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></a>
+  <div class="ep-title"><h1 id="pageTitle">Test Results</h1><p id="pageSub">Who scored what</p></div>
+  <div id="appearanceMount"></div>
+</header>
+<main class="ep-main" id="main">
+  <div id="pageLoading" class="ep-loading" role="status">Loading results...</div>
+  <div id="content" hidden>
+    <section class="ep-card" id="summary" aria-label="Test summary"></section>
+    <h2 class="t-head">Submitted</h2>
+    <div id="submitted"></div>
+    <h2 class="t-head" style="margin-top:20px">Not submitted</h2>
+    <div id="pending"></div>
+  </div>
+</main>
+<script src="site.js"></script>
+<script type="module" src="teacher-test-report.js"></script>
+</body>
+</html>

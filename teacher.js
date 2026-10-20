@@ -165,8 +165,7 @@ const teacherPages = [
   "teacher-students.html",
   "teacher-marks.html",
   "teacher-attendance.html",
-  "teacher-homework.html",
-  "teacher-tests.html"
+  "teacher-homework.html"
 ];
 
 const page = location.pathname;

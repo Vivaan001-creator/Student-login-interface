@@ -4,37 +4,40 @@
 <meta charset="UTF-8">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https://firebasestorage.googleapis.com https://storage.googleapis.com https://*.googleusercontent.com; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://www.gstatic.com; object-src 'none'; base-uri 'self'; form-action 'self' mailto:">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<meta name="description" content="Test reports of your child.">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Test Reports - GenAlpha</title>
+<meta name="description" content="Your child's online tests and reports.">
 <meta name="theme-color" content="#0e1326">
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Tests - GenAlpha</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="edit-profile.css">
 <link rel="stylesheet" href="site.css">
 <link rel="stylesheet" href="tests.css">
 <script src="appearance.js"></script>
 <script src="session-timer.js"></script>
+<script>SessionTimer.start({ flagKeys: ['parentLoggedIn'], loginUrl: "parent-login.html" });</script>
+
 </head>
-<body data-role="parent">
-<header class="top-header">
-  <div class="top-header-left">
-    <a class="header-icon-btn" href="parent-dashboard.html" aria-label="Back"><i class="fa-solid fa-arrow-left"></i></a>
-    <div><h1>Tests</h1><p>Test reports of your child</p></div>
-  </div>
-  <div class="header-actions"><div id="appearanceMount"></div></div>
+<body class="ep">
+<header class="ep-bar">
+  <a class="ep-back" href="parent-dashboard.html" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></a>
+  <div class="ep-title"><h1 id="pageTitle">Test Reports</h1><p id="pageSub">Your child's online tests</p></div>
+  <div id="appearanceMount"></div>
 </header>
-<main id="app"></main>
-<footer class="footer"><nav class="footer-links" aria-label="Legal"><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="cookies.html">Cookies</a><a href="refund.html">Refunds</a></nav><div>&copy; <span data-year>2026</span> GenAlpha</div></footer>
+<main class="ep-main" id="main">
+  <div id="pageLoading" class="ep-loading" role="status">Loading tests...</div>
+  <div id="content" hidden>
+    <p class="ep-hint" id="childLine"></p>
+    <div class="ep-notice" id="parentNote"><strong>Reports appear after your child submits</strong>Your child takes each test from their own login. Tap the arrow on a finished test to see the report.</div>
+    <div id="list" class="t-list"></div>
+    <p id="emptyState" class="t-empty" hidden>No tests yet.</p>
+  </div>
+</main>
 <script src="site.js"></script>
-<script>
-  try { Appearance.renderMenu(document.getElementById('appearanceMount'), { variant: 'inline' }); } catch(e) {}
-  try { SessionTimer.start({ flagKey: 'parentLoggedIn', loginUrl: 'parent-login.html' }); } catch(e) {}
-</script>
-<script type="module" src="tests.js"></script>
+<script type="module" src="parent-tests.js"></script>
 </body>
 </html>

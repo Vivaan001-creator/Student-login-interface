@@ -165,52 +165,89 @@ service cloud.firestore {
       allow update, delete: if isAdmin();
     }
 
-    // ---------- Online MCQ tests ----------
-    // The question paper and answer key cannot be read before the start time
-    // (the server clock decides, not the phone). Submissions are create-only:
-    // a student can submit once, inside the test window, and never edit it.
-    // The score is not stored; it is computed from the submission + key.
-    match /tests/{testId} {
-      allow read: if true;
+    // ---------- Online tests ----------
+    // Questions and answers live in separate documents so a student cannot read
+    // the answers (or the questions) before they are allowed to.
+    //   tests/{id}                  details students see: subject, time, marks
+    //   testPapers/{id}             the questions (no answers). Readable only after the start time.
+    //   testKeys/{id}               the answer key. Staff only.
+    //   testKeys/{id}_{roll}        a copy of the key for one student. Readable only after that
+    //                               student has submitted (a submission with the same id exists).
+    //   testAttempts/{id}_{roll}    created once when the student starts. Holds the start time
+    //                               (server time), so leaving and returning cannot reset the clock.
+    //   testSubmissions/{id}_{roll} created once on submit. Cannot be changed afterwards.
+    function testData(id) {
+      return get(/databases/$(database)/documents/tests/$(id)).data;
+    }
+
+    function ownsTest(id) {
+      return isAdmin()
+        || (isTeacher() && testData(id).createdBy == myTeacherId());
+    }
+
+    match /tests/{id} {
+      // Drafts are hidden. Queries must filter on status == 'published'.
+      allow get, list: if isStaff() || resource.data.status == 'published';
       allow create: if isAdmin()
-        || (isTeacher() && request.resource.data.postedBy == myTeacherId());
-      allow update: if isAdmin();
+        || (isTeacher() && request.resource.data.createdBy == myTeacherId());
+      allow update: if isAdmin()
+        || (isTeacher() && resource.data.createdBy == myTeacherId()
+            && request.resource.data.createdBy == resource.data.createdBy);
       allow delete: if isAdmin()
-        || (isTeacher() && resource.data.postedBy == myTeacherId());
+        || (isTeacher() && resource.data.createdBy == myTeacherId());
+    }
 
-      match /paper/{id} {
-        allow read: if isStaff()
-          || request.time >= get(/databases/$(database)/documents/tests/$(testId)).data.startsAt;
-        allow write: if isStaff();
-      }
+    match /testPapers/{id} {
+      allow get: if isStaff()
+        || (testData(id).status == 'published' && request.time >= testData(id).startAt);
+      allow create, update, delete: if ownsTest(id);
+    }
 
-      match /key/{id} {
-        allow read: if isStaff()
-          || request.time >= get(/databases/$(database)/documents/tests/$(testId)).data.startsAt;
-        allow write: if isStaff();
-      }
+    match /testKeys/{keyId} {
+      allow get: if isStaff()
+        || exists(/databases/$(database)/documents/testSubmissions/$(keyId));
+      allow create, update, delete: if isStaff();
+    }
 
-      match /submissions/{roll} {
-        allow read: if true;
-        allow create: if request.resource.data.keys().hasOnly(
-              ['roll', 'name', 'classId', 'answers', 'leaves', 'submittedAt'])
-            && request.resource.data.roll == roll
-            && request.resource.data.name is string
-            && request.resource.data.name.size() <= 200
-            && request.resource.data.answers is list
-            && request.resource.data.answers.size() <= 200
-            && request.resource.data.leaves is number
-            && request.resource.data.submittedAt == request.time
-            && exists(/databases/$(database)/documents/students/$(roll))
-            && get(/databases/$(database)/documents/students/$(roll)).data.get('class', '')
-                 == get(/databases/$(database)/documents/tests/$(testId)).data.classId
-            && request.time >= get(/databases/$(database)/documents/tests/$(testId)).data.startsAt
-            && request.time <= get(/databases/$(database)/documents/tests/$(testId)).data.endsAt
-                 + duration.value(2, 'm');
-        // Staff may remove a submission (e.g. to allow a re-test).
-        allow delete: if isStaff();
-        allow update: if false;
-      }
+    match /testAttempts/{attemptId} {
+      allow get: if true;
+      allow list: if isStaff();
+      allow create: if request.resource.data.keys().hasOnly(['testId', 'roll', 'startedAt', 'violations'])
+          && request.resource.data.testId is string
+          && request.resource.data.roll is string
+          && attemptId == request.resource.data.testId + '_' + request.resource.data.roll
+          && request.resource.data.startedAt == request.time
+          && request.resource.data.violations == 0
+          && testData(request.resource.data.testId).status == 'published'
+          && request.time >= testData(request.resource.data.testId).startAt
+          && request.time <= testData(request.resource.data.testId).endAt;
+      // Counts each time the student left the test screen (one step at a time).
+      allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['violations'])
+          && request.resource.data.violations == resource.data.violations + 1
+          && !exists(/databases/$(database)/documents/testSubmissions/$(attemptId));
+      allow delete: if isStaff();
+    }
+
+    match /testSubmissions/{submissionId} {
+      allow get: if true;
+      allow list: if isStaff();
+      allow create: if request.resource.data.keys().hasOnly(
+            ['testId', 'roll', 'name', 'class', 'answers', 'startedAt', 'submittedAt', 'violations', 'auto'])
+          && request.resource.data.testId is string
+          && request.resource.data.roll is string
+          && submissionId == request.resource.data.testId + '_' + request.resource.data.roll
+          && request.resource.data.submittedAt == request.time
+          && request.resource.data.answers is list
+          && request.resource.data.answers.size() == testData(request.resource.data.testId).questionCount
+          && request.resource.data.name is string
+          && request.resource.data.name.size() <= 120
+          && exists(/databases/$(database)/documents/testAttempts/$(submissionId))
+          && request.time <= get(/databases/$(database)/documents/testAttempts/$(submissionId)).data.startedAt
+              + duration.value(testData(request.resource.data.testId).durationMinutes, 'm')
+              + duration.value(2, 'm');
+      allow update: if false;
+      // Staff can delete a submission so the student can try again.
+      allow delete: if isStaff();
     }
 
     // ---------- Activity log ----------

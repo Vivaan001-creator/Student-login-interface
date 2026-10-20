@@ -70,3 +70,74 @@ html:not([data-theme="dark"]) .amber-link{ color:#a8510f; }
   html body table.classes-table td.note-cell > .note-stack{ grid-column:2; flex-direction:column; align-items:flex-end; text-align:right; }
   html body .note-stack .action-btns{ justify-content:flex-end; flex-basis:auto; }
 }
+
+/* ---- Buttons and badges: text colours that stay readable on their tinted backgrounds ---- */
+html body .btn-edit, html body .status-pending, html body .ref-marks-pill{ color:#9a4a0a; }
+html:not([data-theme="dark"]) .btn-view,
+html:not([data-theme="dark"]) .status-admin{ color:#2a5cb0; }
+html:not([data-theme="dark"]) .btn-delete,
+html:not([data-theme="dark"]) .status-inactive{ color:#b3362a; }
+html:not([data-theme="dark"]) .status-active,
+html:not([data-theme="dark"]) .att-pill.att-present{ color:#17714b; }
+
+html[data-theme="dark"] .btn-view,
+html[data-theme="dark"] .status-admin{ color:#8fb3f5; }
+html[data-theme="dark"] .btn-delete,
+html[data-theme="dark"] .status-inactive{ color:#ff8a7d; }
+html[data-theme="dark"] .status-active,
+html[data-theme="dark"] .att-pill.att-present{ color:#5fd9a0; }
+html[data-theme="dark"] .ref-subject-chip{ background:rgba(255,255,255,.1); color:#f3ecd9; }
+
+/* Login activity: parent badge, toolbar and clear-all button. */
+.status-parent{ display:inline-block; padding:4px 12px; border-radius:999px; font-size:12px; font-weight:700; background:#dff5f3; color:#0f6b64; }
+html[data-theme="dark"] .status-parent{ background:#12383a; color:#6fe0d6; }
+.log-toolbar{ display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; margin:0 0 14px; }
+.log-count{ font-size:13px; color:#5f5744; }
+html[data-theme="dark"] .log-count{ color:#b7bcdc; }
+.btn-clear-all{ min-height:44px; padding:10px 18px; border:0; border-radius:12px; background:#b3362a; color:#fff; font-weight:700; font-size:14px; font-family:inherit; cursor:pointer; }
+.btn-clear-all:disabled{ opacity:.45; cursor:not-allowed; }
+@media (max-width:560px){ .btn-clear-all{ width:100%; } }
+
+/* Small stat cards: two per row on phones, and a pink icon variant for parents. */
+html body .mini-stat-icon.pink{ background:#fbe6ee; color:#b83a64; }
+html[data-theme="dark"] body .mini-stat-icon.pink{ background:#3a1f2b; color:#ff8fb1; }
+@media (max-width:560px){
+  html body .mini-stats-grid{ grid-template-columns:1fr 1fr; gap:10px; }
+  html body .mini-stats-grid .mini-stat-card{ padding:12px; gap:10px; min-width:0; }
+  html body .mini-stats-grid .mini-stat-label{ overflow-wrap:anywhere; font-size:12px; }
+}
+
+/* Delete button style for pages that do not define their own. */
+.btn-delete{ border:0; border-radius:10px; padding:8px 14px; min-height:36px; font-family:inherit; font-size:13px; font-weight:700; cursor:pointer; background:#fdeceb; }
+html[data-theme="dark"] .btn-delete{ background:#3a1e1c; }
+.btn-delete:disabled{ opacity:.5; cursor:not-allowed; }
+
+/* Pencil button on a dashboard profile card, and the request status banner. */
+.card-title:has(.profile-edit-btn){ display:flex; align-items:center; gap:10px; }
+.profile-edit-btn{ margin-left:auto; flex-shrink:0; width:44px; height:44px; border-radius:14px; display:inline-flex; align-items:center; justify-content:center;
+  background:#fdf0e3; color:#9a4a0a; border:1px solid rgba(154,74,10,.25); text-decoration:none; }
+.profile-edit-btn svg{ width:20px; height:20px; }
+html[data-theme="dark"] .profile-edit-btn{ background:#3a2a14; color:#ffc27a; border-color:rgba(255,194,122,.3); }
+.profile-edit-btn:hover{ filter:brightness(.97); }
+.request-banner{ border-radius:16px; padding:12px 14px; margin:0 0 14px; font-size:14px; line-height:1.45; border:1px solid rgba(154,74,10,.3); background:#fdf0e3; color:#5a2c05; }
+.request-banner.ok{ border-color:rgba(23,113,75,.35); background:#e4f7ee; color:#0f5a3a; }
+.request-banner.err{ border-color:rgba(179,54,42,.35); background:#fdeceb; color:#8f241a; }
+html[data-theme="dark"] .request-banner{ background:#3a2a14; color:#ffd9a8; }
+html[data-theme="dark"] .request-banner.ok{ background:#173a2c; color:#8ee8bd; }
+html[data-theme="dark"] .request-banner.err{ background:#3a1e1c; color:#ffb4aa; }
+.request-banner button{ margin-left:8px; padding:4px 10px; border-radius:8px; border:1px solid currentColor; background:transparent; color:inherit; font:600 12px/1 inherit; cursor:pointer; }
+
+/* Small count bubble next to a menu label. */
+.count-badge{ display:inline-block; min-width:22px; padding:2px 7px; margin-left:6px; border-radius:999px; background:#b3362a; color:#fff; font-size:12px; font-weight:700; line-height:1.3; text-align:center; vertical-align:middle; }
+.header-icon-btn svg{ display:block; }
+a.header-icon-btn{ text-decoration:none; }
+
+/* Very small phones: put the icon above the text in two-column stat cards so long values fit. */
+@media (max-width:420px){
+  html body .mini-stats-grid .mini-stat-card:not(.full-width){ flex-direction:column; align-items:flex-start; gap:8px; }
+  html body .mini-stats-grid .mini-stat-card:not(.full-width) .mini-stat-info{ width:100%; min-width:0; }
+  html body .mini-stats-grid .mini-stat-card:not(.full-width) .mini-stat-number{ overflow-wrap:anywhere; }
+}
+
+/* The decorative circle in dashboard headers must never let the header scroll sideways. */
+html body .top-header{ overflow:clip; }

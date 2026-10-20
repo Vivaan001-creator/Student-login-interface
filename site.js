@@ -57,7 +57,7 @@
 
   // If the page is leaving right after a message, replay it on the next page.
   window.addEventListener("pagehide", function () {
-    if (lastText && Date.now() - lastAt < 3000) {
+    if (lastText && Date.now() - lastAt < 1500) {
       try { sessionStorage.setItem(KEY, JSON.stringify({ t: lastText, at: Date.now() })); } catch (e) {}
     }
   });

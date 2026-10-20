@@ -12,6 +12,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="stylesheet" href="site.css">
 <link rel="stylesheet" href="notify.css">
+<link rel="stylesheet" href="tests.css">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script src="appearance.js"></script>
 <script src="session-timer.js"></script>
@@ -185,6 +186,7 @@
 
     <main class="content">
 
+      <a class="tests-entry" id="openTestsCard" href="teacher-tests.html"><span class="te-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span><span class="te-text"><strong>Online Tests</strong><small>Create tests and see every student's marks</small></span><span class="te-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></span></a>
       <!-- Quick stats -->
       <section class="card">
         <div class="card-title"><i class="fa-solid fa-gauge-high"></i><h2>Quick Stats</h2></div>
@@ -236,11 +238,6 @@
             <div class="action-text"><h3>Upload Homework</h3><p>Share homework with your class</p></div>
             <i class="fa-solid fa-chevron-right arrow"></i>
           </a>
-          <a href="teacher-tests.html" class="action-item">
-            <div class="action-icon blue"><i class="fa-solid fa-clipboard-question"></i></div>
-            <div class="action-text"><h3>MCQ Tests</h3><p>Create, publish and view test reports</p></div>
-            <i class="fa-solid fa-chevron-right arrow"></i>
-          </a>
           <a href="#" class="action-item coming-soon-card">
             <span class="soon-tag">Soon</span>
             <div class="action-icon pink"><i class="fa-regular fa-bell"></i></div>
@@ -270,7 +267,6 @@
         { href: 'teacher-attendance.html', icon: 'fa-calendar-check',    label: 'Attendance' },
         { href: 'teacher-homework.html',   icon: 'fa-file-lines',        label: 'Homework' },
         { href: 'teacher-marks.html',      icon: 'fa-pen-to-square',     label: 'Marks' },
-        { href: 'teacher-tests.html',      icon: 'fa-clipboard-question', label: 'Tests' },
         { href: 'teacher-students.html',   icon: 'fa-user-group',        label: 'Students' }
       ]
     });

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en-IN">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https://firebasestorage.googleapis.com https://storage.googleapis.com https://*.googleusercontent.com; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://www.gstatic.com; object-src 'none'; base-uri 'self'; form-action 'self' mailto:">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Edit My Profile - GenAlpha</title>
+<meta name="description" content="Update your personal and contact details.">
+<meta name="theme-color" content="#0e1326">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="edit-profile.css">
+<link rel="stylesheet" href="site.css">
+<script src="appearance.js"></script>
+<script src="session-timer.js"></script>
+<script>SessionTimer.start({ flagKey:'teacherLoggedIn', loginUrl: "teacher-login.html" });</script>
+</head>
+<body class="ep">
+<header class="ep-bar">
+  <a class="ep-back" href="teacher-dashboard.html" aria-label="Back to dashboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></a>
+  <div class="ep-title"><h1>Edit Profile</h1><p>Your personal and contact details</p></div>
+  <div id="appearanceMount"></div>
+</header>
+<main class="ep-main" id="main">
+  <div id="pageLoading" class="ep-loading" role="status">Loading profile...</div>
+  <form id="editForm" novalidate hidden>
+    <section class="ep-card" aria-labelledby="sec1">
+      <h2 id="sec1">Account</h2>
+      <p class="ep-hint">These are set by the tuition office. Your login email is also fixed.</p>
+      <div id="fixedInfo"></div>
+    </section>
+    <section class="ep-card" aria-labelledby="sec2">
+      <h2 id="sec2">Personal details</h2>
+      <div class="ep-field" id="w_name"><label for="f_name">Full name <span class="req" aria-hidden="true">*</span></label>
+        <input type="text" id="f_name" name="name" required aria-required="true" maxlength="80" autocomplete="name" aria-describedby="e_name"><p class="ep-error" id="e_name" role="alert"></p></div>
+      <div class="ep-field" id="w_dob"><label for="f_dob">Date of birth <span class="req" aria-hidden="true">*</span></label>
+        <input type="date" id="f_dob" name="dob" required aria-required="true" aria-describedby="e_dob"><p class="ep-error" id="e_dob" role="alert"></p></div>
+      <div class="ep-field" id="w_gender"><label for="f_gender">Gender <span class="req" aria-hidden="true">*</span></label>
+        <select id="f_gender" name="gender" required aria-required="true" aria-describedby="e_gender"><option value="">Select gender</option><option value="Male">Male</option><option value="Female">Female</option><option value="Other">Other</option></select><p class="ep-error" id="e_gender" role="alert"></p></div>
+      <div class="ep-field" id="w_address"><label for="f_address">Home address <span class="req" aria-hidden="true">*</span></label>
+        <textarea id="f_address" name="address" required aria-required="true" aria-describedby="e_address"></textarea><p class="ep-error" id="e_address" role="alert"></p></div>
+    </section>
+    <section class="ep-card" aria-labelledby="sec3">
+      <h2 id="sec3">Contact details</h2>
+      <div class="ep-field" id="w_phone"><label for="f_phone">Mobile number <span class="req" aria-hidden="true">*</span></label>
+        <input type="tel" id="f_phone" name="phone" required aria-required="true" inputmode="numeric" maxlength="14" autocomplete="tel" aria-describedby="h_phone e_phone"><p class="ep-help" id="h_phone">This number is shown on your profile and used by the tuition office.</p><p class="ep-error" id="e_phone" role="alert"></p></div>
+      <div class="ep-field" id="w_contactEmail"><label for="f_contactEmail">Contact email address <span class="req" aria-hidden="true">*</span></label>
+        <input type="email" id="f_contactEmail" name="contactEmail" required aria-required="true" maxlength="120" autocomplete="email" aria-describedby="h_contactEmail e_contactEmail"><p class="ep-help" id="h_contactEmail">You still log in with your account email shown above. To change your password, use Change Password on your profile page.</p><p class="ep-error" id="e_contactEmail" role="alert"></p></div>
+    </section>
+    <section class="ep-card" aria-labelledby="sec4">
+      <h2 id="sec4">Qualifications and experience</h2>
+      <div class="ep-field" id="w_qualification"><label for="f_qualification">Highest qualification</label>
+        <input type="text" id="f_qualification" name="qualification" maxlength="120" aria-describedby="e_qualification"><p class="ep-error" id="e_qualification" role="alert"></p></div>
+      <div class="ep-field" id="w_experience"><label for="f_experience">Teaching experience</label>
+        <input type="text" id="f_experience" name="experience" maxlength="60" aria-describedby="h_experience e_experience"><p class="ep-help" id="h_experience">For example: 5 years</p><p class="ep-error" id="e_experience" role="alert"></p></div>
+      <div class="ep-field" id="w_summary"><label for="f_summary">About me</label>
+        <textarea id="f_summary" name="summary" aria-describedby="e_summary"></textarea><p class="ep-error" id="e_summary" role="alert"></p></div>
+    </section>
+    <div class="ep-actions">
+      <a class="ep-btn" href="teacher-dashboard.html">Cancel</a>
+      <button type="submit" class="ep-btn primary" id="saveBtn">Save changes</button>
+    </div>
+  </form>
+</main>
+<script src="site.js"></script>
+<script type="module" src="teacher-profile-edit.js"></script>
+</body>
+</html>

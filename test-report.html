@@ -4,46 +4,40 @@
 <meta charset="UTF-8">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https://firebasestorage.googleapis.com https://storage.googleapis.com https://*.googleusercontent.com; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://www.gstatic.com; object-src 'none'; base-uri 'self'; form-action 'self' mailto:">
 <meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Test Report - GenAlpha</title>
+<meta name="description" content="Your test report: score and every question.">
 <meta name="theme-color" content="#0e1326">
 <meta name="robots" content="noindex, nofollow">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="tests-base.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="edit-profile.css">
+<link rel="stylesheet" href="site.css">
 <link rel="stylesheet" href="tests.css">
 <script src="appearance.js"></script>
-<title>Test Report - GenAlpha</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="session-timer.js"></script>
+<script>SessionTimer.start({ flagKeys: ['studentLoggedIn','parentLoggedIn'], loginUrl: "login.html" });</script>
+
 </head>
-<body>
-<div class="app-shell">
-  <header class="top-header">
-    <div class="top-header-left">
-      <button class="header-icon-btn" id="backBtn" aria-label="Back"><i class="fa-solid fa-arrow-left"></i></button>
-      <div><h1 id="hdrTitle">Test Report</h1><p id="hdrSub"></p></div>
-    </div>
-  </header>
-  <main class="content no-nav">
-    <div id="state" class="loading-state"><div class="spinner"></div>Loading report...</div>
-    <div id="report" hidden>
-      <div class="t-box">
-        <div style="font-weight:800;font-size:18px;" id="rSubject"></div>
-        <div class="t-hint" id="rTitle" style="margin-top:2px;"></div>
-        <div class="t-hint" id="rWho"></div>
-        <div class="t-score"><div class="big" id="rScore"></div><div class="t-hint" id="rPercent"></div></div>
-        <div class="t-sum">
-          <div><b id="rCorrect" style="color:#1f9a68;"></b><span>Correct</span></div>
-          <div><b id="rWrong" style="color:#d9453a;"></b><span>Wrong</span></div>
-          <div><b id="rSkipped"></b><span>Not answered</span></div>
-        </div>
-        <div class="t-hint" id="rWhen"></div>
-      </div>
-      <div id="review"></div>
-    </div>
-  </main>
-</div>
+<body class="ep">
+<header class="ep-bar">
+  <a class="ep-back" href="student-tests.html" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></a>
+  <div class="ep-title"><h1 id="pageTitle">Test Report</h1><p id="pageSub">Score and answers</p></div>
+  <div id="appearanceMount"></div>
+</header>
+<main class="ep-main" id="main">
+  <div id="pageLoading" class="ep-loading" role="status">Loading the report...</div>
+  <div id="message" class="ep-notice warn" hidden role="status"></div>
+  <div id="content" hidden>
+    <section class="ep-card" id="head"></section>
+    <div id="body"></div>
+    <div class="ep-actions" style="margin-top:6px"><a class="ep-btn primary" id="backBtn" href="student-tests.html">Back to tests</a></div>
+  </div>
+</main>
+<script src="site.js"></script>
 <script type="module" src="test-report.js"></script>
 </body>
 </html>

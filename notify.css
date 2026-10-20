@@ -1,0 +1,59 @@
+/* Notifications: bell, panel, permission prompt, update banner and feature highlight. */
+:root{ --ga-bg:#ffffff; --ga-ink:#241f14; --ga-soft:#5f5744; --ga-line:rgba(36,31,20,.16); --ga-accent:#ffb347; --ga-accent-ink:#241f14; --ga-card:#f7f0e0; --ga-red:#e5322d; }
+html[data-theme="dark"]{ --ga-bg:#161d3a; --ga-ink:#f3ecd9; --ga-soft:#b7bcdc; --ga-line:rgba(255,255,255,.18); --ga-card:#1e2750; --ga-red:#ff453a; }
+
+.ga-bell{ position:relative; }
+.ga-bell svg{ width:18px; height:18px; display:block; }
+.ga-dot{ position:absolute; top:2px; right:2px; width:11px; height:11px; border-radius:50%; background:var(--ga-red); border:2px solid #0e1326; box-sizing:content-box;
+  animation:gaBlink 1.1s ease-in-out infinite; }
+.ga-dot[hidden]{ display:none; }
+.ga-bn-dot{ position:absolute; top:-2px; right:-2px; width:10px; height:10px; border-radius:50%; background:var(--ga-red); border:2px solid #fff; box-sizing:content-box; animation:gaBlink 1.1s ease-in-out infinite; }
+html[data-theme="dark"] .ga-bn-dot{ border-color:#161d3a; }
+@keyframes gaBlink{ 0%,100%{ opacity:1; transform:scale(1); } 50%{ opacity:.2; transform:scale(.8); } }
+@media (prefers-reduced-motion: reduce){ .ga-dot, .ga-bn-dot{ animation:none; } .ga-spot{ animation:none !important; } }
+
+.ga-backdrop{ position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:2147482000; }
+.ga-sheet{ position:fixed; left:0; right:0; bottom:0; z-index:2147482100; max-height:86vh; max-height:86dvh; overflow-y:auto; background:var(--ga-bg); color:var(--ga-ink);
+  border-radius:24px 24px 0 0; padding:18px 16px calc(20px + env(safe-area-inset-bottom,0px)); box-shadow:0 -10px 40px rgba(0,0,0,.35);
+  font:15px/1.5 Inter, system-ui, -apple-system, "Segoe UI", Arial, sans-serif; max-width:640px; margin:0 auto; }
+.ga-sheet h2{ margin:0; font:600 20px/1.25 Fraunces, Georgia, serif; }
+.ga-sheet-head{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px; }
+.ga-close{ width:44px; height:44px; border-radius:14px; border:1px solid var(--ga-line); background:var(--ga-card); color:var(--ga-ink); font:700 20px/1 inherit; cursor:pointer; flex-shrink:0; }
+.ga-sec{ margin:14px 0 8px; font:700 12px/1.2 Inter, sans-serif; letter-spacing:.06em; text-transform:uppercase; color:var(--ga-soft); }
+.ga-item{ background:var(--ga-card); border:1px solid var(--ga-line); border-radius:14px; padding:12px 14px; margin:0 0 10px; }
+.ga-item h3{ margin:0 0 2px; font:700 15px/1.35 Inter, sans-serif; overflow-wrap:anywhere; }
+.ga-item p{ margin:0; color:var(--ga-soft); font-size:14px; overflow-wrap:anywhere; }
+.ga-item .ga-when{ display:block; margin-top:4px; font-size:12px; color:var(--ga-soft); }
+.ga-item ul{ margin:6px 0 0; padding-left:18px; color:var(--ga-soft); font-size:14px; }
+.ga-item li{ margin:3px 0; }
+.ga-new{ display:inline-block; margin-left:6px; padding:1px 8px; border-radius:999px; background:#c0211c; color:#fff; font:700 11px/1.5 Inter, sans-serif; vertical-align:middle; }
+.ga-empty{ color:var(--ga-soft); font-size:14px; margin:0 0 10px; }
+.ga-row{ display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; padding:12px 14px; border:1px solid var(--ga-line); border-radius:14px; background:var(--ga-card); margin:0 0 10px; font-size:14px; }
+.ga-btn{ min-height:44px; padding:10px 18px; border-radius:12px; border:1px solid var(--ga-line); background:var(--ga-bg); color:var(--ga-ink); font:700 14px/1 inherit; font-family:inherit; cursor:pointer; }
+.ga-btn.primary{ background:var(--ga-accent); color:var(--ga-accent-ink); border-color:transparent; }
+.ga-link{ background:none; border:0; padding:8px 0; color:inherit; font:700 14px/1.2 inherit; font-family:inherit; text-decoration:underline; text-underline-offset:3px; cursor:pointer; color:var(--ga-ink); min-height:44px; }
+.ga-sheet :focus-visible, .ga-pop :focus-visible, .ga-banner :focus-visible{ outline:3px solid #8ab4ff; outline-offset:2px; }
+
+.ga-ask{ text-align:left; }
+.ga-ask p{ margin:6px 0 16px; color:var(--ga-soft); }
+.ga-ask .ga-actions{ display:flex; gap:10px; }
+.ga-ask .ga-btn{ flex:1; }
+
+.ga-banner{ position:relative; z-index:3; max-width:640px; margin:12px 16px; display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+  background:var(--ga-bg); color:var(--ga-ink); border:1px solid var(--ga-line); border-left:5px solid var(--ga-red); border-radius:14px; padding:10px 12px; box-shadow:0 10px 30px rgba(0,0,0,.3);
+  font:14px/1.4 Inter, system-ui, Arial, sans-serif; }
+.ga-banner-fixed{ position:fixed; left:12px; right:12px; top:calc(10px + env(safe-area-inset-top,0px)); margin:0 auto; z-index:2147482050; }
+.ga-banner span{ flex:1 1 180px; min-width:0; overflow-wrap:anywhere; }
+.ga-banner .ga-btn{ min-height:40px; padding:8px 14px; }
+
+.ga-toast{ position:fixed; left:12px; right:12px; top:calc(12px + env(safe-area-inset-top,0px)); z-index:2147482900; max-width:520px; margin:0 auto; padding:12px 14px; border-radius:12px;
+  background:#12263f; color:#eaf3ff; border:1px solid #3b78c9; font:600 14px/1.45 Inter, system-ui, Arial, sans-serif; box-shadow:0 8px 28px rgba(0,0,0,.3); overflow-wrap:anywhere; cursor:pointer; }
+
+.ga-spot{ position:relative; z-index:2147481000; box-shadow:0 0 0 3px #ffb347, 0 0 0 9px rgba(255,179,71,.3) !important; animation:gaPulse 1.6s ease-in-out infinite; }
+@keyframes gaPulse{ 0%,100%{ box-shadow:0 0 0 3px #ffb347, 0 0 0 7px rgba(255,179,71,.35); } 50%{ box-shadow:0 0 0 3px #ffb347, 0 0 0 14px rgba(255,179,71,.05); } }
+.ga-new-tag{ position:absolute; top:-9px; right:-9px; z-index:2; padding:1px 7px; border-radius:999px; background:#c0211c; color:#fff; font:700 10px/1.6 Inter, sans-serif; letter-spacing:.04em; pointer-events:none; }
+.ga-pop{ position:fixed; z-index:2147482200; width:min(300px, calc(100vw - 24px)); background:var(--ga-bg); color:var(--ga-ink); border:1px solid var(--ga-line); border-radius:16px; padding:14px;
+  box-shadow:0 14px 40px rgba(0,0,0,.4); font:14px/1.45 Inter, system-ui, Arial, sans-serif; }
+.ga-pop h3{ margin:0 0 4px; font:700 15px/1.3 Inter, sans-serif; }
+.ga-pop p{ margin:0 0 12px; color:var(--ga-soft); }
+.ga-pop .ga-btn{ width:100%; }

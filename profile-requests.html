@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en-IN">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https://firebasestorage.googleapis.com https://storage.googleapis.com https://*.googleusercontent.com; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://www.gstatic.com; object-src 'none'; base-uri 'self'; form-action 'self' mailto:">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Profile Requests - GenAlpha</title>
+<meta name="description" content="Review and approve profile changes requested by parents.">
+<meta name="theme-color" content="#0e1326">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="edit-profile.css">
+<link rel="stylesheet" href="site.css">
+<script src="appearance.js"></script>
+<script src="session-timer.js"></script>
+<script>SessionTimer.start({ flagKey: 'adminLoggedIn', loginUrl: 'admin.html' });</script>
+</head>
+<body class="ep">
+<header class="ep-bar">
+  <a class="ep-back" href="dashboard.html" aria-label="Back to dashboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></a>
+  <div class="ep-title"><h1>Profile Requests</h1><p>Changes parents asked for</p></div>
+  <div id="appearanceMount"></div>
+</header>
+<main class="ep-main" id="main">
+  <div id="pageLoading" class="ep-loading" role="status">Loading requests...</div>
+  <section id="pendingSection" hidden>
+    <h2 class="rq-heading">Waiting for approval <span class="count-badge" id="pendingCount">0</span></h2>
+    <div id="pendingList"></div>
+  </section>
+  <section id="historySection" hidden>
+    <h2 class="rq-heading">Recently reviewed</h2>
+    <div id="historyList"></div>
+  </section>
+  <p id="emptyState" class="ep-notice" hidden>No profile change requests yet. When a parent edits a child's profile, it will appear here.</p>
+</main>
+<script src="site.js"></script>
+<script type="module" src="profile-requests.js"></script>
+</body>
+</html>

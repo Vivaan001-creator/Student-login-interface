@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data:; object-src 'none'; base-uri 'self'">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#ffb347">
+<meta name="robots" content="noindex, nofollow">
+<title>GenAlpha Games</title>
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--cream:#fdf6e8;--ink:#241f14;--soft:#6d644e;--amber:#ffb347;--deep:#ff8c42;--shadow:#d9691f;--green:#2fb87f;--gbg:#e4f7ee;--red:#e5584a;--rbg:#fdeceb;--card:#fff;--line:rgba(36,31,20,.08);--r:20px}
+@media (prefers-color-scheme:dark){:root{--cream:#1c2444;--ink:#f3ecd9;--soft:#b7bcdc;--card:#232c56;--line:rgba(255,255,255,.12);--gbg:#173a2c;--rbg:#3a1e1c}}
+*{box-sizing:border-box;margin:0}
+html,body{min-height:100%}
+body{background:var(--cream);color:var(--ink);font:16px/1.45 Inter,'Segoe UI',Arial,sans-serif;padding:env(safe-area-inset-top,0) 0 calc(24px + env(safe-area-inset-bottom,0))}
+.wrap{max-width:640px;margin:0 auto;padding:14px}
+h1,h2{font-family:Fraunces,Georgia,serif;line-height:1.15}
+.top{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.top a,.top button{color:inherit}
+.back{min-width:44px;min-height:44px;display:grid;place-items:center;border-radius:14px;background:var(--card);border:1px solid var(--line);text-decoration:none;font-size:20px;cursor:pointer}
+.stats{display:flex;gap:8px;margin-left:auto;font-weight:700;font-size:14px}
+.stats span{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:6px 11px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin-bottom:12px}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+input,select{font:inherit;color:inherit;background:var(--cream);border:2px solid var(--line);border-radius:14px;padding:11px 14px;min-height:46px;width:100%}
+.chip{flex:1 0 56px;min-height:46px;border-radius:14px;border:2px solid var(--line);background:var(--cream);color:inherit;font:700 15px Inter;cursor:pointer}
+.chip.on{background:var(--amber);border-color:var(--shadow);color:#241f14}
+.btn{min-height:50px;padding:0 22px;border:0;border-radius:16px;background:var(--deep);color:#241f14;font:700 17px Inter;box-shadow:0 4px 0 var(--shadow);cursor:pointer;width:100%}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--shadow)}
+.btn.alt{background:var(--card);border:2px solid var(--line);box-shadow:none;color:inherit}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.g{min-height:104px;text-align:left;padding:12px;border-radius:var(--r);border:1px solid var(--line);background:var(--card);color:inherit;cursor:pointer;display:flex;flex-direction:column;gap:2px;font:inherit}
+.g b{font-size:15px}.g small{color:var(--soft);font-size:12.5px}.g i{font-style:normal;font-size:30px}
+.g:active{background:var(--cream)}
+.bar{height:10px;background:var(--line);border-radius:9px;overflow:hidden;margin:6px 0 14px}
+.bar div{height:100%;background:var(--green);width:0;transition:width .3s}
+.q{font:600 26px/1.3 Fraunces,Georgia,serif;text-align:center;padding:16px 4px;min-height:96px;display:grid;place-items:center}
+.q svg{width:190px;max-width:70%}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.o{min-height:58px;border-radius:16px;border:2px solid var(--line);background:var(--card);color:inherit;font:700 19px Inter;cursor:pointer;padding:6px}
+.o.ok{background:var(--gbg);border-color:var(--green)}.o.no{background:var(--rbg);border-color:var(--red)}
+.mem{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.mc{aspect-ratio:1;border-radius:14px;border:2px solid var(--line);background:var(--amber);font:700 22px Inter;color:#241f14;cursor:pointer;padding:2px;word-break:break-word;line-height:1.1}
+.mc.up{background:var(--card);color:inherit;font-size:clamp(16px,5vw,26px)}.mc.done{background:var(--gbg);border-color:var(--green)}
+.mc.up.t{font-size:13px}
+.big{text-align:center;padding:10px}.big .st{font-size:44px;letter-spacing:4px}
+.lb{width:100%;border-collapse:collapse;font-size:15px}.lb td{padding:9px 6px;border-bottom:1px solid var(--line)}
+.muted{color:var(--soft);font-size:13px}
+.hid{display:none!important}
+.badges{display:flex;gap:8px;flex-wrap:wrap}.badges span{background:var(--cream);border:1px solid var(--line);border-radius:12px;padding:6px 10px;font-size:13px;font-weight:600}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <a class="back" id="backBtn" href="student-dashboard.html" aria-label="Back">←</a>
+    <h1 style="font-size:22px">Padhai Games</h1>
+    <div class="stats"><span id="sStars">⭐ 0</span><span id="sScore">🏆 0</span></div>
+  </div>
+
+  <section id="vSetup" class="card hid">
+    <h2 style="font-size:22px;margin-bottom:12px">Khelna shuru karein!</h2>
+    <label class="muted" for="nick">Apna nickname likho</label>
+    <input id="nick" maxlength="14" autocomplete="off" placeholder="Jaise: ChotuStar" style="margin:6px 0 14px">
+    <div class="muted" style="margin-bottom:6px">Class chuno</div>
+    <div class="row" id="setupClass" style="margin-bottom:16px"></div>
+    <button class="btn" id="goBtn">Chalo khelein 🎮</button>
+  </section>
+
+  <section id="vHome" class="hid">
+    <div class="card"><div class="row" style="align-items:center;justify-content:space-between"><div><b id="hiName"></b><div class="muted">Class badalne ke liye chuno:</div></div></div>
+      <div class="row" id="homeClass" style="margin-top:8px"></div></div>
+    <button class="btn" id="dailyBtn" style="margin-bottom:12px">🎯 Daily Quiz Battle</button>
+    <div class="grid" id="gameGrid"></div>
+    <div class="card" style="margin-top:12px"><h2 style="font-size:18px;margin-bottom:8px">Badges</h2><div class="badges" id="badges"></div></div>
+    <div class="card"><h2 style="font-size:18px;margin-bottom:8px">Leaderboard</h2><table class="lb" id="lb"></table>
+      <p class="muted" style="margin-top:8px">Abhi ye list is phone/device ke bachchon ki hai.</p></div>
+  </section>
+
+  <section id="vPlay" class="hid">
+    <div class="row" style="align-items:center;margin-bottom:6px"><b id="pTitle" style="flex:1"></b><span id="pLvl" class="muted"></span></div>
+    <div class="bar"><div id="pBar"></div></div>
+    <div class="card"><div class="muted" id="pTimer" style="text-align:right;min-height:18px"></div>
+      <div class="q" id="pQ"></div>
+      <div class="opts" id="pOpts"></div>
+      <div id="pIn" class="hid row" style="margin-top:8px"><input id="pAns" autocomplete="off" autocapitalize="none" placeholder="Jawab likho"><button class="btn" id="pCheck">Check</button></div>
+      <div id="pMem" class="mem hid"></div></div>
+    <button class="btn alt" id="quitBtn">Game se bahar</button>
+  </section>
+
+  <section id="vEnd" class="card big hid">
+    <h2 id="eTitle" style="font-size:26px"></h2>
+    <div class="st" id="eStars"></div>
+    <p id="eMsg" style="margin:8px 0 16px"></p>
+    <div class="row"><button class="btn" id="nextBtn" style="flex:1">Agla level ▶</button><button class="btn alt" id="homeBtn" style="flex:1">Home</button></div>
+  </section>
+</div>
+<script src="games.js"></script>
+</body>
+</html>

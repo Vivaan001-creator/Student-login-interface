@@ -123,6 +123,7 @@ async function studentLogin() {
 
     localStorage.setItem("studentLoggedIn", "true");
     localStorage.setItem("studentRoll", roll);
+    alert("Login successful. Welcome back!");
     window.location.href = "student-dashboard.html";
 
   } catch (error) {

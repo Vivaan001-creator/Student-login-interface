@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en-IN">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https://firebasestorage.googleapis.com https://storage.googleapis.com https://*.googleusercontent.com; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://www.gstatic.com; object-src 'none'; base-uri 'self'; form-action 'self' mailto:">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Design a Test - GenAlpha</title>
+<meta name="description" content="Design multiple choice questions, set time and marks, and publish.">
+<meta name="theme-color" content="#0e1326">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="edit-profile.css">
+<link rel="stylesheet" href="site.css">
+<link rel="stylesheet" href="tests.css">
+<script src="appearance.js"></script>
+<script src="session-timer.js"></script>
+<script>SessionTimer.start({ flagKey: 'teacherLoggedIn', loginUrl: "teacher-login.html" });</script>
+
+</head>
+<body class="ep">
+<header class="ep-bar">
+  <a class="ep-back" href="teacher-tests.html" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></a>
+  <div class="ep-title"><h1 id="pageTitle">Design a Test</h1><p id="pageSub">Multiple choice questions</p></div>
+  <div id="appearanceMount"></div>
+</header>
+<main class="ep-main" id="main">
+  <div id="pageLoading" class="ep-loading" role="status">Loading...</div>
+  <div id="lockedNotice" class="ep-notice warn" hidden><strong>This test is published</strong>Published tests cannot be edited, so every student gets the same paper. See the questions below, or open the results.
+    <div class="ep-actions" style="margin-top:10px"><a class="ep-btn primary" id="lockedReport" href="#">View results</a></div></div>
+  <form id="editForm" novalidate hidden>
+    <section class="ep-card" aria-labelledby="s1">
+      <h2 id="s1">Test details</h2>
+      <div class="ep-field" id="w_subject"><label for="f_subject">Subject <span class="req" aria-hidden="true">*</span></label>
+        <input type="text" id="f_subject" maxlength="60" required aria-describedby="e_subject" list="subjectList" autocomplete="off"><datalist id="subjectList"><option>Mathematics</option><option>English</option><option>Hindi</option><option>Science</option><option>Social Studies</option><option>Computer</option></datalist><p class="ep-error" id="e_subject" role="alert"></p></div>
+      <div class="ep-field" id="w_title"><label for="f_title">Test name (optional)</label>
+        <input type="text" id="f_title" maxlength="80" placeholder="For example: Chapter 3 quiz" aria-describedby="e_title"><p class="ep-error" id="e_title" role="alert"></p></div>
+      <div class="ep-field" id="w_class"><label for="f_class">Class <span class="req" aria-hidden="true">*</span></label>
+        <select id="f_class" required aria-describedby="e_class"></select><p class="ep-error" id="e_class" role="alert"></p></div>
+      <div class="te-grid">
+        <div class="ep-field" id="w_hours"><label for="f_hours">Time: hours</label>
+          <input type="number" id="f_hours" min="0" max="5" step="1" value="1" inputmode="numeric" aria-describedby="e_hours"><p class="ep-error" id="e_hours" role="alert"></p></div>
+        <div class="ep-field" id="w_minutes"><label for="f_minutes">Time: minutes</label>
+          <input type="number" id="f_minutes" min="0" max="59" step="1" value="0" inputmode="numeric" aria-describedby="e_minutes"><p class="ep-error" id="e_minutes" role="alert"></p></div>
+      </div>
+      <p class="ep-help" style="margin:-6px 0 14px;font-size:12.5px">Every student gets this much time once they start.</p>
+      <div class="ep-field" id="w_start"><label for="f_start">Test starts at <span class="req" aria-hidden="true">*</span></label>
+        <input type="datetime-local" id="f_start" required aria-describedby="e_start"><p class="ep-help">Students cannot open the test before this time.</p><p class="ep-error" id="e_start" role="alert"></p></div>
+      <div class="ep-field" id="w_end"><label for="f_end">Last time to start <span class="req" aria-hidden="true">*</span></label>
+        <input type="datetime-local" id="f_end" required aria-describedby="e_end"><p class="ep-help">After this time nobody can begin the test.</p><p class="ep-error" id="e_end" role="alert"></p></div>
+      <div class="ep-field" id="w_marks"><label for="f_marks">Marks for each question <span class="req" aria-hidden="true">*</span></label>
+        <input type="number" id="f_marks" min="1" max="20" step="1" value="1" inputmode="numeric" required aria-describedby="e_marks"><p class="ep-error" id="e_marks" role="alert"></p></div>
+    </section>
+    <section class="ep-card" aria-labelledby="sq">
+      <h2 id="sq">Add questions faster</h2>
+      <p class="ep-hint">You do not have to type every question. Choose one way.</p>
+
+      <div class="qi-group">
+        <button type="button" class="qi-toggle" id="qiBtnPaste" aria-expanded="true" aria-controls="qiPaste"><span><strong>Paste questions</strong><small>From Word, WhatsApp, a PDF, Excel or an AI chat</small></span><i aria-hidden="true">&#9662;</i></button>
+        <div class="qi-panel" id="qiPaste">
+          <label class="qi-label" for="qiText">Paste your questions here</label>
+          <textarea id="qiText" rows="9" placeholder="1. What is 7 x 8?&#10;A) 54&#10;B) 56&#10;C) 58&#10;D) 64&#10;Answer: B&#10;&#10;2. Next question..."></textarea>
+          <p class="ep-help">Write each question with options A, B, C, D and the correct answer, like <b>Answer: B</b>. Or put a star on the correct option, like <b>*B) 56</b>. Many other styles work too.</p>
+          <div class="ep-actions"><button type="button" class="ep-btn te-mini" id="qiExample">Show an example</button><button type="button" class="ep-btn primary" id="qiRead">Read questions</button></div>
+        </div>
+      </div>
+
+      <div class="qi-group">
+        <button type="button" class="qi-toggle" id="qiBtnFile" aria-expanded="false" aria-controls="qiFile"><span><strong>Upload a file</strong><small>A CSV file from Excel, or a text file</small></span><i aria-hidden="true">&#9662;</i></button>
+        <div class="qi-panel" id="qiFile" hidden>
+          <label class="qi-label" for="qiFileInput">Choose a .csv or .txt file</label>
+          <input type="file" id="qiFileInput" accept=".csv,.tsv,.txt,text/csv,text/plain">
+          <p class="ep-help">Not sure how to prepare it? Download the sample, type your questions in Excel, then use Save as CSV.</p>
+          <div class="ep-actions"><button type="button" class="ep-btn te-mini" id="qiSample">Download sample file</button></div>
+        </div>
+      </div>
+
+      <div class="qi-group">
+        <button type="button" class="qi-toggle" id="qiBtnAi" aria-expanded="false" aria-controls="qiAi"><span><strong>Ask an AI to write them</strong><small>ChatGPT, Claude or Gemini, free to use</small></span><i aria-hidden="true">&#9662;</i></button>
+        <div class="qi-panel" id="qiAi" hidden>
+          <div class="ep-field"><label for="qiTopic">Topic (optional)</label><input type="text" id="qiTopic" maxlength="80" placeholder="For example: Fractions"></div>
+          <div class="ep-field"><label for="qiCount">How many questions?</label><input type="number" id="qiCount" min="1" max="50" value="10" inputmode="numeric"></div>
+          <ol class="qi-steps"><li>Tap <b>Copy the request</b>.</li><li>Open ChatGPT, Claude or Gemini and paste it.</li><li>Copy the answer it gives you and paste it into <b>Paste questions</b> above.</li></ol>
+          <label class="qi-label" for="qiPrompt">The request</label>
+          <textarea id="qiPrompt" rows="6" readonly></textarea>
+          <div class="ep-actions"><button type="button" class="ep-btn primary" id="qiCopy">Copy the request</button></div>
+          <p class="ep-help" id="qiCopied" role="status" aria-live="polite"></p>
+        </div>
+      </div>
+
+      <div class="qi-preview" id="qiPreview" hidden aria-live="polite">
+        <h3 id="qiSummary"></h3>
+        <ul class="qi-list" id="qiList"></ul>
+        <div class="ep-actions"><button type="button" class="ep-btn" id="qiCancel">Cancel</button><button type="button" class="ep-btn primary" id="qiAdd">Add the questions</button></div>
+      </div>
+      <p class="ep-help" id="qiDone" role="status" aria-live="polite"></p>
+    </section>
+    <section aria-labelledby="s2">
+      <h2 class="t-head" id="s2">Questions</h2>
+      <p class="ep-help" id="totals" style="margin:-4px 0 12px;font-size:14px" aria-live="polite"></p>
+      <div id="questions"></div>
+      <div class="ep-actions" style="margin:0 0 18px"><button type="button" class="ep-btn" id="addQ">+ Add question</button></div>
+    </section>
+    <p class="ep-error" id="e_form" role="alert" style="margin:0 0 10px"></p>
+    <div class="ep-actions">
+      <button type="button" class="ep-btn" id="saveDraft">Save draft</button>
+      <button type="submit" class="ep-btn primary" id="publishBtn">Publish test</button>
+    </div>
+  </form>
+</main>
+<script src="site.js"></script>
+<script type="module" src="teacher-test-edit.js"></script>
+</body>
+</html>

@@ -12,6 +12,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="stylesheet" href="site.css">
 <link rel="stylesheet" href="notify.css">
+<link rel="stylesheet" href="tests.css">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <script src="appearance.js"></script>
 <script src="session-timer.js"></script>
@@ -236,12 +237,8 @@
 
     <!-- ================= HOME TAB ================= -->
     <section class="tab-panel" data-tab-section="home">
-      <a href="tests.html" class="card" style="display:flex;align-items:center;gap:14px;">
-        <span class="card-title-icon" style="background:var(--yellow-bg,#fff4d6);color:var(--amber-deep);width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="fa-solid fa-clipboard-question"></i></span>
-        <span style="flex:1;"><b style="display:block;font-size:15px;">MCQ Tests</b><small style="color:var(--ink-soft);">Take tests and see your reports</small></span>
-        <i class="fa-solid fa-chevron-right" style="color:var(--ink-faint);"></i>
-      </a>
-
+      <a class="tests-entry" id="openTestsCard" href="student-tests.html"><span class="te-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span><span class="te-text"><strong>Online Tests</strong><small>Start a test and see your reports</small></span><span class="te-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></span></a>
+      <a class="tests-entry" href="games.html"><span class="te-icon" aria-hidden="true" style="font-size:22px">🎮</span><span class="te-text"><strong>Padhai Games</strong><small>Class 1-6 ke games, stars aur badges</small></span><span class="te-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></span></a>
       <div class="card">
         <div class="card-title"><span class="card-title-icon"><i class="fa-solid fa-id-card"></i></span><h2>My Profile</h2></div>
         <div class="mini-stats-grid">

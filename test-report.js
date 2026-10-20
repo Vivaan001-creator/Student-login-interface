@@ -1,73 +1,49 @@
-// Report for one student's attempt. Opened by the student, the parent or the teacher.
-//   test-report.html?test=<testId>&roll=<roll>&role=student|parent|teacher
+// Report for one test and one student. Shown to the student and to their parent.
 import { db } from "./Firebase.js";
-import { doc, getDoc, getDocs, collection, query, where } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
-import {
-  escapeHtml, getTest, getAttempt, getQuestions, getKey, grade, renderReview, fmtDateTime
-} from "./tests-core.js";
+import { doc, getDoc } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+import { escapeHtml, tsMs, fmtDay, fmtDuration, reportHTML, attemptId } from "./tests-common.js";
+import { normalizeMobile } from "./profile-utils.js";
 
 const $ = (id) => document.getElementById(id);
-const p = new URLSearchParams(location.search);
-const testId = p.get("test");
-const roll = p.get("roll");
-const role = p.get("role");
+const params = new URLSearchParams(window.location.search);
+const testId = params.get("id");
+const isStudent = localStorage.getItem("studentLoggedIn") === "true";
+const roll = isStudent ? localStorage.getItem("studentRoll") : (params.get("roll") || localStorage.getItem("parentActiveRoll"));
 
-const backTo = { student: "student-dashboard.html", parent: "parent-dashboard.html", teacher: "teacher-tests.html" }[role] || "login.html";
-$("backBtn").addEventListener("click", () => {
-  if (role === "teacher") { location.href = backTo; return; }
-  // Student and parent dashboards open on their Tests tab if they can.
-  try { sessionStorage.setItem("gaOpenTab", "tests"); } catch (e) { /* ignore */ }
-  location.href = backTo;
-});
+function say(text) { $("pageLoading").hidden = true; const m = $("message"); m.hidden = false; m.textContent = text; }
 
-function fail(msg) {
-  $("state").className = "t-empty";
-  $("state").innerHTML = escapeHtml(msg);
-}
-
-// Who may open this report.
-async function allowed() {
-  if (!testId || !roll) return false;
-  if (role === "student") {
-    return localStorage.getItem("studentLoggedIn") === "true" && localStorage.getItem("studentRoll") === roll;
-  }
-  if (role === "teacher") return localStorage.getItem("teacherLoggedIn") === "true";
-  if (role === "parent") {
-    const contact = localStorage.getItem("parentContact");
-    if (localStorage.getItem("parentLoggedIn") !== "true" || !contact) return false;
-    const snap = await getDocs(query(collection(db, "students"), where("contactNumber", "==", contact)));
-    return snap.docs.some((d) => d.id === roll);
-  }
-  return false;
-}
-
-(async function () {
+(async function init() {
+  if (!testId || !roll) { window.location.replace("login.html"); return; }
   try {
-    if (!(await allowed())) return fail("You do not have access to this report.");
-    const [test, attempt] = await Promise.all([getTest(testId), getAttempt(testId, roll)]);
-    if (!test) return fail("This test is no longer available.");
-    if (!attempt) return fail("This test has not been submitted yet.");
+    const student = await getDoc(doc(db, "students", roll));
+    if (!student.exists()) { window.location.replace("login.html"); return; }
+    if (!isStudent) {
+      const contact = localStorage.getItem("parentContact");
+      const okParent = localStorage.getItem("parentLoggedIn") === "true" && contact && normalizeMobile(student.data().contactNumber) === normalizeMobile(contact);
+      if (!okParent) { window.location.replace("parent-login.html"); return; }
+      $("backBtn").setAttribute("href", "parent-tests.html");
+      document.querySelector(".ep-back").setAttribute("href", "parent-tests.html");
+    }
+    const aid = attemptId(testId, roll);
+    const [tSnap, pSnap, sSnap] = await Promise.all([getDoc(doc(db, "tests", testId)), getDoc(doc(db, "testPapers", testId)), getDoc(doc(db, "testSubmissions", aid))]);
+    if (!tSnap.exists()) { say("This test was not found."); return; }
+    if (!sSnap.exists()) { say("There is no submission for this test yet."); return; }
+    const test = tSnap.data(), sub = sSnap.data(), paper = pSnap.exists() ? pSnap.data() : { questions: [] };
+    let key = null;
+    try { const k = await getDoc(doc(db, "testKeys", aid)); if (k.exists()) key = k.data().answers; } catch (e) { /* not ready */ }
+    if (!key) { say("The result is not ready yet. Please check again a little later."); return; }
 
-    const [questions, key] = await Promise.all([getQuestions(testId), getKey(testId)]);
-    if (!key.length) return fail("The answer key is not available yet.");
-
-    const r = grade(attempt.answers, key, test.marksPerQuestion);
-    $("hdrSub").textContent = test.subject || "";
-    $("rSubject").textContent = test.subject || "Test";
-    $("rTitle").textContent = test.title || "";
-    $("rWho").textContent = (attempt.studentName || roll) + " \u00b7 Roll " + roll;
-    $("rScore").textContent = `${r.score} / ${r.max}`;
-    $("rPercent").textContent = r.max ? Math.round((r.score / r.max) * 100) + "%" : "";
-    $("rCorrect").textContent = r.correct;
-    $("rWrong").textContent = r.wrong;
-    $("rSkipped").textContent = r.skipped;
-    $("rWhen").textContent = "Submitted: " + fmtDateTime(attempt.submittedAt) + (attempt.autoSubmitted ? " (auto-submitted when time ended)" : "");
-    renderReview($("review"), questions, key, attempt.answers);
-
-    $("state").hidden = true;
-    $("report").hidden = false;
-  } catch (e) {
-    console.error(e);
-    fail("Could not load the report: " + e.message);
+    const took = tsMs(sub.submittedAt) - tsMs(sub.startedAt);
+    const left = sub.violations || 0;
+    $("head").innerHTML = '<h2 style="margin:0">' + escapeHtml(test.subject) + (test.title ? " &middot; " + escapeHtml(test.title) : "") + "</h2>" +
+      '<p class="ep-hint">' + escapeHtml(student.data().name || student.data().studentName || roll) + " &middot; Class " + escapeHtml(test.class) + " &middot; " + escapeHtml(fmtDay(tsMs(test.startAt))) + "</p>" +
+      '<div class="ep-readonly-row"><span>Time allowed</span><span>' + escapeHtml(fmtDuration(test.durationMinutes)) + '</span></div>' +
+      '<div class="ep-readonly-row"><span>Time taken</span><span>' + (took > 0 ? Math.max(1, Math.round(took / 60000)) + " min" : "-") + "</span></div>" +
+      (left ? '<div class="ep-readonly-row"><span>Left the test screen</span><span>' + left + (left === 1 ? " time" : " times") + "</span></div>" : "");
+    $("body").innerHTML = reportHTML({ test, paper, key, submission: sub });
+    $("pageLoading").hidden = true; $("content").hidden = false;
+  } catch (error) {
+    console.error(error);
+    say("Could not load the report. Please try again.");
   }
 })();

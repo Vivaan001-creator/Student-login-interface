@@ -1,15 +1,25 @@
 {
-  "version": "2026.10.14",
+  "version": "2026.10.15",
   "releases": [
+    {
+      "version": "2026.10.15",
+      "date": "2026-10-15",
+      "title": "Faster test creation",
+      "notes": [
+        "Teachers can paste questions copied from Word, WhatsApp, a PDF, Excel or an AI chat, and the app reads them.",
+        "Upload a CSV file from Excel, with a sample file to download.",
+        "Ask ChatGPT, Claude or Gemini to write the questions: the app prepares the request in the right format."
+      ]
+    },
     {
       "version": "2026.10.14",
       "date": "2026-10-14",
-      "title": "Online MCQ tests",
+      "title": "Online tests",
       "notes": [
-        "Teachers can publish MCQ tests with a start time, duration and marks.",
-        "Students take the test from the new Tests tab after verifying their details.",
-        "Marks and the full correct/wrong report show to the student and parent right after submitting.",
-        "Teachers see every student's marks for each test."
+        "Teachers can design multiple choice tests, set the time and marks, and publish them.",
+        "Students see each test as a card with the subject, time, marks and start time. The arrow opens once the test starts.",
+        "Students verify their details before the questions appear. Leaving the test screen erases the answers and the verification.",
+        "After submitting, students see which answers were correct. Parents see the same report, and teachers see every student's marks."
       ]
     },
     {
@@ -33,7 +43,7 @@
       ],
       "target": "#gaBell",
       "title": "Notifications",
-      "text": "New notices and app updates show up here. A blinking red dot means something new."
+      "text": "New notices, new tests and app updates show up here. A blinking red dot means something new."
     },
     {
       "id": "edit-profile-parent",
@@ -72,31 +82,31 @@
       "text": "Approve or reject profile changes that parents ask for."
     },
     {
-      "id": "tests-student",
+      "id": "online-tests-student",
       "roles": [
         "student"
       ],
-      "target": "[data-bn-tab='tests']",
-      "title": "Tests",
-      "text": "Your tests are here. The arrow opens when the test time starts."
+      "target": "#openTestsCard",
+      "title": "Online tests",
+      "text": "Your teacher's tests appear here. Tap to see the subject, time and marks, and to start a test when it opens."
     },
     {
-      "id": "tests-parent",
+      "id": "online-tests-parent",
       "roles": [
         "parent"
       ],
-      "target": "[data-bn-tab='tests']",
-      "title": "Tests",
-      "text": "See your child's tests and open the full report after they submit."
+      "target": "#openTestsCard",
+      "title": "Test reports",
+      "text": "See your child's online tests and, after they submit, the score and which answers were right or wrong."
     },
     {
-      "id": "tests-teacher",
+      "id": "online-tests-teacher",
       "roles": [
         "teacher"
       ],
-      "target": "a[href='teacher-tests.html']",
-      "title": "Tests",
-      "text": "Create and publish MCQ tests, and see every student's report."
+      "target": "#openTestsCard",
+      "title": "Online tests",
+      "text": "Design multiple choice tests, publish them, and see every student's marks."
     }
   ]
 }

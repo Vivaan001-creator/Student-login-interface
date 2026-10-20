@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en-IN">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https://firebasestorage.googleapis.com https://storage.googleapis.com https://*.googleusercontent.com; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://www.gstatic.com; object-src 'none'; base-uri 'self'; form-action 'self' mailto:">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Edit Child Profile - GenAlpha</title>
+<meta name="description" content="Update your child profile details and your contact information.">
+<meta name="theme-color" content="#0e1326">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="edit-profile.css">
+<link rel="stylesheet" href="site.css">
+<script src="appearance.js"></script>
+<script src="session-timer.js"></script>
+<script>SessionTimer.start({ flagKeys:['parentLoggedIn'], loginUrl: "parent-login.html" });</script>
+</head>
+<body class="ep">
+<header class="ep-bar">
+  <a class="ep-back" href="parent-dashboard.html" aria-label="Back to dashboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></a>
+  <div class="ep-title"><h1>Edit Profile</h1><p>Your child's details and contact information</p></div>
+  <div id="appearanceMount"></div>
+</header>
+<main class="ep-main" id="main">
+  <div id="pageLoading" class="ep-loading" role="status">Loading profile...</div>
+  <div id="pendingNotice" class="ep-notice warn" hidden role="status"></div>
+  <div id="requestInfo" class="ep-notice" hidden>
+    <strong>Changes are reviewed first</strong>
+    For your child's safety, changes are sent to the tuition office and appear on the profile after they approve them. You will see the status on your dashboard.
+  </div>
+  <form id="editForm" novalidate hidden>
+    <section class="ep-card" aria-labelledby="sec1">
+      <h2 id="sec1">Child details</h2>
+      <p class="ep-hint">Roll number, class and section can only be changed by the tuition office.</p>
+      <div id="fixedInfo"></div>
+      <div class="ep-field" id="w_name"><label for="f_name">Student name <span class="req" aria-hidden="true">*</span></label>
+        <input type="text" id="f_name" name="name" required aria-required="true" maxlength="80" autocomplete="off" aria-describedby="e_name"><p class="ep-error" id="e_name" role="alert"></p></div>
+      <div class="ep-field" id="w_dob"><label for="f_dob">Date of birth <span class="req" aria-hidden="true">*</span></label>
+        <input type="date" id="f_dob" name="dob" required aria-required="true" aria-describedby="e_dob"><p class="ep-error" id="e_dob" role="alert"></p></div>
+      <div class="ep-field" id="w_gender"><label for="f_gender">Gender <span class="req" aria-hidden="true">*</span></label>
+        <select id="f_gender" name="gender" required aria-required="true" aria-describedby="e_gender"><option value="">Select gender</option><option value="Male">Male</option><option value="Female">Female</option><option value="Other">Other</option></select><p class="ep-error" id="e_gender" role="alert"></p></div>
+      <div class="ep-field" id="w_previousSchool"><label for="f_previousSchool">Previous school</label>
+        <input type="text" id="f_previousSchool" name="previousSchool" maxlength="120" aria-describedby="e_previousSchool"><p class="ep-error" id="e_previousSchool" role="alert"></p></div>
+      <div class="ep-field" id="w_address"><label for="f_address">Home address <span class="req" aria-hidden="true">*</span></label>
+        <textarea id="f_address" name="address" required aria-required="true" aria-describedby="e_address"></textarea><p class="ep-error" id="e_address" role="alert"></p></div>
+    </section>
+    <section class="ep-card" aria-labelledby="sec2">
+      <h2 id="sec2">Parents</h2>
+      <div class="ep-field" id="w_father"><label for="f_father">Father's name <span class="req" aria-hidden="true">*</span></label>
+        <input type="text" id="f_father" name="father" required aria-required="true" maxlength="80" autocomplete="off" aria-describedby="e_father"><p class="ep-error" id="e_father" role="alert"></p></div>
+      <div class="ep-field" id="w_mother"><label for="f_mother">Mother's name <span class="req" aria-hidden="true">*</span></label>
+        <input type="text" id="f_mother" name="mother" required aria-required="true" maxlength="80" autocomplete="off" aria-describedby="e_mother"><p class="ep-error" id="e_mother" role="alert"></p></div>
+    </section>
+    <section class="ep-card" aria-labelledby="sec3">
+      <h2 id="sec3">Contact details</h2>
+      <p class="ep-hint">Used only for tuition notices and fee updates.</p>
+      <div class="ep-field" id="w_contactNumber"><label for="f_contactNumber">Registered mobile number <span class="req" aria-hidden="true">*</span></label>
+        <input type="tel" id="f_contactNumber" name="contactNumber" required aria-required="true" inputmode="numeric" maxlength="14" autocomplete="tel" aria-describedby="h_contactNumber e_contactNumber"><p class="ep-help" id="h_contactNumber">This is the number you use to log in. If you change it, use the new number to log in once the change is approved.</p><p class="ep-error" id="e_contactNumber" role="alert"></p></div>
+      <div class="ep-field" id="w_altContact"><label for="f_altContact">Alternate mobile number</label>
+        <input type="tel" id="f_altContact" name="altContact" inputmode="numeric" maxlength="14" autocomplete="off" aria-describedby="e_altContact"><p class="ep-error" id="e_altContact" role="alert"></p></div>
+      <div class="ep-field" id="w_parentEmail"><label for="f_parentEmail">Parent email address <span class="req" aria-hidden="true">*</span></label>
+        <input type="email" id="f_parentEmail" name="parentEmail" required aria-required="true" maxlength="120" autocomplete="email" aria-describedby="e_parentEmail"><p class="ep-error" id="e_parentEmail" role="alert"></p></div>
+    </section>
+    <label class="ep-check" for="f_consent"><input type="checkbox" id="f_consent" required>
+      <span>I am the parent or legal guardian and the details above are correct. I have read the <a href="privacy.html" target="_blank" rel="noopener">Privacy Policy</a>.</span></label>
+    <p class="ep-error" id="e_consent" role="alert"></p>
+    <div class="ep-actions">
+      <a class="ep-btn" href="parent-dashboard.html">Cancel</a>
+      <button type="submit" class="ep-btn primary" id="saveBtn">Send changes for approval</button>
+    </div>
+  </form>
+</main>
+<script src="site.js"></script>
+<script type="module" src="parent-profile-edit.js"></script>
+</body>
+</html>
