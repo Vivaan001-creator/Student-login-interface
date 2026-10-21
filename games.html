@@ -58,45 +58,46 @@ input,select{font:inherit;color:inherit;background:var(--cream);border:2px solid
 <div class="wrap">
   <div class="top">
     <a class="back" id="backBtn" href="student-dashboard.html" aria-label="Back">←</a>
-    <h1 style="font-size:22px">Padhai Games</h1>
+    <h1 style="font-size:22px">Learning Games</h1>
     <div class="stats"><span id="sStars">⭐ 0</span><span id="sScore">🏆 0</span></div>
   </div>
 
   <section id="vSetup" class="card hid">
-    <h2 style="font-size:22px;margin-bottom:12px">Khelna shuru karein!</h2>
-    <label class="muted" for="nick">Apna nickname likho</label>
-    <input id="nick" maxlength="14" autocomplete="off" placeholder="Jaise: ChotuStar" style="margin:6px 0 14px">
-    <div class="muted" style="margin-bottom:6px">Class chuno</div>
+    <h2 style="font-size:22px;margin-bottom:12px">Let’s start playing!</h2>
+    <label class="muted" for="nick">Type your nickname</label>
+    <input id="nick" maxlength="14" autocomplete="off" placeholder="Example: LittleStar" style="margin:6px 0 14px">
+    <div class="muted" style="margin-bottom:6px">Choose your class (games are only for Class 1 and 2)</div>
     <div class="row" id="setupClass" style="margin-bottom:16px"></div>
-    <button class="btn" id="goBtn">Chalo khelein 🎮</button>
+    <button class="btn" id="goBtn">Let’s play 🎮</button>
   </section>
 
   <section id="vHome" class="hid">
-    <div class="card"><div class="row" style="align-items:center;justify-content:space-between"><div><b id="hiName"></b><div class="muted">Class badalne ke liye chuno:</div></div></div>
-      <div class="row" id="homeClass" style="margin-top:8px"></div></div>
+    <div class="card"><div><b id="hiName"></b></div><div id="classCard"><div class="muted">Playing in: <b id="classCardTxt"></b>. Change class:</div>
+      <div class="row" id="homeClass" style="margin-top:8px"></div></div></div>
     <button class="btn" id="dailyBtn" style="margin-bottom:12px">🎯 Daily Quiz Battle</button>
     <div class="grid" id="gameGrid"></div>
     <div class="card" style="margin-top:12px"><h2 style="font-size:18px;margin-bottom:8px">Badges</h2><div class="badges" id="badges"></div></div>
     <div class="card"><h2 style="font-size:18px;margin-bottom:8px">Leaderboard</h2><table class="lb" id="lb"></table>
-      <p class="muted" style="margin-top:8px">Abhi ye list is phone/device ke bachchon ki hai.</p></div>
+      <p class="muted" style="margin-top:8px">This list shows the children who play on this device.</p></div>
   </section>
 
   <section id="vPlay" class="hid">
     <div class="row" style="align-items:center;margin-bottom:6px"><b id="pTitle" style="flex:1"></b><span id="pLvl" class="muted"></span></div>
     <div class="bar"><div id="pBar"></div></div>
-    <div class="card"><div class="muted" id="pTimer" style="text-align:right;min-height:18px"></div>
+    <div class="card"><div class="row" style="justify-content:space-between;align-items:center;min-height:38px"><span class="muted" id="pTimer"></span><button type="button" id="pTr" class="chip" style="flex:0 0 auto;min-height:36px;padding:0 14px;font-size:14px" aria-label="Translate question">हिंदी</button></div>
       <div class="q" id="pQ"></div>
+      <div class="muted" id="pFb" style="text-align:center;min-height:22px;font-size:16px;font-weight:600;color:var(--ink)"></div>
       <div class="opts" id="pOpts"></div>
-      <div id="pIn" class="hid row" style="margin-top:8px"><input id="pAns" autocomplete="off" autocapitalize="none" placeholder="Jawab likho"><button class="btn" id="pCheck">Check</button></div>
+      <div id="pIn" class="hid row" style="margin-top:8px"><input id="pAns" autocomplete="off" autocapitalize="none" placeholder="Type your answer"><button class="btn" id="pCheck">Check</button></div>
       <div id="pMem" class="mem hid"></div></div>
-    <button class="btn alt" id="quitBtn">Game se bahar</button>
+    <button class="btn alt" id="quitBtn">Quit game</button>
   </section>
 
   <section id="vEnd" class="card big hid">
     <h2 id="eTitle" style="font-size:26px"></h2>
     <div class="st" id="eStars"></div>
     <p id="eMsg" style="margin:8px 0 16px"></p>
-    <div class="row"><button class="btn" id="nextBtn" style="flex:1">Agla level ▶</button><button class="btn alt" id="homeBtn" style="flex:1">Home</button></div>
+    <div class="row"><button class="btn" id="nextBtn" style="flex:1">Next level ▶</button><button class="btn alt" id="homeBtn" style="flex:1">Home</button></div>
   </section>
 </div>
 <script src="games.js"></script>
