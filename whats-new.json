@@ -4,9 +4,12 @@
     {
       "version": "2026.10.15",
       "date": "2026-10-15",
+      "roles": [
+        "teacher"
+      ],
       "title": "Faster test creation",
       "notes": [
-        "Teachers can paste questions copied from Word, WhatsApp, a PDF, Excel or an AI chat, and the app reads them.",
+        "Paste questions copied from Word, WhatsApp, a PDF, Excel or an AI chat, and the app reads them.",
         "Upload a CSV file from Excel, with a sample file to download.",
         "Ask ChatGPT, Claude or Gemini to write the questions: the app prepares the request in the right format."
       ]
@@ -14,23 +17,86 @@
     {
       "version": "2026.10.14",
       "date": "2026-10-14",
+      "roles": [
+        "teacher"
+      ],
       "title": "Online tests",
       "notes": [
-        "Teachers can design multiple choice tests, set the time and marks, and publish them.",
-        "Students see each test as a card with the subject, time, marks and start time. The arrow opens once the test starts.",
-        "Students verify their details before the questions appear. Leaving the test screen erases the answers and the verification.",
-        "After submitting, students see which answers were correct. Parents see the same report, and teachers see every student's marks."
+        "Design multiple choice tests, set the time and marks, and publish them to your class.",
+        "See every student's marks, rank and time taken, and let a student retake if needed."
+      ]
+    },
+    {
+      "version": "2026.10.14",
+      "date": "2026-10-14",
+      "roles": [
+        "student"
+      ],
+      "title": "Online tests",
+      "notes": [
+        "Each test is a card with the subject, time, marks and start time. The arrow opens once the test starts.",
+        "You verify your details before the questions appear. If you leave the test screen, your answers and verification are erased.",
+        "After you submit, you see which answers were right and which were wrong."
+      ]
+    },
+    {
+      "version": "2026.10.14",
+      "date": "2026-10-14",
+      "roles": [
+        "parent"
+      ],
+      "title": "Test reports",
+      "notes": [
+        "See your child's online tests on the Test Reports card.",
+        "After your child submits, you see the score and which answers were right or wrong."
       ]
     },
     {
       "version": "2026.10.13",
       "date": "2026-10-13",
+      "roles": [
+        "student"
+      ],
+      "title": "Notifications",
+      "notes": [
+        "A notification bell at the top. A blinking red dot means a new notice, a new test or an app update."
+      ]
+    },
+    {
+      "version": "2026.10.13",
+      "date": "2026-10-13",
+      "roles": [
+        "parent"
+      ],
       "title": "Notifications and profile editing",
       "notes": [
-        "Notification bell on the student and parent dashboards. A blinking red dot means a new notice or update.",
-        "Edit your profile with the pencil icon. Parent changes are approved by the tuition office first.",
-        "Login Activity: delete one record, or clear them all.",
+        "A notification bell at the top. A blinking red dot means a new notice, a new test or an app update.",
+        "Edit your child's profile with the pencil icon. The tuition office approves changes first.",
         "Mother's name now shows in the child profile."
+      ]
+    },
+    {
+      "version": "2026.10.13",
+      "date": "2026-10-13",
+      "roles": [
+        "teacher"
+      ],
+      "title": "Edit your profile",
+      "notes": [
+        "Tap the pencil on My Profile to update your phone, email, address and other details."
+      ]
+    },
+    {
+      "version": "2026.10.13",
+      "date": "2026-10-13",
+      "roles": [
+        "admin"
+      ],
+      "title": "Profile editing and requests",
+      "notes": [
+        "Edit your profile with the pencil icon at the top right.",
+        "Profile Requests: approve or reject profile changes that parents ask for.",
+        "Login Activity: delete one record, or clear them all."
       ]
     }
   ],

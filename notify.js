@@ -53,7 +53,11 @@ let firstSnapshotDone = false;
 const unseenNotices = () => notices.filter((n) => n.time > seenTs);
 const unseenTests = () => tests.filter((t) => t.time > seenTs);
 const TESTS_PAGE = ROLE === "parent" ? "parent-tests.html" : "student-tests.html";
-const versionUnseen = () => !!(site && site.version && read(K.version, null) !== site.version);
+// Each release in whats-new.json can list the roles it is for. A person only ever sees the releases for their own role,
+// so a teacher-only change never alerts a student or a parent, and the other way round.
+const myReleases = (data) => ((data && data.releases) || []).filter((r) => !r.roles || r.roles.includes(ROLE));
+const myVersion = (data) => { const r = myReleases(data)[0]; return r ? r.version : null; };
+const versionUnseen = () => { const v = myVersion(site); return !!v && read(K.version, null) !== v; };
 
 // ---------- small UI helpers ----------
 function toast(text) {
@@ -106,16 +110,18 @@ function renderBanner() {
   const old = document.getElementById("gaBanner");
   const show = (!HAS_BELL && versionUnseen()) || needsReload;
   if (!show) { if (old) old.remove(); return; }
-  if (old) return;
-  const latest = site && site.releases && site.releases[0];
+  const mode = needsReload ? "reload" : "new";
+  if (old && old.getAttribute("data-mode") === mode) return;
+  if (old) old.remove();   // an update arrived while "What's new" was showing: replace it with the reload prompt
+  const latest = myReleases(site)[0];
   const b = document.createElement("div");
-  b.id = "gaBanner"; b.className = "ga-banner"; b.setAttribute("role", "status");
+  b.id = "gaBanner"; b.className = "ga-banner"; b.setAttribute("role", "status"); b.setAttribute("data-mode", mode);
   b.innerHTML = '<span><strong>' + (needsReload ? "App updated." : "What's new.") + '</strong> ' + esc(latest ? latest.title : "The app was updated.") + '</span>';
   const open = document.createElement("button"); open.type = "button"; open.className = "ga-btn primary";
   open.textContent = needsReload ? "Reload" : "See what's new";
   open.addEventListener("click", () => { if (needsReload) window.location.reload(); else openPanel(); });
   const close = document.createElement("button"); close.type = "button"; close.className = "ga-btn"; close.textContent = "Dismiss";
-  close.addEventListener("click", () => { if (site) write(K.version, site.version); b.remove(); updateDot(); });
+  close.addEventListener("click", () => { const v = myVersion(site); if (v) write(K.version, v); b.remove(); updateDot(); });
   b.appendChild(open); b.appendChild(close);
   // Sit in the page, just under the header, so it never covers the header buttons.
   const header = document.querySelector(".top-header");
@@ -143,7 +149,7 @@ function openPanel() {
   const backdrop = document.createElement("div"); backdrop.className = "ga-backdrop";
   const sheet = document.createElement("div"); sheet.className = "ga-sheet"; sheet.setAttribute("role", "dialog"); sheet.setAttribute("aria-modal", "true"); sheet.setAttribute("aria-labelledby", "gaPanelTitle");
 
-  const releases = (site && site.releases ? site.releases : []).slice(0, 3);
+  const releases = myReleases(site).slice(0, 3);
   let html = '<div class="ga-sheet-head"><h2 id="gaPanelTitle">Notifications</h2><button type="button" class="ga-close" aria-label="Close">&times;</button></div>';
   html += permissionRow();
 
@@ -199,7 +205,7 @@ function openPanel() {
 
   // Opening the panel means the user has seen everything in it.
   seenTs = Date.now(); write(K.seenNotices, seenTs);
-  if (site && site.version) write(K.version, site.version);
+  { const v = myVersion(site); if (v) write(K.version, v); }
   updateDot();
 }
 
@@ -311,14 +317,16 @@ async function checkForUpdate() {
   const fresh = await fetchSite();
   if (!fresh || !fresh.version) return;
   site = fresh;
-  if (loadedVersion === null) loadedVersion = fresh.version;
-  else if (fresh.version !== loadedVersion) needsReload = true;
+  // Only a release meant for this role counts as "the app was updated" for this person.
+  const mine = myVersion(fresh);
+  if (loadedVersion === null) loadedVersion = mine || "none";
+  else if (mine && mine !== loadedVersion) needsReload = true;
   updateDot();
   // Tell the user once per version, as a system notification when the app is in the background.
-  if (versionUnseen() && read(K.versionNotified, null) !== fresh.version && document.hidden) {
-    const latest = fresh.releases && fresh.releases[0];
+  if (versionUnseen() && read(K.versionNotified, null) !== mine && document.hidden) {
+    const latest = myReleases(fresh)[0];
     const sent = await showSystem("GenAlpha was updated", latest ? latest.title : "See what's new.", "update-" + fresh.version, "./login.html");
-    if (sent) write(K.versionNotified, fresh.version);
+    if (sent) write(K.versionNotified, mine);
   }
 }
 

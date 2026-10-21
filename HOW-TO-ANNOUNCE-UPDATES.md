@@ -6,15 +6,22 @@ Everything is controlled by one file: `whats-new.json`.
 ## Steps
 
 1. Open `whats-new.json`.
-2. Change `"version"` to a new value, for example `"2026.11.02"`. Any text that is different from the old one works.
-3. Add a new release at the top of `"releases"`:
+2. Change the top `"version"` to a new value, for example `"2026.11.02"`, and use the same value in the releases you add.
+3. Add a release at the top of `"releases"` for each group of people it affects. Every release has a `"roles"` list, and **people only ever see releases for their own role**:
 
        {
          "version": "2026.11.02",
          "date": "2026-11-02",
+         "roles": ["teacher"],
          "title": "Short title of the update",
          "notes": [ "First thing that changed.", "Second thing that changed." ]
        }
+
+   - `roles` can include `student`, `parent`, `teacher`, `admin`. Use `["student", "parent"]` when the same note is meant for both.
+   - If one change affects two groups differently, write two releases with the same `version` and different `roles`, and word each note for that group.
+   - A release for teachers never shows a red dot, a banner or a notification to students, parents or the admin. A role with no release for a version is not told about it at all.
+   - Releases without `roles` go to everyone. Use that only for changes everybody should hear about.
+   - Keep releases newest first.
 
 4. For each new feature you want people to notice, add an entry to `"features"`:
 
@@ -29,8 +36,8 @@ Everything is controlled by one file: `whats-new.json`.
 
 ## What people see
 
-- **Student and parent:** the bell on the dashboard gets a blinking red dot. Opening it shows the update notes.
-- **Teacher and admin:** a "What's new" bar appears under the header.
+- **Student and parent:** the bell on the dashboard gets a blinking red dot, but only if there is a release for their role. Opening the bell shows only their own update notes.
+- **Teacher and admin:** a "What's new" bar appears under the header, again only for their own releases.
 - **Highlight:** each new feature glows once with a NEW tag, then goes back to normal after the person taps Got it (or after 15 seconds).
 - **Open apps** notice the new version within about 5 minutes. Phones that are closed see it the next time the app is opened.
 - A device that allowed notifications also gets a phone notification when the app is open in the background.
