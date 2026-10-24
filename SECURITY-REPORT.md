@@ -134,3 +134,13 @@ Still open (needs you):
 7. **Security headers** (HSTS, frame-ancestors, X-Frame-Options) cannot be set on GitHub Pages. The CSP still allows inline scripts. Cloudflare in front of the site or Firebase Hosting would allow real headers.
 8. **Admin email address** (`vivaan510399@gmail.com`) is in public page scripts and legal pages. Turn on 2-step verification for it, and use a long unique password.
 9. **Emoji remain only in game content** (`games-words.js`, `games-facts.js`: fruit and animal pictures for spelling and counting questions), not as interface icons.
+
+
+## 8. Premium look, 24 October 2026
+
+Colour and finish only. No layout, sizes or behaviour were changed, and the mobile checks were repeated (53 pages, 360 and 320 px, light and dark: no sideways scrolling, no pill shaped buttons, no unlabeled controls).
+- One palette: midnight navy, champagne gold, warm ivory. Icon tiles are one gold tone instead of a rainbow, including the tiles that were bright white in dark mode.
+- Removed the purple glow from the premium layer in `site.css`, and the orange "Last Login" bar on the admin dashboard (now the same navy card).
+- Sign-in screens: navy medallion with a gold ring, gold primary button.
+- Privacy, Terms, Cookies and Refund pages and the 404 page now match (navy header and footer, gold hairlines, calmer table headers).
+- `fix-android-splash.js` is excluded from the website in `_config.yml`.
