@@ -88,11 +88,11 @@
   .profile-hero-main{ flex:1; min-width:200px; }
   .profile-hero-main h2{ font-size:22px; margin-bottom:4px; }
   .profile-role-line{ font-size:12.5px; color:#b7bcdc; margin-bottom:10px; }
-  .status-pill{ display:inline-block; font-size:11px; font-weight:700; padding:4px 12px; border-radius:999px; margin-bottom:12px; }
+  .status-pill{ display:inline-block; font-size:11px; font-weight:700; padding:4px 12px; border-radius: 8px; margin-bottom:12px; }
   .status-active{ background:rgba(47,184,127,.18); color:#5be3a8; }
   .status-inactive{ background:rgba(229,88,74,.18); color:#f18e83; }
   .profile-hero-meta{ display:flex; gap:10px; flex-wrap:wrap; }
-  .meta-chip{ display:inline-flex; align-items:center; gap:6px; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.1); padding:6px 12px; border-radius:999px; font-size:12px; color:#e5e0cf; }
+  .meta-chip{ display:inline-flex; align-items:center; gap:6px; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.1); padding:6px 12px; border-radius: 8px; font-size:12px; color:#e5e0cf; }
   .profile-hero-actions{ display:flex; gap:10px; flex-wrap:wrap; margin-left:auto; }
   .btn{ display:inline-flex; align-items:center; gap:8px; border:none; cursor:pointer; font-family:inherit; font-size:12.5px; font-weight:700; padding:11px 18px; border-radius:12px; transition:transform .15s var(--ease), box-shadow .15s var(--ease); }
   .btn-primary{ background:linear-gradient(135deg, var(--amber) 0%, var(--coral) 100%); color:#241608; box-shadow:0 4px 0 var(--amber-shadow), 0 10px 20px rgba(255,140,66,.28); }
@@ -312,20 +312,6 @@
   } catch(e) {}
 </script>
 
-<script>
-  document.addEventListener('DOMContentLoaded', function(){
-    if (!window.matchMedia('(hover:hover)').matches || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    document.querySelectorAll('.mini-stat-card').forEach(card => {
-      card.addEventListener('pointermove', (e) => {
-        const r = card.getBoundingClientRect();
-        const x = (e.clientX - r.left)/r.width - 0.5;
-        const y = (e.clientY - r.top)/r.height - 0.5;
-        card.style.transform = `perspective(600px) rotateY(${x*8}deg) rotateX(${-y*8}deg) translateY(-2px)`;
-      });
-      card.addEventListener('pointerleave', () => { card.style.transform = ''; });
-    });
-  });
-</script>
 
 <script>
   try { SessionTimer.start({ flagKey: 'adminLoggedIn', loginUrl: 'admin.html' }); } catch(e) {}

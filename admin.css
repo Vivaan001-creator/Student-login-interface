@@ -7,7 +7,7 @@
 
 body {
   font-family: 'Poppins', sans-serif;
-  background: linear-gradient(160deg, #f2f0fc 0%, #e9e6fb 45%, #eeecfc 100%);
+  background: #f2f0fc;
   color: #1a1a2e;
   min-height: 100vh;
   overflow-x: hidden;
@@ -25,7 +25,7 @@ a {
   left: -140px;
   width: 380px;
   height: 380px;
-  background: radial-gradient(circle at 30% 30%, rgba(147, 138, 240, 0.28), rgba(147, 138, 240, 0) 70%);
+  display: none;
   border-radius: 50%;
   pointer-events: none;
   z-index: 0;
@@ -35,8 +35,7 @@ a {
   position: fixed;
   width: 160px;
   height: 90px;
-  background-image: radial-gradient(circle, #b9b3ec 1.6px, transparent 1.6px);
-  background-size: 16px 16px;
+  display: none;
   opacity: 0.55;
   pointer-events: none;
   z-index: 0;
@@ -1587,7 +1586,7 @@ padding:12px 30px;
 
 font-size:16px;
 
-border-radius:30px;
+border-radius:8px;
 
 cursor:pointer;
 
@@ -1796,7 +1795,7 @@ html, body {
 /* ===== Topbar ===== */
 .topbar {
   position: relative;
-  background: linear-gradient(120deg, #5f5be0 0%, #7c6ff0 55%, #8b7bf5 100%);
+  background: #5b4fe0;
   padding: 34px 40px 130px 40px;
   display: flex;
   justify-content: space-between;
@@ -2281,7 +2280,7 @@ html, body {
 
 body {
   font-family: 'Poppins', sans-serif;
-  background: linear-gradient(160deg, #f3f1fc 0%, #eae6fb 50%, #efecfc 100%);
+  background: #f2f0fc;
   color: #1a1a2e;
   min-height: 100vh;
   overflow-x: hidden;
@@ -2328,8 +2327,7 @@ a {
   position: fixed;
   width: 100px;
   height: 130px;
-  background-image: radial-gradient(circle, #b9b3ec 1.6px, transparent 1.6px);
-  background-size: 16px 16px;
+  display: none;
   opacity: 0.55;
   pointer-events: none;
   z-index: 0;
@@ -2357,8 +2355,7 @@ a {
 .bg-waves-bottom-left {
   bottom: 60px;
   left: -60px;
-  background:
-    repeating-radial-gradient(circle at 0% 100%, transparent 0, transparent 40px, rgba(255,255,255,0.5) 41px, rgba(255,255,255,0.5) 42px);
+  display: none;
 }
 
 /* ===== Wrapper / layout ===== */
@@ -2400,7 +2397,7 @@ a {
 .brand-logo .shield {
   width: 60px;
   height: 68px;
-  background: linear-gradient(135deg, #8b7ef2 0%, #5b4fe0 100%);
+  background: #5b4fe0;
   clip-path: polygon(50% 0%, 100% 16%, 100% 58%, 50% 100%, 0% 58%, 0% 16%);
   display: flex;
   align-items: center;
@@ -2834,7 +2831,7 @@ button {
   width: 42px;
   height: 42px;
   border-radius: 12px;
-  background: linear-gradient(135deg, #7c6ff2, #5b4fe0);
+  background: #5b4fe0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2947,7 +2944,7 @@ button {
 }
 
 .sub-link.active {
-  background: linear-gradient(135deg, #7c6ff2, #5b4fe0);
+  background: #5b4fe0;
   color: #ffffff;
   box-shadow: 0 6px 16px rgba(91, 79, 224, 0.35);
 }
@@ -3107,7 +3104,7 @@ button {
   width: 52px;
   height: 52px;
   border-radius: 14px;
-  background: linear-gradient(135deg, #7c6ff2, #5b4fe0);
+  background: #5b4fe0;
   color: #ffffff;
   display: flex;
   align-items: center;
@@ -3377,7 +3374,7 @@ button {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #7c6ff2, #5b4fe0);
+  background: #5b4fe0;
   color: #ffffff;
   border: none;
   box-shadow: 0 10px 22px rgba(91, 79, 224, 0.3);
@@ -3426,7 +3423,7 @@ button {
   }
   
 /* =========================================================
-   HOME TUITION — SHARED ADMIN STYLESHEET
+   HOME TUITION - SHARED ADMIN STYLESHEET
    Used by: dashboard.html, add-student.html, and other
    inner admin pages (students.html, teachers.html, etc.)
    ========================================================= */
@@ -3465,7 +3462,7 @@ button { cursor: pointer; }
 }
 
 /* =========================================================
-   SIDEBAR — icon-only rail by default.
+   SIDEBAR - icon-only rail by default.
    Click the hamburger at the top to expand into a full
    labeled drawer that OVERLAPS the page (page underneath
    does not shift), with a dimmed backdrop behind it.
@@ -3508,7 +3505,7 @@ button { cursor: pointer; }
   pointer-events: auto;
 }
 
-/* Hamburger toggle — pinned at the very top of the sidebar */
+/* Hamburger toggle - pinned at the very top of the sidebar */
 .menu-toggle {
   background: rgba(255, 255, 255, 0.06);
   border: none;
@@ -3548,7 +3545,7 @@ button { cursor: pointer; }
   width: 40px;
   height: 40px;
   border-radius: 12px;
-  background: linear-gradient(135deg, #7c6ff2, #5b4fe0);
+  background: #5b4fe0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -3653,7 +3650,7 @@ button { cursor: pointer; }
 }
 
 .nav-link.active {
-  background: linear-gradient(135deg, #7c6ff2, #5b4fe0);
+  background: #5b4fe0;
   color: #ffffff;
   box-shadow: 0 6px 16px rgba(91, 79, 224, 0.35);
 }
@@ -3718,7 +3715,7 @@ button { cursor: pointer; }
 }
 
 .sub-link.active {
-  background: linear-gradient(135deg, #7c6ff2, #5b4fe0);
+  background: #5b4fe0;
   color: #ffffff;
   box-shadow: 0 6px 16px rgba(91, 79, 224, 0.35);
 }
@@ -3759,14 +3756,14 @@ button { cursor: pointer; }
 }
 
 /* =========================================================
-   DASHBOARD PAGE — hero header (unique to dashboard.html)
+   DASHBOARD PAGE - hero header (unique to dashboard.html)
    Scoped under .dashboard-hero so it can never collide with
    the plain inner-page .topbar used on other admin pages.
    ========================================================= */
 
 .dashboard-hero {
   position: relative;
-  background: linear-gradient(120deg, #5f5be0 0%, #7c6ff0 55%, #8b7bf5 100%);
+  background: #5b4fe0;
   padding: 34px 40px 130px 40px;
   display: flex;
   justify-content: space-between;
@@ -4120,7 +4117,7 @@ button { cursor: pointer; }
 }
 
 /* =========================================================
-   INNER PAGES — plain white topbar (add-student, students,
+   INNER PAGES - plain white topbar (add-student, students,
    teachers, etc.) Generic ".topbar" class, safe to reuse
    across every inner page without colliding with the
    dashboard's hero header above (which uses .dashboard-hero).
@@ -4224,7 +4221,7 @@ button { cursor: pointer; }
   width: 52px;
   height: 52px;
   border-radius: 14px;
-  background: linear-gradient(135deg, #7c6ff2, #5b4fe0);
+  background: #5b4fe0;
   color: #ffffff;
   display: flex;
   align-items: center;
@@ -4423,7 +4420,7 @@ button { cursor: pointer; }
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #7c6ff2, #5b4fe0);
+  background: #5b4fe0;
   color: #ffffff;
   border: none;
   box-shadow: 0 10px 22px rgba(91, 79, 224, 0.3);
@@ -4481,7 +4478,7 @@ button { cursor: pointer; }
 
 
 /* =========================================================
-   Home Tuition — Admin Panel
+   Home Tuition - Admin Panel
    admin.css
 ========================================================= */
 
@@ -4545,12 +4542,12 @@ button { font-family: inherit; cursor: pointer; }
   flex-direction: column;
   min-width: 0;
   /* .sidebar is position:fixed (taken out of flow), so without this
-     offset it sits on top of the page at all times — even at its
+     offset it sits on top of the page at all times - even at its
      default 76px icon-rail width. This margin reserves that space
      so the rail and the content sit side by side. When the rail
      expands to 272px on click, it intentionally overlaps on top of
      this fixed offset (with the dimmed backdrop) rather than
-     pushing the page — that overlay behavior is unaffected. */
+     pushing the page - that overlay behavior is unaffected. */
   margin-left: 76px;
   transition: margin-left var(--transition-base, 0.28s cubic-bezier(0.4, 0, 0.2, 1));
 }
@@ -4639,7 +4636,7 @@ button { font-family: inherit; cursor: pointer; }
   align-items: center;
   gap: 10px;
   padding: 6px 14px 6px 6px;
-  border-radius: 999px;
+  border-radius: 8px;
   background: var(--bg-app);
   transition: background var(--transition-fast), box-shadow var(--transition-fast);
 }
@@ -5050,14 +5047,14 @@ button { font-family: inherit; cursor: pointer; }
 
 @media (max-width: 900px) {
   /* BUG FIX: this block used to force the sidebar off-canvas with
-     left:-280px and only bring it back via a ".sidebar.open" class —
+     left:-280px and only bring it back via a ".sidebar.open" class -
      but the JS only ever toggles ".expanded", never ".open". Below
      900px width, the icon-only rail was therefore shoved off-screen
      (or clipped, showing broken/partial icons) and could never be
      recovered by the hamburger button. The rail system further down
      this file already works correctly as a fixed, always-visible
      76px rail that expands into an overlay drawer at any viewport
-     size, so it does not need this override — removing it is the fix. */
+     size, so it does not need this override - removing it is the fix. */
   .content {
     padding: 22px 18px 50px;
   }
@@ -5098,7 +5095,7 @@ button { font-family: inherit; cursor: pointer; }
 
 
 /* =========================================================
-   ALL CLASSES PAGE — append this whole block to admin.css
+   ALL CLASSES PAGE - append this whole block to admin.css
    ========================================================= */
 
 /* ----- Page topbar (title + Add button) ----- */
@@ -5166,7 +5163,7 @@ button { font-family: inherit; cursor: pointer; }
 }
 
 /* ----- Page wrapper animation -----
-   (shared by All Classes, All Students and All Teachers — all
+   (shared by All Classes, All Students and All Teachers - all
    three reuse this same card/table/mini-stat component set) ----- */
 .classes-page,
 .students-page,
@@ -5390,7 +5387,7 @@ button { font-family: inherit; cursor: pointer; }
 .mini-stat-card:nth-child(8) { animation-delay: 0.75s; }
 
 /* Long text values (full names) don't fit in a quarter-width card at
-   20px/800-weight — each word was wrapping onto its own line with no
+   20px/800-weight - each word was wrapping onto its own line with no
    room to breathe, which looked like the spaces had disappeared.
    This gives those cards the full row and a calmer text style. */
 .mini-stat-card.full-width {
@@ -5437,7 +5434,7 @@ button { font-family: inherit; cursor: pointer; }
 /* ----- Quick tips box ----- */
 .quick-tips-box {
   margin: 22px 32px 0 32px;
-  background: linear-gradient(135deg, #ece9fc 0%, #e3e0fb 100%);
+  background: #ece9fc;
   border-radius: 20px;
   padding: 22px 26px;
   display: flex;
@@ -5696,7 +5693,7 @@ button { font-family: inherit; cursor: pointer; }
 .role-card-icon.teal   { background: #dcf6f2; color: #22b8a4; }
 
 /* =========================================================
-   Parent Portal — child switcher (parent-dashboard.html)
+   Parent Portal - child switcher (parent-dashboard.html)
    A parent can have more than one child in the tuition; these
    pills let them flip between children without logging out.
 ========================================================= */
@@ -5725,7 +5722,7 @@ button { font-family: inherit; cursor: pointer; }
   align-items: center;
   gap: 8px;
   padding: 9px 16px;
-  border-radius: 999px;
+  border-radius: 8px;
   background: #fff;
   border: 1.5px solid var(--border-color, #e7e8f1);
   color: var(--text-dark, #1f2237);
@@ -5783,7 +5780,7 @@ button { font-family: inherit; cursor: pointer; }
   color: #8a8fa3;
   background: #f0f0f5;
   padding: 5px 10px;
-  border-radius: 999px;
+  border-radius: 8px;
 }
 
 .role-select-note {
@@ -5804,7 +5801,7 @@ button { font-family: inherit; cursor: pointer; }
 }
 
 /* =========================================================
-   Teacher Dashboard — My Class card (teacher-dashboard.html)
+   Teacher Dashboard - My Class card (teacher-dashboard.html)
 ========================================================= */
 .no-class-msg {
   font-size: 13.5px;
@@ -5862,7 +5859,7 @@ button { font-family: inherit; cursor: pointer; }
   align-items: center;
   gap: 6px;
   padding: 4px 12px;
-  border-radius: 999px;
+  border-radius: 8px;
   font-size: 12px;
   font-weight: 700;
 }
@@ -5880,7 +5877,7 @@ button { font-family: inherit; cursor: pointer; }
 }
 
 /* Pass/Fail badges (Student Dashboard > My Result table).
-   These classes were referenced in student.js but never defined here —
+   These classes were referenced in student.js but never defined here -
    result rows were rendering as plain unstyled text. */
 .status-pass,
 .status-fail {
@@ -5888,7 +5885,7 @@ button { font-family: inherit; cursor: pointer; }
   align-items: center;
   gap: 6px;
   padding: 4px 12px;
-  border-radius: 999px;
+  border-radius: 8px;
   font-size: 12px;
   font-weight: 700;
 }
@@ -5919,7 +5916,7 @@ button { font-family: inherit; cursor: pointer; }
   font-size: 12.5px;
   font-weight: 600;
   padding: 7px 14px;
-  border-radius: 999px;
+  border-radius: 8px;
   cursor: pointer;
   transition: all 0.18s ease;
 }
@@ -6180,7 +6177,7 @@ button { font-family: inherit; cursor: pointer; }
   align-items: center;
   gap: 6px;
   padding: 4px 12px 4px 10px;
-  border-radius: 999px;
+  border-radius: 8px;
   font-size: 11.5px;
   font-weight: 700;
 }
@@ -6366,7 +6363,7 @@ button { font-family: inherit; cursor: pointer; }
   background: var(--bg-app);
   border: 1px solid var(--border-color);
   padding: 4px 10px;
-  border-radius: 999px;
+  border-radius: 8px;
   flex-shrink: 0;
   white-space: nowrap;
 }
@@ -6520,7 +6517,7 @@ button { font-family: inherit; cursor: pointer; }
 }
 
 /* Explicit opt-out of the left icon gutter, for fields whose only
-   icon sits on the right (e.g. date pickers) — avoids relying on
+   icon sits on the right (e.g. date pickers) - avoids relying on
    fragile :nth-child position hacks on pages with a different
    field order. */
 .input-wrap.icon-right-only input {
@@ -6529,7 +6526,7 @@ button { font-family: inherit; cursor: pointer; }
 
 /* =========================================================
    Generalized modal form fields
-   (previously #classForm-only — now any .modal-box form
+   (previously #classForm-only - now any .modal-box form
    gets the same look, used by Notice/Gallery/Fee modals)
 ========================================================= */
 .modal-box .field-label {
@@ -6610,7 +6607,7 @@ button { font-family: inherit; cursor: pointer; }
   font-size: 11px;
   font-weight: 600;
   padding: 4px 10px;
-  border-radius: 999px;
+  border-radius: 8px;
   backdrop-filter: blur(3px);
 }
 
@@ -6670,7 +6667,7 @@ button { font-family: inherit; cursor: pointer; }
 }
 
 /* =========================================================
-   Fee Status — month-wise due rows (parent-dashboard.html)
+   Fee Status - month-wise due rows (parent-dashboard.html)
 ========================================================= */
 .fee-period-row {
   display: flex;
@@ -6740,7 +6737,7 @@ button { font-family: inherit; cursor: pointer; }
 .result-comment:empty { display: none; }
 
 /* "Print Result" button (Student Dashboard > My Result) only
-   prints that one card — sidebar, header and other cards/buttons
+   prints that one card - sidebar, header and other cards/buttons
    are hidden for the print output. */
 @media print {
   .sidebar,

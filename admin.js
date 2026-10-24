@@ -2617,7 +2617,7 @@ function renderClassRows(rows) {
     const sections = c.sections || [];
 
     const sectionBadges = sections.length
-      ? sections.map(s => `<span class="section-badge">${s}</span>`).join(" ")
+      ? sections.map(s => `<span class="section-badge">${escapeHtmlAdmin(s)}</span>`).join(" ")
       : `<span class="section-badge">-</span>`;
 
     const row = document.createElement("tr");

@@ -18,5 +18,6 @@ exclude:
   - unused-assistant.html
   - unused-coming-soon.html
   - unused-home.js
+  - unused-my-portfolio.html
   - node_modules
   - android
