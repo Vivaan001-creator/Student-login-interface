@@ -1,7 +1,7 @@
 {
   "name": "genalpha-app",
   "version": "1.0.0",
-  "description": "GenAlpha \u2014 Home Tuition management system, packaged as an Android app with Capacitor.",
+  "description": "GenAlpha - Home Tuition management system, packaged as an Android app with Capacitor.",
   "private": true,
   "scripts": {
     "sync": "npx cap sync android",

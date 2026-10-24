@@ -200,20 +200,10 @@
   // Appearance menu (System / Light / Dark) - persists across the whole site
   try { Appearance.renderMenu(document.getElementById('appearanceMount'), { variant: 'corner' }); } catch(e) {}
 
-  if (!reduceMotion && window.matchMedia('(hover:hover)').matches){
-    const card = document.getElementById('loginCard');
-    card.addEventListener('pointermove', (e) => {
-      const r = card.getBoundingClientRect();
-      const x = (e.clientX - r.left)/r.width - 0.5;
-      const y = (e.clientY - r.top)/r.height - 0.5;
-      card.style.transform = `perspective(900px) rotateY(${x*6}deg) rotateX(${-y*6}deg)`;
-    });
-    card.addEventListener('pointerleave', () => { card.style.transform = ''; });
-  }
 </script>
 
 <script type="module" src="student.js"></script>
-<nav class="legal-links" aria-label="Legal"><a href="my-portfolio.html">About Vivaan</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="cookies.html">Cookies</a><a href="refund.html">Refunds</a></nav>
+<nav class="legal-links" aria-label="Legal"><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="cookies.html">Cookies</a><a href="refund.html">Refunds</a></nav>
 <script src="site.js"></script>
 </body>
 </html>

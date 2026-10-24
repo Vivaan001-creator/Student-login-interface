@@ -102,6 +102,9 @@
   }
   .header-icon-btn:hover{ background:rgba(255,255,255,.18); }
 
+  .child-switch-row{ position:relative; z-index:1; display:flex; gap:8px; margin-top:14px; overflow-x:auto; padding-bottom:2px; }
+  .child-chip{ display:inline-flex; align-items:center; gap:7px; border:1.5px solid rgba(255,255,255,.16); background:rgba(255,255,255,.06); color:#c7cbe0; font-family:inherit; font-size:12.5px; font-weight:600; padding:8px 15px; border-radius: 8px; cursor:pointer; transition:all .2s var(--ease); white-space:nowrap; flex-shrink:0; }
+  .child-chip.active{ background:linear-gradient(135deg, var(--brand-yellow) 0%, var(--amber-deep) 100%); color:var(--brand-ink); border-color:transparent; }
   .streak-row{ position:relative; z-index:1; display:flex; gap:10px; margin-top:16px; overflow-x:auto; padding-bottom:2px; }
   .streak-chip{
     flex:1 1 0; min-width:86px; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12);
@@ -185,8 +188,8 @@
   table.classes-table{ width:100%; border-collapse:collapse; font-size:12.5px; }
   table.classes-table th{ text-align:left; background:var(--paper); color:var(--ink-soft); font-weight:600; font-size:10.5px; text-transform:uppercase; letter-spacing:.3px; padding:11px 14px; white-space:nowrap; }
   table.classes-table td{ padding:11px 14px; border-top:1px solid var(--surface-card-border); }
-  .status-active{ background:var(--green-bg); color:var(--green); font-size:11px; font-weight:700; padding:4px 11px; border-radius:999px; white-space:nowrap; }
-  .status-inactive{ background:var(--red-bg); color:var(--red); font-size:11px; font-weight:700; padding:4px 11px; border-radius:999px; white-space:nowrap; }
+  .status-active{ background:var(--green-bg); color:var(--green); font-size:11px; font-weight:700; padding:4px 11px; border-radius: 8px; white-space:nowrap; }
+  .status-inactive{ background:var(--red-bg); color:var(--red); font-size:11px; font-weight:700; padding:4px 11px; border-radius: 8px; white-space:nowrap; }
 
   .result-empty-msg{ font-size:13px; color:var(--ink-soft); padding:14px 0; text-align:center; }
 
@@ -231,6 +234,11 @@
       <div class="streak-chip"><div class="num" id="dashAttendanceStreak">-</div><div class="lbl">Attendance</div></div>
       <div class="streak-chip"><div class="num" id="dashLastLoginStreak">-</div><div class="lbl">Last Login</div></div>
     </div>
+
+    <!-- Student switcher (hidden automatically if no other student shares this mobile number) -->
+    <div class="child-switch-row" id="child-switch-section" style="display:none;">
+      <div id="childSwitchRow" style="display:flex; gap:8px;"></div>
+    </div>
   </header>
 
   <main class="app-content" id="studentProfileBox">
@@ -252,7 +260,7 @@
         </div>
       </div>
 
-      <footer class="footer"><nav class="footer-links" aria-label="Legal"><a href="my-portfolio.html">About Vivaan</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="cookies.html">Cookies</a><a href="refund.html">Refunds</a></nav><div>&copy; <span data-year>2026</span> GenAlpha</div></footer>
+      <footer class="footer"><nav class="footer-links" aria-label="Legal"><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="cookies.html">Cookies</a><a href="refund.html">Refunds</a></nav><div>&copy; <span data-year>2026</span> GenAlpha</div></footer>
 <script src="site.js"></script>
     </section>
 

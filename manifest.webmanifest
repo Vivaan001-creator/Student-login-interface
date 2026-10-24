@@ -2,7 +2,7 @@
   "name": "GenAlpha",
   "short_name": "GenAlpha",
   "description": "Results, attendance, fees and notices in one place.",
-  "start_url": "./login.html",
+  "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "background_color": "#0e1326",

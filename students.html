@@ -103,8 +103,8 @@
   @keyframes rowFadeIn{ from{opacity:0; transform:translateX(-6px);} to{opacity:1; transform:translateX(0);} }
   table.classes-table tbody tr{ animation:rowFadeIn .4s var(--ease) both; }
 
-  .status-active{ background:var(--green-bg); color:var(--green); font-size:11px; font-weight:700; padding:4px 11px; border-radius:999px; white-space:nowrap; }
-  .status-inactive{ background:var(--red-bg); color:var(--red); font-size:11px; font-weight:700; padding:4px 11px; border-radius:999px; white-space:nowrap; }
+  .status-active{ background:var(--green-bg); color:var(--green); font-size:11px; font-weight:700; padding:4px 11px; border-radius: 8px; white-space:nowrap; }
+  .status-inactive{ background:var(--red-bg); color:var(--red); font-size:11px; font-weight:700; padding:4px 11px; border-radius: 8px; white-space:nowrap; }
 
   .action-btns{ display:flex; gap:6px; flex-wrap:wrap; }
   .action-btns button{ display:inline-flex; align-items:center; gap:5px; border:none; cursor:pointer; font-family:inherit; font-size:11.5px; font-weight:600; padding:7px 12px; border-radius:9px; transition:transform .15s var(--ease), filter .15s var(--ease); }
@@ -238,20 +238,6 @@
   } catch(e) {}
 </script>
 
-<script>
-  document.addEventListener('DOMContentLoaded', function(){
-    if (!window.matchMedia('(hover:hover)').matches || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    document.querySelectorAll('.mini-stat-card').forEach(card => {
-      card.addEventListener('pointermove', (e) => {
-        const r = card.getBoundingClientRect();
-        const x = (e.clientX - r.left)/r.width - 0.5;
-        const y = (e.clientY - r.top)/r.height - 0.5;
-        card.style.transform = `perspective(600px) rotateY(${x*8}deg) rotateX(${-y*8}deg) translateY(-2px)`;
-      });
-      card.addEventListener('pointerleave', () => { card.style.transform = ''; });
-    });
-  });
-</script>
 
 <script>
   try { SessionTimer.start({ flagKey: 'adminLoggedIn', loginUrl: 'admin.html' }); } catch(e) {}

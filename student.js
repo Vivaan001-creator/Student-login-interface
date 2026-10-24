@@ -7,6 +7,7 @@ import {
   query,
   orderBy,
   limit,
+  where,
   addDoc,
   updateDoc,
   serverTimestamp,
@@ -278,6 +279,10 @@ async function loadStudentDashboard() {
 
   const student = snap.data();
 
+  // Show the switcher if other students share this mobile number
+  // (same idea as the parent dashboard's child switcher).
+  await loadSiblingSwitcher(roll, student);
+
   setText("dashStudentName", student.name || "-");
   setText("dashStudentRoll", roll);
   setText("dashStudentRoll2", roll);
@@ -320,6 +325,54 @@ async function loadStudentDashboard() {
   await loadStudentFeeStatus(roll, student);
   await loadStudentNotices();
 }
+
+// ==========================================================
+// Student switcher - students registered under the same mobile
+// number (contactNumber) can switch between each other, exactly
+// like the parent dashboard's child switcher. The active student
+// is simply localStorage "studentRoll", which every other student
+// page (results, tests, notifications) already reads.
+// ==========================================================
+async function loadSiblingSwitcher(activeRoll, student) {
+  const section = document.getElementById("child-switch-section");
+  const row = document.getElementById("childSwitchRow");
+  if (!section || !row) return;
+
+  const contact = String(student.contactNumber || "").trim();
+  if (!contact) { section.style.display = "none"; return; }
+
+  let siblings = [];
+  try {
+    const snap = await getDocs(query(collection(db, "students"), where("contactNumber", "==", contact)));
+    siblings = snap.docs.map((d) => ({ roll: d.id, ...d.data() }));
+  } catch (err) {
+    console.error("Could not load students for the switcher:", err);
+    section.style.display = "none";
+    return;
+  }
+
+  if (siblings.length <= 1) { section.style.display = "none"; return; }
+
+  section.style.display = "block";
+  row.innerHTML = siblings.map((c) => `
+    <button type="button" class="child-chip ${c.roll === activeRoll ? "active" : ""}" data-roll="${escapeHtml(c.roll)}">
+      <i class="fa-solid fa-user"></i> ${escapeHtml(c.name || c.roll)}
+    </button>
+  `).join("");
+
+  row.querySelectorAll(".child-chip").forEach((btn) => {
+    btn.addEventListener("click", () => switchStudent(btn.dataset.roll));
+  });
+}
+
+function switchStudent(roll) {
+  if (!roll || roll === localStorage.getItem("studentRoll")) return;
+  localStorage.setItem("studentRoll", roll);
+  // Reload so everything tied to the active student (results, tests,
+  // notifications for that student's class) starts fresh.
+  window.location.reload();
+}
+window.switchStudent = switchStudent;
 
 function setText(id, value) {
   const el = document.getElementById(id);

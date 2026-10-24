@@ -191,16 +191,6 @@
   // Appearance menu (System / Light / Dark) - persists across the whole site
   try { Appearance.renderMenu(document.getElementById('appearanceMount'), { variant: 'corner' }); } catch(e) {}
 
-  if (!reduceMotion && window.matchMedia('(hover:hover)').matches){
-    const card = document.getElementById('loginCard');
-    card.addEventListener('pointermove', (e) => {
-      const r = card.getBoundingClientRect();
-      const x = (e.clientX - r.left)/r.width - 0.5;
-      const y = (e.clientY - r.top)/r.height - 0.5;
-      card.style.transform = `perspective(900px) rotateY(${x*6}deg) rotateX(${-y*6}deg)`;
-    });
-    card.addEventListener('pointerleave', () => { card.style.transform = ''; });
-  }
 
   const pwToggle = document.getElementById('pwToggle');
   const pwInput = document.getElementById('teacherPassword');

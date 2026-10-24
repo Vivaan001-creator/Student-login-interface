@@ -39,7 +39,7 @@ Until then, treat student data as readable by anyone technical, and do not store
 - `student-register.html`: removed the placeholder number (now uses 917970500551), added a parent/guardian consent checkbox, validation and inline messages.
 - Unused files renamed with an `unused-` prefix: `unused-assistant.html`, `unused-coming-soon.html`, `unused-home.js`. Nothing links to them. `_config.yml` tells GitHub Pages not to publish them, nor this report, the rules files, `package.json`, `capacitor.config.json` or the original images. Do not add a `.nojekyll` file or that list stops working. If your repo is published by a GitHub Action instead of the default branch build, `_config.yml` is ignored, so check that `SECURITY-REPORT.md` is not reachable on your site.
 - Accessibility: every form control has a label, keyboard focus is always visible, browser pop-up alerts are replaced by on-page messages (success and error), teacher phone numbers and emails are tap-to-call and tap-to-email. Text contrast was checked automatically on every page in light and dark mode (empty-data state) and now passes. Fixed along the way: invisible text on form cards in dark mode, faint footer and bottom-nav labels, and an unreadable teacher signature in dark mode on the result page.
-- Style: button corners are no longer pill shaped, purple gradients in `admin.css` are solid colours, em dashes removed.
+- Style: see section 7 (this line was inaccurate in the first version of this report).
 - Images: login logo reduced from 396 KB to 178 KB. Originals are `logo-original.png` and `favicon-original.png` (excluded from the website by `_config.yml`).
 - Mobile (admin): the dashboard had its page padding wiped out by a later CSS rule, so everything touched the screen edges; fixed, with a 2x2 stats grid. List cards no longer overflow their box, class teacher and payment history cells are tidy. All 19 admin pages were run against realistic mock data at 360 and 320 px wide, light and dark, with a check that no element sticks out past the screen.
 - Edit profile (pencil icon):
@@ -71,7 +71,7 @@ Until then, treat student data as readable by anyone technical, and do not store
 - Login Activity: each record has a Delete button, and Clear All Records removes every record (not just the 200 shown), both with a confirmation. A Parent Logins count and badge were added.
 - Parent dashboard: Mother's Name added to the child profile.
 - Contrast: re-checked with realistic data loaded (the earlier check ran on empty pages and missed table buttons and status badges). Fixed Edit, View, Delete, status badges, subject chips and similar. Zero failures on the pages tested, light and dark.
-- Rules audit (repeated after adding profile requests and teacher self-edit): every Firestore read and write in the code was compared with `firestore.rules`. They match, including the exact fields written for login logs, parent payment reports, homework and login tracking.
+- Rules audit (repeated after adding profile requests and teacher self-edit; the games leaderboard was added later and had no rules until section 7): every Firestore read and write in the code was compared with `firestore.rules`. They matched at that time, including the exact fields written for login logs, parent payment reports, homework and login tracking.
 - Release build: `package.json` has a new `build:android:release` script. The existing `build:android` makes a debug build, which should not be shipped; a release build must be signed with your own keystore.
 
 ## 4. What you must do (in this order)
@@ -106,3 +106,31 @@ I could not run the rules in the Firebase emulator here. Step 5 is not optional.
 - Business details: only your email is listed. Add a postal address or phone if you want them shown.
 - DPDP: the main obligations start on 14 May 2027. Records of children under 18 need verifiable parental consent, with an exemption for educational institutions in limited cases. Whether that exemption covers a private tutor is a question for a lawyer.
 - Check that your Firebase project's data location (shown in Firestore settings) is described correctly in the privacy page.
+
+
+## 7. Update, 24 October 2026
+
+What was found and changed in this pass. Checked by reading every file, a syntax check of all 154 scripts, and a headless browser run of all 53 pages at 360 and 320 px wide in light and dark mode (no sideways scrolling, no unlabeled form controls, no pill shaped buttons). Nothing was tested against the live Firebase project.
+
+Fixed:
+- **Games leaderboard had no Firestore rules.** `gameLeaderboard` and `gameDaily` fell into the admin-only catch-all, so every score upload and the leaderboard itself were refused. Rules added to `firestore.rules` (nickname 3 to 14 characters, class 1 to 6, totals can rise only a step at a time, admin can delete). **Publish the rules and test the games leaderboard.** Anyone can still write to these collections, so cheating is slowed, not prevented.
+- **Logout on the admin More page did nothing.** The page called `adminLogout()` but never loaded it. Fixed.
+- **Purple gradients and pill shapes were still in `admin.css`** despite the earlier note. All gradients with purple tones are now solid colours, the decorative dots, blob and waves are hidden, and every pill shaped (999px) label or button is now an 8px rounded rectangle. A global 30px rounded `button` rule was reduced to 8px. Em dashes in `admin.css` and `package.json` removed.
+- **Cursor-following tilt effect removed** from 21 pages (login, register and admin cards).
+- **`my-portfolio.html` retired** (renamed `unused-my-portfolio.html`, excluded in `_config.yml`, "About Vivaan" links removed). It had placeholder projects ("Project 01, Coming soon"), a cursor glow, scramble text, a typing effect, emoji and a "Come back!" tab title. Restore it only after it has real content.
+- **Content-Security-Policy added** to `404.html`, `privacy.html`, `terms.html`, `cookies.html` and `refund.html` (they had none).
+- **One unescaped value** in `admin.js` (class section names shown in the classes table) is now escaped.
+- Dead "Notices - Soon" card removed from the teacher dashboard. Duplicate page titles fixed. Close buttons on pop-ups now have a screen reader label. Password show/hide, back links and close buttons now have 44 px touch targets.
+- Privacy policy: removed the claim that access is "limited by sign-in" (not true for student and parent records, see section 2), added the games leaderboard (nickname, class, scores), updated the date. Cookies policy lists the games progress stored on the device.
+- Logo image resized to its largest display size (178 KB to 116 KB, same quality). `.gitignore` now also covers keystores, `google-services.json`, logs and `.DS_Store`.
+
+Still open (needs you):
+1. **Student and parent records are publicly readable.** Parent login looks students up by contact number, so reading cannot be closed without moving them to Firebase Auth (section 2). This is the main remaining risk and a DPDP exposure for children's data.
+2. **Dependencies could not be audited here (no registry access).** Firebase is loaded from the CDN at 12.1.0; the 12.x line was at 12.19.0 on 21 October 2026 (13.x also exists). Replace `firebasejs/12.1.0/` with `firebasejs/12.19.0/` in `Firebase.js`, `session-timer.js` and the pages, then test all four logins. Run `npm audit` and `npm outdated` for Capacitor.
+3. **Git history not checked** (no `.git` folder in the zip). Run `gitleaks detect` in your repo. If any real secret ever appeared, rotate it. The Firebase `apiKey` in `Firebase.js` is public by design: restrict it to your domain in Google Cloud Console.
+4. **Custom domain** needs a domain you own: add a `CNAME` file, DNS records, then Enforce HTTPS. Also add the domain to the API key restriction and Firebase Auth authorised domains.
+5. **Font Awesome has no integrity hash** (the official hash could not be fetched here). Copy the SRI value for 6.5.1 from cdnjs.com into the 36 `<link>` tags, or self-host.
+6. **No postal address** on the legal pages, only an email. Add one if you want it shown.
+7. **Security headers** (HSTS, frame-ancestors, X-Frame-Options) cannot be set on GitHub Pages. The CSP still allows inline scripts. Cloudflare in front of the site or Firebase Hosting would allow real headers.
+8. **Admin email address** (`vivaan510399@gmail.com`) is in public page scripts and legal pages. Turn on 2-step verification for it, and use a long unique password.
+9. **Emoji remain only in game content** (`games-words.js`, `games-facts.js`: fruit and animal pictures for spelling and counting questions), not as interface icons.

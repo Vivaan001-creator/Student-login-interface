@@ -104,8 +104,8 @@
   @keyframes rowFadeIn{ from{opacity:0; transform:translateX(-6px);} to{opacity:1; transform:translateX(0);} }
   table.classes-table tbody tr{ animation:rowFadeIn .4s var(--ease) both; }
 
-  .status-active{ background:var(--green-bg); color:var(--green); font-size:11px; font-weight:700; padding:4px 11px; border-radius:999px; white-space:nowrap; }
-  .status-inactive{ background:var(--red-bg); color:var(--red); font-size:11px; font-weight:700; padding:4px 11px; border-radius:999px; white-space:nowrap; }
+  .status-active{ background:var(--green-bg); color:var(--green); font-size:11px; font-weight:700; padding:4px 11px; border-radius: 8px; white-space:nowrap; }
+  .status-inactive{ background:var(--red-bg); color:var(--red); font-size:11px; font-weight:700; padding:4px 11px; border-radius: 8px; white-space:nowrap; }
 
   .action-btns{ display:flex; gap:6px; flex-wrap:wrap; }
   .action-btns button{ display:inline-flex; align-items:center; gap:5px; border:none; cursor:pointer; font-family:inherit; font-size:11.5px; font-weight:600; padding:7px 12px; border-radius:9px; transition:transform .15s var(--ease), filter .15s var(--ease); }
@@ -159,14 +159,14 @@
   .class-name-text strong{ display:block; font-size:13.5px; }
   .class-name-text small{ font-size:11px; color:var(--ink-soft); }
   .teacher-cell small{ display:block; font-size:11px; color:var(--ink-soft); }
-  .section-badge{ display:inline-block; background:var(--paper); font-size:11px; font-weight:600; padding:3px 9px; border-radius:999px; margin:1px; }
+  .section-badge{ display:inline-block; background:var(--paper); font-size:11px; font-weight:600; padding:3px 9px; border-radius: 8px; margin:1px; }
 
   .gallery-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(180px,1fr)); gap:16px; }
   .gallery-thumb{ position:relative; border-radius:var(--radius-md); overflow:hidden; background:var(--paper); aspect-ratio:1/1; box-shadow:0 10px 22px rgba(36,31,20,.08); transition:transform .2s var(--ease); }
   .gallery-thumb:hover{ transform:translateY(-4px); }
   .gallery-thumb img{ width:100%; height:100%; object-fit:cover; display:block; }
   .gallery-thumb-overlay{ position:absolute; top:0; left:0; right:0; display:flex; align-items:center; justify-content:space-between; padding:10px; background:linear-gradient(180deg, rgba(14,19,38,.55), transparent); }
-  .gallery-thumb-category{ font-size:10.5px; font-weight:700; color:#fff; background:rgba(255,255,255,.18); padding:3px 9px; border-radius:999px; backdrop-filter:blur(4px); }
+  .gallery-thumb-category{ font-size:10.5px; font-weight:700; color:#fff; background:rgba(255,255,255,.18); padding:3px 9px; border-radius: 8px; backdrop-filter:blur(4px); }
   .gallery-thumb-delete{ width:28px; height:28px; border-radius:50%; background:rgba(229,88,74,.9); color:#fff; border:none; cursor:pointer; font-size:11px; display:flex; align-items:center; justify-content:center; }
   .gallery-thumb-caption{ position:absolute; bottom:0; left:0; right:0; padding:8px 10px; background:linear-gradient(0deg, rgba(14,19,38,.7), transparent); color:#fff; font-size:12px; font-weight:600; }
   .photo-upload-btn{ display:inline-flex; align-items:center; gap:8px; background:var(--paper); border:1.5px dashed rgba(36,31,20,.18); border-radius:12px; padding:11px 18px; font-size:12.5px; font-weight:600; color:var(--ink-soft); cursor:pointer; width:100%; justify-content:center; margin-bottom:14px; }
@@ -233,7 +233,7 @@
   <div class="modal-card">
     <div class="modal-header">
       <h2>Add Photo</h2>
-      <button type="button" class="modal-close" onclick="closeGalleryModal()"><i class="fa-solid fa-xmark"></i></button>
+      <button type="button" class="modal-close" aria-label="Close" onclick="closeGalleryModal()"><i class="fa-solid fa-xmark"></i></button>
     </div>
     <form id="galleryForm">
       <label class="photo-upload-btn"><i class="fa-solid fa-camera"></i> Choose Photo<input type="file" id="galleryFile" accept="image/*" style="display:none;" aria-label="Choose gallery photo"></label>
@@ -278,20 +278,6 @@
 </script>
 
 
-<script>
-  document.addEventListener('DOMContentLoaded', function(){
-    if (!window.matchMedia('(hover:hover)').matches || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    document.querySelectorAll('.mini-stat-card').forEach(card => {
-      card.addEventListener('pointermove', (e) => {
-        const r = card.getBoundingClientRect();
-        const x = (e.clientX - r.left)/r.width - 0.5;
-        const y = (e.clientY - r.top)/r.height - 0.5;
-        card.style.transform = `perspective(600px) rotateY(${x*8}deg) rotateX(${-y*8}deg) translateY(-2px)`;
-      });
-      card.addEventListener('pointerleave', () => { card.style.transform = ''; });
-    });
-  });
-</script>
 
 <script>
   try { SessionTimer.start({ flagKey: 'adminLoggedIn', loginUrl: 'admin.html' }); } catch(e) {}

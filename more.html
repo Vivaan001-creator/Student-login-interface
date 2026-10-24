@@ -161,6 +161,20 @@
   try { SessionTimer.start({ flagKey: 'adminLoggedIn', loginUrl: 'admin.html' }); } catch(e) {}
 </script>
 <nav class="legal-links" aria-label="Legal"><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="cookies.html">Cookies</a><a href="refund.html">Refunds</a></nav>
+<script type="module">
+  // The Logout button below needs this function. This page does not load admin.js.
+  import { auth } from "./Firebase.js";
+  import { signOut } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+  window.adminLogout = async function () {
+    try {
+      await signOut(auth);
+      localStorage.clear();
+      window.location.replace("admin.html");
+    } catch (error) {
+      alert("Could not log out. Please try again.");
+    }
+  };
+</script>
 <script src="site.js"></script>
 </body>
 </html>

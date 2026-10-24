@@ -197,16 +197,6 @@
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 
-  if (!reduceMotion && window.matchMedia('(hover:hover)').matches){
-    const card = document.getElementById('loginCard');
-    card.addEventListener('pointermove', (e) => {
-      const r = card.getBoundingClientRect();
-      const x = (e.clientX - r.left)/r.width - 0.5;
-      const y = (e.clientY - r.top)/r.height - 0.5;
-      card.style.transform = `perspective(900px) rotateY(${x*6}deg) rotateX(${-y*6}deg)`;
-    });
-    card.addEventListener('pointerleave', () => { card.style.transform = ''; });
-  }
 
   // Admissions WhatsApp number: country code, digits only (for example 919876543210).
   // Leave empty to send admission requests by email instead.
@@ -251,7 +241,7 @@
   });
 </script>
 
-<nav class="legal-links" aria-label="Legal"><a href="my-portfolio.html">About Vivaan</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="cookies.html">Cookies</a><a href="refund.html">Refunds</a></nav>
+<nav class="legal-links" aria-label="Legal"><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="cookies.html">Cookies</a><a href="refund.html">Refunds</a></nav>
 <script src="site.js"></script>
 </body>
 </html>

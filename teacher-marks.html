@@ -110,8 +110,8 @@
   .btn-add-class:hover{ transform:translateY(-2px); box-shadow:0 6px 0 var(--amber-shadow), 0 14px 26px rgba(255,140,66,.34); }
   .btn-add-class:active{ transform:translateY(2px); box-shadow:0 2px 0 var(--amber-shadow), 0 6px 14px rgba(255,140,66,.3); }
 
-  .attendance-toggle{ display:inline-flex; gap:6px; background:var(--paper); padding:4px; border-radius:999px; }
-  .att-pill{ border:none; cursor:pointer; font-family:inherit; font-size:11.5px; font-weight:700; padding:7px 14px; border-radius:999px; background:transparent; color:var(--ink-soft); transition:background .18s var(--ease), color .18s var(--ease); }
+  .attendance-toggle{ display:inline-flex; gap:6px; background:var(--paper); padding:4px; border-radius: 8px; }
+  .att-pill{ border:none; cursor:pointer; font-family:inherit; font-size:11.5px; font-weight:700; padding:7px 14px; border-radius: 8px; background:transparent; color:var(--ink-soft); transition:background .18s var(--ease), color .18s var(--ease); }
   .att-present.active{ background:var(--green-bg); color:var(--green); }
   .att-absent.active{ background:var(--red-bg); color:var(--red); }
 
@@ -129,7 +129,7 @@
   .homework-item{ display:flex; gap:16px; padding:16px 0; border-top:1px solid rgba(36,31,20,.06); }
   .homework-item:first-child{ border-top:none; padding-top:2px; }
   .homework-tag{ display:flex; flex-direction:column; align-items:center; gap:4px; min-width:70px; }
-  .homework-tag .subject{ font-size:11px; font-weight:700; color:#241608; background:linear-gradient(135deg, var(--amber), var(--coral)); padding:4px 10px; border-radius:999px; }
+  .homework-tag .subject{ font-size:11px; font-weight:700; color:#241608; background:linear-gradient(135deg, var(--amber), var(--coral)); padding:4px 10px; border-radius: 8px; }
   .homework-tag .due{ font-size:10.5px; color:var(--ink-soft); white-space:nowrap; }
   .homework-body{ flex:1; }
   .homework-body h4{ font-size:14px; margin-bottom:3px; }
@@ -164,8 +164,8 @@
   .btn-primary:hover{ transform:translateY(-2px); }
   .btn-secondary{ background:var(--paper); color:var(--ink-soft); border:1.5px solid rgba(36,31,20,.09); }
   .btn-secondary:hover{ background:#eee3cc; }
-  .status-active{ background:var(--green-bg); color:var(--green); font-size:11px; font-weight:700; padding:5px 12px; border-radius:999px; }
-  .status-inactive{ background:var(--red-bg); color:var(--red); font-size:11px; font-weight:700; padding:5px 12px; border-radius:999px; }
+  .status-active{ background:var(--green-bg); color:var(--green); font-size:11px; font-weight:700; padding:5px 12px; border-radius: 8px; }
+  .status-inactive{ background:var(--red-bg); color:var(--red); font-size:11px; font-weight:700; padding:5px 12px; border-radius: 8px; }
 
   .toolbar-row select{ padding:11px 14px; border:1.5px solid rgba(36,31,20,.1); border-radius:12px; font-size:13.5px; font-family:inherit; background:var(--paper); color:var(--ink); appearance:none; }
 
@@ -236,7 +236,7 @@
   <div class="modal-card">
     <div class="modal-header">
       <h2 id="marksModalTitle">Marks</h2>
-      <button type="button" class="modal-close" onclick="closeMarksModal()"><i class="fa-solid fa-xmark"></i></button>
+      <button type="button" class="modal-close" aria-label="Close" onclick="closeMarksModal()"><i class="fa-solid fa-xmark"></i></button>
     </div>
     <div id="marksEditor"></div>
     <div class="modal-actions">

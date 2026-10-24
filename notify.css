@@ -26,7 +26,7 @@ html[data-theme="dark"] .ga-bn-dot{ border-color:#161d3a; }
 .ga-item .ga-when{ display:block; margin-top:4px; font-size:12px; color:var(--ga-soft); }
 .ga-item ul{ margin:6px 0 0; padding-left:18px; color:var(--ga-soft); font-size:14px; }
 .ga-item li{ margin:3px 0; }
-.ga-new{ display:inline-block; margin-left:6px; padding:1px 8px; border-radius:999px; background:#c0211c; color:#fff; font:700 11px/1.5 Inter, sans-serif; vertical-align:middle; }
+.ga-new{ display:inline-block; margin-left:6px; padding:1px 8px; border-radius: 8px; background:#c0211c; color:#fff; font:700 11px/1.5 Inter, sans-serif; vertical-align:middle; }
 .ga-empty{ color:var(--ga-soft); font-size:14px; margin:0 0 10px; }
 .ga-row{ display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; padding:12px 14px; border:1px solid var(--ga-line); border-radius:14px; background:var(--ga-card); margin:0 0 10px; font-size:14px; }
 .ga-btn{ min-height:44px; padding:10px 18px; border-radius:12px; border:1px solid var(--ga-line); background:var(--ga-bg); color:var(--ga-ink); font:700 14px/1 inherit; font-family:inherit; cursor:pointer; }
@@ -51,7 +51,7 @@ html[data-theme="dark"] .ga-bn-dot{ border-color:#161d3a; }
 
 .ga-spot{ position:relative; z-index:2147481000; box-shadow:0 0 0 3px #ffb347, 0 0 0 9px rgba(255,179,71,.3) !important; animation:gaPulse 1.6s ease-in-out infinite; }
 @keyframes gaPulse{ 0%,100%{ box-shadow:0 0 0 3px #ffb347, 0 0 0 7px rgba(255,179,71,.35); } 50%{ box-shadow:0 0 0 3px #ffb347, 0 0 0 14px rgba(255,179,71,.05); } }
-.ga-new-tag{ position:absolute; top:-9px; right:-9px; z-index:2; padding:1px 7px; border-radius:999px; background:#c0211c; color:#fff; font:700 10px/1.6 Inter, sans-serif; letter-spacing:.04em; pointer-events:none; }
+.ga-new-tag{ position:absolute; top:-9px; right:-9px; z-index:2; padding:1px 7px; border-radius: 8px; background:#c0211c; color:#fff; font:700 10px/1.6 Inter, sans-serif; letter-spacing:.04em; pointer-events:none; }
 .ga-pop{ position:fixed; z-index:2147482200; width:min(300px, calc(100vw - 24px)); background:var(--ga-bg); color:var(--ga-ink); border:1px solid var(--ga-line); border-radius:16px; padding:14px;
   box-shadow:0 14px 40px rgba(0,0,0,.4); font:14px/1.45 Inter, system-ui, Arial, sans-serif; }
 .ga-pop h3{ margin:0 0 4px; font:700 15px/1.3 Inter, sans-serif; }
