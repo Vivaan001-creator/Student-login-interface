@@ -56,7 +56,7 @@ html:not([data-theme="dark"]) .amber-link{ color:#a8510f; }
 @media (max-width:560px){
   html body .classes-card{ padding:14px 12px; border-radius:20px; }
   html body .form-card{ padding:18px 14px; border-radius:20px; }
-  html body .quick-tips-box{ padding:18px 16px; }
+  html body :is(.quick-tips-box,.profile-hero,.clock-card){ padding:18px 16px; }
   html body .profile-hero{ padding:20px 16px; }
   html body .classes-card-toolbar{ margin-bottom:12px; }
 }
@@ -147,3 +147,206 @@ html body .top-header{ overflow:clip; }
 html body .pw-toggle{ min-width:44px; min-height:44px; display:inline-flex; align-items:center; justify-content:center; right:4px; }
 html body .back-link, html body .forgot-link, html body .pay-back, html body .amber-link{ display:inline-flex; align-items:center; min-height:44px; }
 html body .modal-close{ min-width:44px; min-height:44px; }
+
+
+/* =====================================================================
+   PREMIUM LAYER
+   Loaded on every inner page through site.css. It only changes finish:
+   colour, depth, borders, shadows, type rendering and touch feedback.
+   It does not change sizes, spacing or layout, so no page can break.
+   Palette: midnight navy, champagne gold, warm ivory.
+   ===================================================================== */
+:root{
+  --gold-hi:#ffe08a; --gold:#ffc24a; --gold-lo:#f29a2e; --gold-ink:#2b1a04;
+  --prem-ease:cubic-bezier(.22,.8,.3,1);
+  --hair-light:rgba(36,31,20,.08); --hair-dark:rgba(255,255,255,.10);
+}
+
+/* ---- Type rendering ---- */
+html body{ -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; text-rendering:optimizeLegibility; }
+html body h1, html body h2, html body h3{ letter-spacing:-.012em; text-wrap:balance; }
+html body .mini-stat-number, html body .stat-number-lg, html body .streak-chip .num,
+html body table td, html body .count-badge{ font-variant-numeric:tabular-nums; }
+html body p{ text-wrap:pretty; }
+::selection{ background:rgba(255,194,74,.45); color:inherit; }
+
+/* ---- Page canvas: a soft pool of light instead of flat colour ---- */
+html:not([data-theme="dark"]) body:has(.app-shell){
+  background-color:var(--paper);
+  background-image:
+    radial-gradient(760px 360px at 100% -40px, rgba(255,194,74,.16), transparent 70%),
+    radial-gradient(620px 320px at -10% 38%, rgba(138,111,232,.06), transparent 70%);
+  background-repeat:no-repeat;
+}
+html[data-theme="dark"] body:has(.app-shell){
+  background-color:var(--paper);
+  background-image:
+    radial-gradient(760px 380px at 100% -40px, rgba(255,194,74,.09), transparent 70%),
+    radial-gradient(640px 360px at -10% 40%, rgba(110,120,255,.10), transparent 70%);
+  background-repeat:no-repeat;
+}
+
+/* ---- Header: deep navy with a gold edge ---- */
+html body .top-header{
+  background-image:
+    radial-gradient(ellipse 70% 90% at 100% 0%, rgba(255,194,74,.20) 0%, transparent 60%),
+    radial-gradient(ellipse 120% 100% at 0% 0%, #26306a 0%, transparent 62%),
+    linear-gradient(160deg, #141b3a 0%, #0b1020 100%);
+  box-shadow:
+    inset 0 -1px 0 rgba(255,214,130,.30),
+    inset 0 1px 0 rgba(255,255,255,.06),
+    0 22px 40px -22px rgba(8,10,28,.65);
+}
+html body .top-header h1, html body .greeting{ letter-spacing:-.01em; text-shadow:0 1px 14px rgba(0,0,0,.25); }
+html body .header-icon-btn{
+  background:linear-gradient(180deg, rgba(255,255,255,.16), rgba(255,255,255,.06));
+  border:1px solid rgba(255,255,255,.18);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.18), 0 6px 14px -6px rgba(0,0,0,.45);
+  -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
+  transition:transform .18s var(--prem-ease), background .2s var(--prem-ease);
+}
+html body .header-icon-btn:active{ transform:scale(.92); }
+html body .avatar-badge, html body .role-chip .avatar{
+  background:linear-gradient(145deg, var(--gold-hi) 0%, var(--gold) 50%, var(--gold-lo) 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.6), inset 0 -2px 4px rgba(150,80,0,.25), 0 8px 18px -6px rgba(255,170,40,.55);
+}
+html body .role-chip, html body .streak-chip{
+  background:linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.05));
+  border-color:rgba(255,255,255,.14);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.10);
+}
+
+/* ---- Cards: hairline edge, light from above, long soft shadow ---- */
+html:not([data-theme="dark"]) body :is(.classes-card,.form-card,.stat-card-lg,.more-item,.card){
+  border:1px solid var(--hair-light);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.95),
+    0 1px 2px rgba(36,31,20,.05),
+    0 18px 38px -18px rgba(36,31,20,.20);
+}
+html[data-theme="dark"] body :is(.classes-card,.form-card,.stat-card-lg,.more-item,.card){
+  background-image:linear-gradient(180deg, rgba(255,255,255,.065) 0%, rgba(255,255,255,.02) 100%);
+  border:1px solid var(--hair-dark);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.08),
+    0 20px 40px -20px rgba(0,0,0,.65);
+}
+html body .mini-stat-card{ border-color:var(--hair-light); box-shadow:inset 0 1px 0 rgba(255,255,255,.7), 0 1px 2px rgba(36,31,20,.04); }
+html[data-theme="dark"] body .mini-stat-card{ border-color:var(--hair-dark); box-shadow:inset 0 1px 0 rgba(255,255,255,.06); }
+html body .mini-stat-card:hover, html body .stat-card-lg:hover{
+  box-shadow:0 22px 40px -18px rgba(36,31,20,.28), 0 0 0 1px rgba(255,194,74,.35);
+}
+html body .mini-stat-icon, html body .stat-icon-lg, html body .more-icon{
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.55), inset 0 -1px 0 rgba(0,0,0,.05);
+}
+
+/* Navy info panels get the same gold edge as the header */
+html body :is(.quick-tips-box,.profile-hero,.clock-card){
+  background-image:
+    radial-gradient(ellipse 60% 120% at 100% 0%, rgba(255,194,74,.18), transparent 60%),
+    linear-gradient(135deg, #18204a 0%, #0b1020 100%);
+  border:1px solid rgba(255,214,130,.18);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.07), 0 22px 40px -22px rgba(8,10,28,.7);
+}
+
+/* ---- Primary buttons: champagne gold, no chunky 3D slab ---- */
+html body :is(.btn-add-class,.btn-primary,.login-btn,.btn-save,.submit-btn){
+  background:linear-gradient(180deg, var(--gold-hi) 0%, var(--gold) 46%, var(--gold-lo) 100%);
+  color:var(--gold-ink);
+  border:1px solid rgba(160,90,0,.35);
+  border-radius:14px;
+  letter-spacing:.005em;
+  text-shadow:0 1px 0 rgba(255,255,255,.35);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.65),
+    inset 0 -2px 0 rgba(160,80,0,.18),
+    0 10px 22px -8px rgba(242,154,46,.65);
+  transition:transform .18s var(--prem-ease), box-shadow .22s var(--prem-ease), filter .2s var(--prem-ease);
+}
+html body :is(.btn-add-class,.btn-primary,.login-btn,.btn-save,.submit-btn):hover{
+  transform:translateY(-1px); filter:saturate(1.06) brightness(1.03);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.7), inset 0 -2px 0 rgba(160,80,0,.18), 0 16px 28px -8px rgba(242,154,46,.7);
+}
+html body :is(.btn-add-class,.btn-primary,.login-btn,.btn-save,.submit-btn):active{
+  transform:translateY(1px) scale(.985); filter:brightness(.98);
+  box-shadow:inset 0 2px 4px rgba(150,80,0,.25), 0 4px 10px -4px rgba(242,154,46,.6);
+}
+html body :is(.btn-primary,.login-btn,.btn-add-class):disabled{ filter:grayscale(.35) opacity(.7); box-shadow:none; transform:none; }
+
+html body .btn-secondary{ border-radius:14px; transition:transform .18s var(--prem-ease), background .2s var(--prem-ease), border-color .2s var(--prem-ease); }
+html body .btn-secondary:active{ transform:scale(.985); }
+html:not([data-theme="dark"]) body .btn-secondary{ background:#fff; border:1.5px solid rgba(36,31,20,.12); box-shadow:0 1px 2px rgba(36,31,20,.05); }
+html body :is(.btn-view,.btn-edit,.btn-delete){ transition:transform .15s var(--prem-ease), filter .2s var(--prem-ease); }
+html body :is(.btn-view,.btn-edit,.btn-delete):active{ transform:scale(.95); }
+
+/* ---- Inputs: quiet at rest, gold when focused ---- */
+html body :is(.search-box-wrap input,.input-wrap input,.date-input-wrap input,.field input,.field select,.field textarea){
+  border-radius:14px;
+  transition:border-color .2s var(--prem-ease), box-shadow .25s var(--prem-ease), background-color .2s var(--prem-ease);
+}
+html body :is(.search-box-wrap input,.input-wrap input,.date-input-wrap input,.field input,.field select,.field textarea):focus{
+  border-color:var(--gold-lo);
+  box-shadow:0 0 0 4px rgba(255,194,74,.22);
+  outline:none;
+}
+html:not([data-theme="dark"]) body :is(.search-box-wrap input,.date-input-wrap input,.field input,.field select,.field textarea){
+  background:#fff; border-color:rgba(36,31,20,.12); box-shadow:inset 0 1px 2px rgba(36,31,20,.05);
+}
+
+/* ---- Tables: airy rows, calm header ---- */
+html body table.classes-table thead th{ letter-spacing:.02em; font-weight:700; }
+html:not([data-theme="dark"]) body table.classes-table tbody tr{ transition:background .2s var(--prem-ease); }
+html:not([data-theme="dark"]) body table.classes-table tbody tr:hover{ background:rgba(255,194,74,.08); }
+html[data-theme="dark"] body table.classes-table tbody tr:hover{ background:rgba(255,255,255,.04); }
+
+/* ---- Bottom navigation: floating glass with a gold active pill ---- */
+html body .bottom-nav{
+  background:color-mix(in srgb, var(--nav-surface) 92%, transparent);
+  -webkit-backdrop-filter:blur(22px) saturate(1.5); backdrop-filter:blur(22px) saturate(1.5);
+  border:1px solid var(--hair-light);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.35), 0 22px 44px -14px rgba(10,12,30,.40);
+}
+html[data-theme="dark"] body .bottom-nav{ border-color:var(--hair-dark); box-shadow:inset 0 1px 0 rgba(255,255,255,.08), 0 22px 44px -14px rgba(0,0,0,.7); }
+html body .bn-item{ transition:transform .18s var(--prem-ease), color .2s var(--prem-ease); }
+html body .bn-item:active{ transform:scale(.93); }
+html body .bn-item.bn-active .bn-icon-wrap{
+  background:linear-gradient(180deg, var(--gold-hi), var(--gold) 55%, var(--gold-lo));
+  color:var(--gold-ink);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.6), 0 8px 16px -6px rgba(242,154,46,.65);
+}
+
+/* ---- Badges and pills ---- */
+html body :is(.status-active,.status-inactive,.status-pending,.status-admin,.status-parent){
+  box-shadow:inset 0 0 0 1px color-mix(in srgb, currentColor 22%, transparent);
+  letter-spacing:.01em;
+}
+
+/* ---- Modals: frosted backdrop, lifted sheet ---- */
+html body .modal-backdrop{ -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px); }
+html body .modal-backdrop > *{ box-shadow:0 40px 80px -24px rgba(8,10,28,.55); }
+
+/* ---- Login screens: glass card with a gold hairline on top ---- */
+html body .login-card{
+  border-color:rgba(255,255,255,.14);
+  box-shadow:inset 0 1px 0 rgba(255,214,130,.35), 0 40px 80px -30px rgba(0,0,0,.6);
+}
+html body .role-card{
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08), 0 16px 30px -16px rgba(0,0,0,.5);
+  transition:transform .18s var(--prem-ease), box-shadow .2s var(--prem-ease), border-color .2s var(--prem-ease);
+}
+html body .role-card:hover{ border-color:rgba(255,194,74,.45); }
+html body .role-card:active{ transform:scale(.975); }
+
+/* ---- Scrollbars and loading ---- */
+html body ::-webkit-scrollbar-thumb{ background:rgba(120,110,90,.28); border-radius:8px; }
+html[data-theme="dark"] body ::-webkit-scrollbar-thumb{ background:rgba(255,255,255,.18); }
+html body .spinner{ border-top-color:var(--gold-lo); }
+
+/* ---- One orchestrated moment: the header settles in on page load ---- */
+@keyframes premSettle{ from{ opacity:.0; transform:translateY(-10px); } to{ opacity:1; transform:none; } }
+html body .top-header{ animation:premSettle .55s var(--prem-ease) both; }
+
+/* ---- Respect people who turn motion off ---- */
+@media (prefers-reduced-motion:reduce){
+  html body *{ animation-duration:.001ms !important; transition-duration:.001ms !important; }
+}
