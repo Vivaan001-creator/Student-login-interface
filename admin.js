@@ -118,7 +118,7 @@ async function adminLogin() {
             return;
         }
 
-        localStorage.setItem("adminLoggedIn","true");
+        localStorage.setItem("adminLoggedIn","true"); localStorage.setItem("adminLoggedInAt", String(Date.now()));
 
         // Login tracking runs in the background AFTER we've already
         // committed to redirecting - a slow/hung Firestore call must
@@ -510,6 +510,7 @@ async function loadStudent() {
     const emailField = document.getElementById("parentEmail");
     if (emailField) emailField.value = student.parentEmail || "";
     document.getElementById("attendance").value = student.attendance || "";
+    await populateAssignedTeacherSelect(student.teacherId || "");
 
     const motherField = document.getElementById("motherName");
     if (motherField) motherField.value = student.mother || "";
@@ -707,6 +708,11 @@ async function saveStudent() {
         ? classField.value
         : localStorage.getItem("studentClass");
 
+    if (document.getElementById("assignedTeacher") && !document.getElementById("assignedTeacher").value) {
+        alert("Please select the teacher this student is assigned to.");
+        return;
+    }
+
     const studentData = {
 
         name: document.getElementById("studentName").value,
@@ -722,7 +728,9 @@ async function saveStudent() {
         address: document.getElementById("address")?.value || "",
         admissionDate: document.getElementById("admissionDate")?.value || "",
         previousSchool: document.getElementById("previousSchool")?.value || "",
-        attendance: document.getElementById("attendance").value
+        attendance: document.getElementById("attendance").value,
+        teacherId: document.getElementById("assignedTeacher")?.value || "",
+        teacherName: document.getElementById("assignedTeacher")?.selectedOptions[0]?.dataset.name || ""
 
         // Note: publishStatus is no longer set from here - each
         // teacher now publishes/unpublishes a student's result
@@ -792,6 +800,40 @@ function searchStudent() {
 window.searchStudent = searchStudent;
 
 
+// ===== Assigned-teacher dropdown (Add / Edit Student) =====
+// Fills #assignedTeacher with every teacher; the value is the teacher's
+// document id, which is what the teacher dashboard filters students by.
+async function populateAssignedTeacherSelect(selectedId) {
+    const sel = document.getElementById("assignedTeacher");
+    if (!sel) return;
+    try {
+        const snap = await getDocs(collection(db, "teachers"));
+        const teachers = snap.docs
+            .map(d => ({ id: d.id, ...d.data() }))
+            .sort((a, b) => String(a.name || "").localeCompare(String(b.name || "")));
+        sel.innerHTML = '<option value="">Select teacher</option>';
+        teachers.forEach(t => {
+            const opt = document.createElement("option");
+            opt.value = t.id;
+            opt.dataset.name = t.name || "";
+            opt.textContent = (t.name || t.email || t.id) + (t.subject ? " - " + t.subject : "");
+            sel.appendChild(opt);
+        });
+        if (!teachers.length) sel.innerHTML = '<option value="">No teachers added yet</option>';
+        if (selectedId) sel.value = selectedId;
+    } catch (e) {
+        console.error("Could not load teachers:", e);
+        sel.innerHTML = '<option value="">Could not load teachers</option>';
+    }
+}
+window.populateAssignedTeacherSelect = populateAssignedTeacherSelect;
+document.addEventListener("DOMContentLoaded", () => {
+    // Edit page fills the selection itself after loading the student.
+    if (document.getElementById("assignedTeacher") && !document.getElementById("attendance")) {
+        populateAssignedTeacherSelect();
+    }
+});
+
 // ===== Add Student (Firebase) =====
 async function addStudent() {
   try {
@@ -808,8 +850,16 @@ async function addStudent() {
     const admissionDate = document.getElementById("admissionDate")?.value.trim() || "";
     const previousSchool = document.getElementById("previousSchool")?.value.trim() || "";
 
+    const teacherSel = document.getElementById("assignedTeacher");
+    const teacherId = teacherSel ? teacherSel.value : "";
+    const teacherName = teacherSel && teacherSel.selectedOptions[0] ? (teacherSel.selectedOptions[0].dataset.name || "") : "";
+
     if (!roll || !name || !father || !mother || !studentClass || !section || !dob || !gender) {
       alert("Please fill all required fields (marked with *).");
+      return;
+    }
+    if (!teacherId) {
+      alert("Please select the teacher this student will be assigned to.");
       return;
     }
 
@@ -835,6 +885,8 @@ async function addStudent() {
       address,
       admissionDate,
       previousSchool,
+      teacherId,
+      teacherName,
       attendance: "0",
       publishStatus: "unpublished"
     });

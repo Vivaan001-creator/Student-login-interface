@@ -6,9 +6,17 @@ rules_version = '2';
 //   Admin    : the account vivaan510399@gmail.com. Full access.
 //   Teacher  : a signed-in user whose email has a document in /teacherAccounts
 //              (the admin app creates it when a teacher is added).
-//   Anyone   : students and parents are not Firebase users yet, so the
-//              student-facing data below is still publicly readable.
-//              THIS IS THE KNOWN REMAINING EXPOSURE. See SECURITY-REPORT.md.
+//   Student  : proves roll number + date of birth + last 4 digits of the registered mobile
+//              (see studentSessions). They can then read and write only their own records.
+//   Parent   : proves roll number + the registered mobile number (see parentSessions). They can
+//              then read the records of the children registered under that number.
+//   Nobody else can read student data. The public can read only the school's open information
+//              (classes, notices, gallery, settings, homework) and the games leaderboard.
+//
+// How students and parents are recognised without a server: the browser signs in anonymously
+// (free, no Blaze plan) and then writes ONE document, studentSessions/{uid} or parentSessions/{uid}.
+// These rules only accept that document if what was typed matches the student's record, so the
+// document existing is the proof of login. Every other rule below checks for it.
 //
 // Signing in is NOT enough. Anyone can create a Firebase account with your
 // public API key, so request.auth != null must never grant write access.
@@ -18,6 +26,8 @@ service cloud.firestore {
 
     function signedIn() { return request.auth != null; }
 
+    // To make this even safer, replace the email check with your admin account's UID:
+    //   request.auth.uid == 'PASTE-THE-UID-FROM-FIREBASE-CONSOLE-AUTHENTICATION'
     function isAdmin() {
       return signedIn()
         && request.auth.token.email == 'vivaan510399@gmail.com';
@@ -39,43 +49,110 @@ service cloud.firestore {
       return request.resource.data.diff(resource.data).affectedKeys().hasOnly(keys);
     }
 
+    // ---------- Student and parent sessions ----------
+    function hasStudentSession() {
+      return signedIn() && exists(/databases/$(database)/documents/studentSessions/$(request.auth.uid));
+    }
+    function studentSession() {
+      return get(/databases/$(database)/documents/studentSessions/$(request.auth.uid)).data;
+    }
+    function hasParentSession() {
+      return signedIn() && exists(/databases/$(database)/documents/parentSessions/$(request.auth.uid));
+    }
+    function parentSession() {
+      return get(/databases/$(database)/documents/parentSessions/$(request.auth.uid)).data;
+    }
+    function isStudentOf(roll) { return hasStudentSession() && studentSession().roll == roll; }
+    function isParentOf(roll) {
+      return hasParentSession()
+        && exists(/databases/$(database)/documents/students/$(roll))
+        && get(/databases/$(database)/documents/students/$(roll)).data.get('contactNumber', '') == parentSession().contact;
+    }
+    function isMember(roll) { return isStudentOf(roll) || isParentOf(roll); }
+    function studentRow() {
+      return get(/databases/$(database)/documents/students/$(studentSession().roll)).data;
+    }
+    // The part of a document id after "{testId}_" is the roll number.
+    function idRoll(id) { return id.replace(id.split('_')[0] + '_', ''); }
+
+    // The date of birth a student must type: dobKey if the record has one, else dob.
+    function dobOf(s) { return s.get('dobKey', s.get('dob', '')); }
+
+    // A login claim. The browser writes it after signing in anonymously. It is accepted
+    // only when it matches the student's record, so a wrong guess is simply refused.
+    match /studentSessions/{uid} {
+      allow get: if signedIn() && request.auth.uid == uid;
+      allow create, update: if signedIn() && request.auth.uid == uid
+        && request.resource.data.keys().hasOnly(['roll', 'dob', 'tail', 'createdAt'])
+        && request.resource.data.roll is string && request.resource.data.roll.size() > 0 && request.resource.data.roll.size() <= 50
+        && request.resource.data.dob is string
+        && request.resource.data.tail is string && request.resource.data.tail.matches('^[0-9]{4}$')
+        && request.resource.data.createdAt == request.time
+        && exists(/databases/$(database)/documents/students/$(request.resource.data.roll))
+        && request.resource.data.dob == dobOf(get(/databases/$(database)/documents/students/$(request.resource.data.roll)).data)
+        && get(/databases/$(database)/documents/students/$(request.resource.data.roll)).data.get('contactNumber', '').matches('.*' + request.resource.data.tail);
+      allow delete: if signedIn() && request.auth.uid == uid;
+    }
+
+    match /parentSessions/{uid} {
+      allow get: if signedIn() && request.auth.uid == uid;
+      allow create, update: if signedIn() && request.auth.uid == uid
+        && request.resource.data.keys().hasOnly(['roll', 'contact', 'createdAt'])
+        && request.resource.data.roll is string && request.resource.data.roll.size() > 0 && request.resource.data.roll.size() <= 50
+        && request.resource.data.contact is string && request.resource.data.contact.size() >= 5
+        && request.resource.data.createdAt == request.time
+        && exists(/databases/$(database)/documents/students/$(request.resource.data.roll))
+        && request.resource.data.contact == get(/databases/$(database)/documents/students/$(request.resource.data.roll)).data.get('contactNumber', '');
+      allow delete: if signedIn() && request.auth.uid == uid;
+    }
+
     // ---------- Students and their records ----------
+    function okStr(m, k, n) { return !(k in m) || (m[k] is string && m[k].size() <= n); }
+
     match /students/{roll} {
-      // Needed today because student and parent login read this document
-      // from the browser. Remove once login is moved to Firebase Auth.
-      allow read: if true;
+      // Only the staff, the student, or a parent registered under the same mobile number.
+      allow get: if isStaff() || isMember(roll);
+      // A parent (or a student) can list the brothers and sisters registered under the same mobile number.
+      allow list: if isStaff()
+        || (hasParentSession() && resource.data.contactNumber == parentSession().contact)
+        || (hasStudentSession() && resource.data.contactNumber == studentRow().get('contactNumber', ''));
       allow create, delete: if isAdmin();
 
       allow update: if isAdmin()
         // A teacher may only publish or unpublish a result.
         || (isTeacher() && onlyChanges(['publishStatus']))
         // Login tracking written by the student's own browser.
-        || (onlyChanges(['lastLogin', 'loginCount'])
+        || (isStudentOf(roll)
+            && onlyChanges(['lastLogin', 'loginCount'])
             && request.resource.data.lastLogin == request.time
             && request.resource.data.loginCount == resource.data.get('loginCount', 0) + 1);
 
       match /attendance/{date} {
-        allow read: if true;
+        allow read: if isStaff() || isMember(roll);
         allow write: if isStaff();
       }
 
       match /results/{month} {
-        allow read: if true;
+        allow read: if isStaff() || isMember(roll);
         allow write: if isStaff();
       }
 
       match /payments/{paymentId} {
-        allow read: if true;
+        allow read: if isStaff() || isMember(roll);
         // A parent reports a payment. It must start unverified; only the
         // admin can verify, edit or delete it.
         allow create: if isAdmin()
-          || (request.resource.data.keys().hasOnly(
-                ['amount', 'date', 'mode', 'note', 'source', 'periodKey', 'verified', 'recordedAt'])
+          || (isParentOf(roll)
+              && request.resource.data.keys().hasOnly(
+                  ['amount', 'date', 'mode', 'note', 'source', 'periodKey', 'verified', 'recordedAt'])
               && request.resource.data.verified == false
               && request.resource.data.source == 'parent_portal'
               && request.resource.data.amount is number
               && request.resource.data.amount > 0
               && request.resource.data.amount < 1000000
+              && okStr(request.resource.data, 'date', 40)
+              && okStr(request.resource.data, 'mode', 40)
+              && okStr(request.resource.data, 'periodKey', 20)
               && request.resource.data.note is string
               && request.resource.data.note.size() < 300);
         allow update, delete: if isAdmin();
@@ -86,7 +163,7 @@ service cloud.firestore {
     match /{path=**}/attendance/{id} { allow read: if isStaff(); }
     match /{path=**}/results/{id}    { allow read: if isStaff(); }
 
-    // ---------- Shared school data ----------
+    // ---------- Shared school data (open information) ----------
     match /classes/{id} {
       allow read: if true;
       allow write: if isAdmin();
@@ -137,11 +214,10 @@ service cloud.firestore {
     }
 
     // ---------- Profile change requests from parents ----------
-    // Parents are not Firebase users, so they cannot edit a student record. They
-    // send a request, and only the admin can approve it and change the record.
+    // A parent cannot edit a student record. They send a request, and only the
+    // admin can approve it and change the record.
     match /profileRequests/{id} {
-      // A parent reads only the request they created (the id is unguessable).
-      allow get: if true;
+      allow get: if isAdmin() || (resource != null && isParentOf(resource.data.roll));
       allow list: if isAdmin();
       allow create: if request.resource.data.keys().hasOnly(
             ['roll', 'studentName', 'changes', 'previous', 'status', 'createdAt', 'requestedBy'])
@@ -150,7 +226,7 @@ service cloud.firestore {
           && request.resource.data.createdAt == request.time
           && request.resource.data.roll is string
           && request.resource.data.roll.size() <= 50
-          && exists(/databases/$(database)/documents/students/$(request.resource.data.roll))
+          && isParentOf(request.resource.data.roll)
           && request.resource.data.studentName is string
           && request.resource.data.studentName.size() <= 200
           && request.resource.data.changes is map
@@ -161,20 +237,43 @@ service cloud.firestore {
           && request.resource.data.previous is map
           && request.resource.data.previous.keys().hasOnly(
                ['name', 'father', 'mother', 'dob', 'gender', 'contactNumber',
-                'altContact', 'parentEmail', 'address', 'previousSchool']);
+                'altContact', 'parentEmail', 'address', 'previousSchool'])
+          && okStr(request.resource.data.changes, 'name', 200)
+          && okStr(request.resource.data.changes, 'father', 200)
+          && okStr(request.resource.data.changes, 'mother', 200)
+          && okStr(request.resource.data.changes, 'dob', 40)
+          && okStr(request.resource.data.changes, 'gender', 40)
+          && okStr(request.resource.data.changes, 'contactNumber', 40)
+          && okStr(request.resource.data.changes, 'altContact', 40)
+          && okStr(request.resource.data.changes, 'parentEmail', 200)
+          && okStr(request.resource.data.changes, 'address', 500)
+          && okStr(request.resource.data.changes, 'previousSchool', 200)
+          && okStr(request.resource.data.previous, 'name', 200)
+          && okStr(request.resource.data.previous, 'father', 200)
+          && okStr(request.resource.data.previous, 'mother', 200)
+          && okStr(request.resource.data.previous, 'dob', 40)
+          && okStr(request.resource.data.previous, 'gender', 40)
+          && okStr(request.resource.data.previous, 'contactNumber', 40)
+          && okStr(request.resource.data.previous, 'altContact', 40)
+          && okStr(request.resource.data.previous, 'parentEmail', 200)
+          && okStr(request.resource.data.previous, 'address', 500)
+          && okStr(request.resource.data.previous, 'previousSchool', 200);
       allow update, delete: if isAdmin();
     }
 
     // ---------- Online tests ----------
     // Questions and answers live in separate documents so a student cannot read
     // the answers (or the questions) before they are allowed to.
-    //   tests/{id}                  details students see: subject, time, marks
-    //   testPapers/{id}             the questions (no answers). Readable only after the start time.
+    //   tests/{id}                  details students see: subject, class, section, time, marks.
+    //                               keyOpenAt = when the answer key may be shown (after the last student could finish).
+    //   testPapers/{id}             the questions (no answers). Readable during the test only by a student of
+    //                               that class and section; after the test closes by any signed-in student or parent.
     //   testKeys/{id}               the answer key. Staff only.
-    //   testKeys/{id}_{roll}        a copy of the key for one student. Readable only after that
-    //                               student has submitted (a submission with the same id exists).
-    //   testAttempts/{id}_{roll}    created once when the student starts. Holds the start time
-    //                               (server time), so leaving and returning cannot reset the clock.
+    //   testKeys/{id}_{roll}        a copy of the key for one student. Readable only by that student or their
+    //                               parent, only after they submitted, and only after keyOpenAt.
+    //   testReschedules/{id}_{roll} a new start window the teacher gives one student who missed the test.
+    //   testAttempts/{id}_{roll}    created once when the student starts. Holds the start time (server time),
+    //                               so leaving and returning cannot reset the clock.
     //   testSubmissions/{id}_{roll} created once on submit. Cannot be changed afterwards.
     function testData(id) {
       return get(/databases/$(database)/documents/tests/$(id)).data;
@@ -185,9 +284,22 @@ service cloud.firestore {
         || (isTeacher() && testData(id).createdBy == myTeacherId());
     }
 
+    // When the answer key may be shown. Older tests have no keyOpenAt, so they use the end of the last start time plus the time limit.
+    function keyOpenTime(t) {
+      return 'keyOpenAt' in t ? t.keyOpenAt : t.endAt + duration.value(t.durationMinutes, 'm');
+    }
+
+    // The signed-in student belongs to the class and section the test was made for.
+    function studentMatchesTest(t) {
+      return studentRow().get('class', '') == t.class
+        && (t.get('section', '') == ''
+            || t.section.trim().upper() == studentRow().get('section', '').trim().upper());
+    }
+
     match /tests/{id} {
       // Drafts are hidden. Queries must filter on status == 'published'.
-      allow get, list: if isStaff() || resource.data.status == 'published';
+      allow get, list: if isStaff()
+        || (resource.data.status == 'published' && (hasStudentSession() || hasParentSession()));
       allow create: if isAdmin()
         || (isTeacher() && request.resource.data.createdBy == myTeacherId());
       allow update: if isAdmin()
@@ -199,48 +311,78 @@ service cloud.firestore {
 
     match /testPapers/{id} {
       allow get: if isStaff()
-        || (testData(id).status == 'published' && request.time >= testData(id).startAt);
+        || (testData(id).status == 'published'
+            && ((request.time >= testData(id).startAt && hasStudentSession() && studentMatchesTest(testData(id)))
+                || ((hasStudentSession() || hasParentSession()) && request.time >= keyOpenTime(testData(id)))));
       allow create, update, delete: if ownsTest(id);
     }
 
     match /testKeys/{keyId} {
       allow get: if isStaff()
-        || exists(/databases/$(database)/documents/testSubmissions/$(keyId));
+        || (resource != null
+            && exists(/databases/$(database)/documents/testSubmissions/$(keyId))
+            && isMember(resource.data.roll)
+            && request.time >= keyOpenTime(get(/databases/$(database)/documents/tests/$(resource.data.testId)).data));
       allow create, update, delete: if isStaff();
     }
 
+    match /testReschedules/{rid} {
+      allow get: if isStaff() || isMember(idRoll(rid));
+      allow list: if isStaff();
+      allow create, update: if request.resource.data.keys().hasOnly(['testId', 'roll', 'startAt', 'endAt', 'updatedAt'])
+          && request.resource.data.testId is string
+          && request.resource.data.roll is string
+          && rid == request.resource.data.testId + '_' + request.resource.data.roll
+          && request.resource.data.startAt is timestamp
+          && request.resource.data.endAt is timestamp
+          && request.resource.data.endAt >= request.resource.data.startAt
+          && request.resource.data.updatedAt == request.time
+          && ownsTest(request.resource.data.testId);
+      allow delete: if ownsTest(resource.data.testId);
+    }
+
     match /testAttempts/{attemptId} {
-      allow get: if true;
+      allow get: if isStaff() || isMember(idRoll(attemptId));
       allow list: if isStaff();
       allow create: if request.resource.data.keys().hasOnly(['testId', 'roll', 'startedAt', 'violations'])
           && request.resource.data.testId is string
           && request.resource.data.roll is string
           && attemptId == request.resource.data.testId + '_' + request.resource.data.roll
+          && isStudentOf(request.resource.data.roll)
           && request.resource.data.startedAt == request.time
           && request.resource.data.violations == 0
           && testData(request.resource.data.testId).status == 'published'
-          && request.time >= testData(request.resource.data.testId).startAt
-          && request.time <= testData(request.resource.data.testId).endAt;
+          && studentMatchesTest(testData(request.resource.data.testId))
+          // Open in the test's own time, or in the new time the teacher gave this student (testReschedules).
+          && ((request.time >= testData(request.resource.data.testId).startAt
+                && request.time <= testData(request.resource.data.testId).endAt)
+              || (exists(/databases/$(database)/documents/testReschedules/$(attemptId))
+                  && request.time >= get(/databases/$(database)/documents/testReschedules/$(attemptId)).data.startAt
+                  && request.time <= get(/databases/$(database)/documents/testReschedules/$(attemptId)).data.endAt));
       // Counts each time the student left the test screen (one step at a time).
-      allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['violations'])
+      allow update: if isStudentOf(resource.data.roll)
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['violations'])
           && request.resource.data.violations == resource.data.violations + 1
           && !exists(/databases/$(database)/documents/testSubmissions/$(attemptId));
       allow delete: if isStaff();
     }
 
     match /testSubmissions/{submissionId} {
-      allow get: if true;
+      allow get: if isStaff() || isMember(idRoll(submissionId));
       allow list: if isStaff();
       allow create: if request.resource.data.keys().hasOnly(
             ['testId', 'roll', 'name', 'class', 'answers', 'startedAt', 'submittedAt', 'violations', 'auto'])
           && request.resource.data.testId is string
           && request.resource.data.roll is string
           && submissionId == request.resource.data.testId + '_' + request.resource.data.roll
+          && isStudentOf(request.resource.data.roll)
           && request.resource.data.submittedAt == request.time
           && request.resource.data.answers is list
           && request.resource.data.answers.size() == testData(request.resource.data.testId).questionCount
+          && request.resource.data.answers.hasOnly([-1, 0, 1, 2, 3, 4, 5])
           && request.resource.data.name is string
           && request.resource.data.name.size() <= 120
+          && request.resource.data.class == studentRow().get('class', '')
           && exists(/databases/$(database)/documents/testAttempts/$(submissionId))
           && request.time <= get(/databases/$(database)/documents/testAttempts/$(submissionId)).data.startedAt
               + duration.value(testData(request.resource.data.testId).durationMinutes, 'm')
@@ -314,6 +456,7 @@ service cloud.firestore {
     // ---------- Activity log ----------
     match /loginLogs/{id} {
       allow read: if isAdmin();
+      // Written by the person's own signed-in session, so nobody can fill the log with made-up logins.
       allow create: if request.resource.data.keys().hasOnly(
             ['role', 'refId', 'name', 'class', 'subject', 'timestamp'])
           && request.resource.data.role in ['student', 'teacher', 'parent']
@@ -321,7 +464,10 @@ service cloud.firestore {
           && request.resource.data.refId.size() <= 100
           && request.resource.data.name is string
           && request.resource.data.name.size() <= 200
-          && request.resource.data.timestamp == request.time;
+          && request.resource.data.timestamp == request.time
+          && ((request.resource.data.role == 'teacher' && isTeacher())
+              || (request.resource.data.role == 'student' && isStudentOf(request.resource.data.refId))
+              || (request.resource.data.role == 'parent' && isParentOf(request.resource.data.refId)));
       allow update, delete: if false;
     }
 

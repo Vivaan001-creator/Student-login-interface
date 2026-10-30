@@ -1,8 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
 <meta charset="UTF-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https://firebasestorage.googleapis.com https://storage.googleapis.com https://*.googleusercontent.com; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://www.gstatic.com; object-src 'none'; base-uri 'self'; form-action 'self' mailto:">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://www.google.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https://firebasestorage.googleapis.com https://storage.googleapis.com https://*.googleusercontent.com; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://www.gstatic.com https://www.google.com; object-src 'none'; frame-src https://www.google.com; base-uri 'self'; form-action 'self' mailto:">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Page not found - GenAlpha</title>
@@ -25,13 +29,16 @@
   *{ box-sizing:border-box; }
   body{ margin:0; min-height:100vh; min-height:100dvh; display:flex; align-items:center; justify-content:center; padding:24px;
     background:var(--bg); color:var(--ink); font:16px/1.6 Inter, system-ui, -apple-system, "Segoe UI", Arial, sans-serif; overflow-x:hidden; }
-  main{ width:100%; max-width:420px; background:var(--card); border:1px solid var(--line); border-top:3px solid #f29a2e; border-radius:16px; padding:32px 24px; text-align:center; box-shadow:0 30px 60px -30px rgba(8,10,28,.45); }
+  main{ width:100%; max-width:420px; background:var(--card); border:1px solid var(--line); border-radius:14px; padding:28px 22px; text-align:center; }
   img{ width:72px; height:72px; object-fit:contain; }
-  h1{ font:600 26px/1.25 Fraunces, Georgia, serif; letter-spacing:-.012em; margin:14px 0 8px; }
+  h1{ font:600 26px/1.25 Georgia, serif; margin:14px 0 8px; }
   p{ margin:0 0 20px; color:var(--soft); }
-  a.btn{ display:inline-block; min-height:44px; padding:12px 22px; border-radius:14px; background:linear-gradient(180deg,#ffe08a,#ffc24a 46%,#f29a2e); color:#2b1a04; border:1px solid rgba(160,90,0,.35); font-weight:700; text-decoration:none; box-shadow:inset 0 1px 0 rgba(255,255,255,.65), 0 10px 22px -8px rgba(242,154,46,.6); }
+  a.btn{ display:inline-block; min-height:44px; padding:12px 20px; border-radius:10px; background:var(--accent); color:var(--on); font-weight:700; text-decoration:none; }
   a:focus-visible{ outline:3px solid var(--focus); outline-offset:2px; }
 </style>
+<link rel="stylesheet" href="premium.css">
+<link rel="stylesheet" href="protect.css">
+<script src="protect.js"></script>
 </head>
 <body>
 <main>
@@ -40,5 +47,6 @@
   <p>The link may be old or mistyped. Head back to the login page and choose where you want to go.</p>
   <a class="btn" href="login.html">Go to login</a>
 </main>
+<script src="site.js"></script>
 </body>
 </html>

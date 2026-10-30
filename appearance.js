@@ -1,3 +1,6 @@
+/* Clickjacking guard: if another website puts this page inside a frame, hide it and break out. */
+(function () { try { if (window.top !== window.self) { document.documentElement.style.display = "none"; window.top.location = window.self.location; } } catch (e) { document.documentElement.style.display = "none"; } })();
+
 /* =========================================================
    appearance.js - one-tap Light/Dark toggle for the whole
    GenAlpha app.
@@ -78,19 +81,27 @@
         border-color:rgba(36,31,20,.1); background:#ffffff; color:#241f14;
         box-shadow:0 6px 16px rgba(36,31,20,.08);
       }
+      .appearance-corner{
+        position:fixed; z-index:50;
+        top:calc(env(safe-area-inset-top, 0px) + 12px);
+        right:calc(env(safe-area-inset-right, 0px) + 12px);
+        margin:0; width:auto; height:auto;
+      }
       .appearance-btn:active{ transform:scale(.92); }
       @media (prefers-reduced-motion: reduce){ .appearance-btn{ transition:none; } }
     `;
     document.head.appendChild(style);
   }
 
-  function renderMenu(mountEl /*, opts - accepted for backwards compatibility, unused */) {
+  function renderMenu(mountEl, opts) {
     if (!mountEl) return;
     injectStyles();
+    const corner = !!(opts && opts.variant === 'corner');
+    if (corner) mountEl.classList.add('appearance-corner');
 
     const btn = document.createElement('button');
     btn.type = 'button';
-    btn.className = 'appearance-btn';
+    btn.className = 'appearance-btn' + (corner ? ' on-light-surface' : '');
     btn.setAttribute('aria-label', 'Toggle dark mode');
     mountEl.appendChild(btn);
 

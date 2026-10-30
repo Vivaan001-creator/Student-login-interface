@@ -1,8 +1,17 @@
 <!DOCTYPE html>
 <html lang="en-IN">
 <head>
+<link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="modulepreload" href="Firebase.js">
+<link rel="modulepreload" href="https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js">
+<link rel="modulepreload" href="https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js">
+<link rel="modulepreload" href="https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js">
+<link rel="modulepreload" href="https://www.gstatic.com/firebasejs/12.1.0/firebase-storage.js">
+
 <meta charset="UTF-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https://firebasestorage.googleapis.com https://storage.googleapis.com https://*.googleusercontent.com; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://www.gstatic.com; object-src 'none'; base-uri 'self'; form-action 'self' mailto:">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://www.google.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https://firebasestorage.googleapis.com https://storage.googleapis.com https://*.googleusercontent.com; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://www.gstatic.com https://www.google.com; object-src 'none'; frame-src https://www.google.com; base-uri 'self'; form-action 'self' mailto:">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="description" content="Admin dashboard for GenAlpha: students, teachers, fees and activity.">
 <meta name="theme-color" content="#0e1326">
@@ -16,9 +25,9 @@
 <script src="appearance.js"></script>
 <script src="session-timer.js"></script>
 <title>Dashboard - GenAlpha</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"></noscript>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap"></noscript>
 
 <style>
   :root{
@@ -105,8 +114,6 @@
 
   .clock-card{ display:flex; align-items:center; justify-content:space-between; background:linear-gradient(120deg, var(--navy-900), var(--navy-950)); color:#f3ecd9; border-radius:var(--radius-lg); padding:18px 24px; margin-bottom:24px; flex-wrap:wrap; gap:10px; }
   .clock-card i{ color:var(--amber); margin-right:8px; }
-  #liveDateTime{ font-size:13px; color:#c7cbe0; line-height:1.5; }
-  #dashboardClock{ font-size:12px; color:var(--ink-faint); }
 
   .btn-add-class{
     display:inline-flex; align-items:center; gap:8px; border:none; cursor:pointer;
@@ -190,8 +197,6 @@
 
   .clock-card{ display:flex; align-items:center; justify-content:space-between; background:linear-gradient(120deg, var(--navy-900), var(--navy-950)); color:#f3ecd9; border-radius:var(--radius-lg); padding:18px 24px; margin-bottom:24px; flex-wrap:wrap; gap:10px; }
   .clock-card i{ color:var(--amber); margin-right:8px; }
-  #liveDateTime{ font-size:13px; color:#c7cbe0; line-height:1.5; }
-  #dashboardClock{ font-size:12px; color:var(--ink-faint); }
 
   .actions-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(220px,1fr)); gap:14px; margin-bottom:22px; }
   .action-item{ position:relative; display:flex; align-items:center; gap:14px; background:var(--surface-card); border:1px solid rgba(36,31,20,.06); border-radius:var(--radius-md); padding:16px 18px; box-shadow:0 12px 26px rgba(36,31,20,.06); transition:transform .18s var(--ease), box-shadow .18s var(--ease); }
@@ -211,22 +216,42 @@
 
   /* ---------- Phones ---------- */
   @media (max-width:560px){
-    .stats-grid-lg{ grid-template-columns:1fr 1fr; gap:12px; margin-bottom:20px; }
-    .stat-card-lg{ flex-direction:column; align-items:flex-start; gap:10px; padding:16px; min-width:0; }
-    .stat-icon-lg{ min-width:44px; width:44px; height:44px; font-size:18px; border-radius:14px; }
-    .stat-number-lg{ font-size:24px; line-height:1.1; }
-    .stat-label-lg{ font-size:12px; overflow-wrap:anywhere; }
     .clock-card{ padding:12px 14px; gap:6px 10px; flex-wrap:wrap; font-size:13px; }
     .clock-card > span:last-child{ min-width:0; overflow-wrap:anywhere; text-align:right; }
-    #dashboardClock{ display:none; }
-    .actions-grid{ grid-template-columns:1fr; }
+      .actions-grid{ grid-template-columns:1fr; }
     .action-item{ min-width:0; }
     .action-text{ min-width:0; }
     .action-text p{ overflow-wrap:anywhere; }
     .footer{ margin-top:8px; }
   }
+
+  /* ===== Stat cards: 4 in a single row, compact tiles ===== */
+  .stats-grid-lg{ display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:10px; margin-bottom:22px; }
+  .stat-card-lg{
+    position:relative; overflow:hidden; min-width:0;
+    flex-direction:column; align-items:center; justify-content:flex-start; text-align:center;
+    gap:8px; padding:16px 6px 14px; border-radius:var(--radius-md);
+    box-shadow:0 10px 24px rgba(36,31,20,.07);
+  }
+  .stat-card-lg::before{ content:''; position:absolute; left:0; right:0; top:0; height:4px; background:var(--stat-accent, var(--amber)); }
+  .stat-card-lg:nth-child(1){ --stat-accent:var(--purple); }
+  .stat-card-lg:nth-child(2){ --stat-accent:var(--blue); }
+  .stat-card-lg:nth-child(3){ --stat-accent:var(--green); }
+  .stat-card-lg:nth-child(4){ --stat-accent:var(--amber-deep); }
+  .stat-card-lg .stat-icon-lg{ min-width:40px; width:40px; height:40px; font-size:16px; border-radius:12px; }
+  .stat-card-lg .stat-number-lg{ font-size:22px; line-height:1; }
+  .stat-card-lg .stat-label-lg{ font-size:10.5px; font-weight:600; line-height:1.25; margin-top:5px; overflow-wrap:anywhere; }
+  @media (min-width:561px){
+    .stat-card-lg{ padding:20px 10px 18px; gap:10px; }
+    .stat-card-lg .stat-icon-lg{ min-width:46px; width:46px; height:46px; font-size:18px; }
+    .stat-card-lg .stat-number-lg{ font-size:26px; }
+    .stat-card-lg .stat-label-lg{ font-size:12px; }
+  }
   @media (prefers-reduced-motion: reduce){ *{ animation:none !important; transition:none !important; } }
 </style>
+<link rel="stylesheet" href="premium.css">
+<link rel="stylesheet" href="protect.css">
+<script src="protect.js"></script>
 </head>
 <body>
 <div class="app-shell">
@@ -249,12 +274,8 @@
 
     <main class="main dashboard-content">
 
-      <div class="clock-card">
-        <div><i class="fa-regular fa-clock"></i><span id="liveDateTime">Loading...</span></div>
-        <span id="dashboardClock"></span>
-      </div>
 
-      <div class="clock-card">
+      <div class="clock-card" style="background:linear-gradient(120deg, var(--amber-shadow), var(--amber-deep));">
         <div><i class="fa-solid fa-right-to-bracket"></i> Last Login</div>
         <span id="dashLastLogin">-</span>
       </div>
@@ -319,7 +340,7 @@
         </div>
       </section>
 
-      <footer class="footer"><nav class="footer-links" aria-label="Legal"><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="cookies.html">Cookies</a><a href="refund.html">Refunds</a></nav><div>&copy; <span data-year>2026</span> GenAlpha</div></footer>
+      <footer class="footer"><nav class="footer-links" aria-label="Legal"><a href="my-portfolio.html">About Vivaan</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="cookies.html">Cookies</a><a href="refund.html">Refunds</a></nav><div>&copy; <span data-year>2026</span> GenAlpha</div></footer>
 <script src="site.js"></script>
     </main>
 

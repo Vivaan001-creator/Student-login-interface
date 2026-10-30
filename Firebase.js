@@ -15,6 +15,15 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 
+// App Check (free): lets only your real website and app talk to the database. To switch it on:
+// Firebase console > App Check > register this web app with reCAPTCHA v3, paste the site key here,
+// upload, then press "Enforce" for Cloud Firestore. Leave empty to keep it off.
+const APP_CHECK_SITE_KEY = "";
+if (APP_CHECK_SITE_KEY) {
+  const ac = await import("https://www.gstatic.com/firebasejs/12.1.0/firebase-app-check.js");
+  ac.initializeAppCheck(app, { provider: new ac.ReCaptchaV3Provider(APP_CHECK_SITE_KEY), isTokenAutoRefreshEnabled: true });
+}
+
 const db = getFirestore(app);
 const storage = getStorage(app);
 const auth = getAuth(app);

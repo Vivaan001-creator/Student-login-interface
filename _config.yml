@@ -18,7 +18,5 @@ exclude:
   - unused-assistant.html
   - unused-coming-soon.html
   - unused-home.js
-  - unused-my-portfolio.html
-  - fix-android-splash.js
   - node_modules
   - android
