@@ -74,3 +74,20 @@
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", replay);
   else replay();
 })();
+
+// Register the service worker on every page so repeat visits open from cache.
+(function () {
+  try {
+    if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) {
+      window.addEventListener("load", function () { navigator.serviceWorker.register("sw.js").catch(function () {}); });
+    }
+  } catch (e) {}
+})();
+
+// ga-noselect: no text selection, copy or long-press menu anywhere except typing fields.
+(function () {
+  function typing(t) { return t && t.closest && t.closest("input,textarea,select,[contenteditable=true]"); }
+  ["selectstart", "contextmenu", "copy", "cut", "dragstart"].forEach(function (ev) {
+    document.addEventListener(ev, function (e) { if (!typing(e.target)) e.preventDefault(); }, true);
+  });
+})();

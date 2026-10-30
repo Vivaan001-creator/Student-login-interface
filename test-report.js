@@ -1,7 +1,7 @@
 // Report for one test and one student. Shown to the student and to their parent.
 import { db } from "./Firebase.js";
 import { doc, getDoc } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
-import { escapeHtml, tsMs, fmtDay, fmtDuration, reportHTML, attemptId } from "./tests-common.js";
+import { escapeHtml, tsMs, fmtDay, fmtDuration, fmtDateTime, reportHTML, attemptId, keyOpenMs } from "./tests-common.js";
 import { normalizeMobile } from "./profile-utils.js";
 
 const $ = (id) => document.getElementById(id);
@@ -25,11 +25,14 @@ function say(text) { $("pageLoading").hidden = true; const m = $("message"); m.h
       document.querySelector(".ep-back").setAttribute("href", "parent-tests.html");
     }
     const aid = attemptId(testId, roll);
-    const [tSnap, pSnap, sSnap] = await Promise.all([getDoc(doc(db, "tests", testId)), getDoc(doc(db, "testPapers", testId)), getDoc(doc(db, "testSubmissions", aid))]);
+    const [tSnap, sSnap] = await Promise.all([getDoc(doc(db, "tests", testId)), getDoc(doc(db, "testSubmissions", aid))]);
     if (!tSnap.exists()) { say("This test was not found."); return; }
     if (!sSnap.exists()) { say("There is no submission for this test yet."); return; }
-    const test = tSnap.data(), sub = sSnap.data(), paper = pSnap.exists() ? pSnap.data() : { questions: [] };
-    let key = null;
+    const test = tSnap.data(), sub = sSnap.data();
+    // The database gives out the questions and the answer key only after the test has closed for everyone.
+    if (Date.now() < keyOpenMs(test)) { say("Your answers are saved. The result opens after " + fmtDateTime(keyOpenMs(test)) + "."); return; }
+    let paper = { questions: [] }, key = null;
+    try { const p = await getDoc(doc(db, "testPapers", testId)); if (p.exists()) paper = p.data(); } catch (e) { /* not ready */ }
     try { const k = await getDoc(doc(db, "testKeys", aid)); if (k.exists()) key = k.data().answers; } catch (e) { /* not ready */ }
     if (!key) { say("The result is not ready yet. Please check again a little later."); return; }
 

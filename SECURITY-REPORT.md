@@ -1,3 +1,17 @@
+# UPDATE 30 October 2026 - read SECURITY-UPGRADE-STEPS.md first
+
+Sections 1 and 2 below describe the situation BEFORE this update. This update:
+
+- Student and parent records, marks, attendance and payments are private (only staff, the student, or the registered parent).
+- Student login = roll + date of birth + last 4 digits of the registered mobile; parent login = roll + registered mobile. The Firestore rules verify them (studentSessions / parentSessions), using free anonymous sign-in. See `portal-auth.js`.
+- Tests: answer key locked until `keyOpenAt`; only the student themselves can start or submit; paper readable only by the class and section it was made for.
+- Login logs, payments and profile requests can be created only by a logged-in student or parent for their own child, with size limits.
+- 12-hour login expiry everywhere, frame-busting, optional App Check, CSP allows reCAPTCHA only.
+
+Still open: see the last section of SECURITY-UPGRADE-STEPS.md.
+
+---
+
 # GenAlpha security report
 
 Date: 10 October 2026. Everything here was checked by reading the code and running pages in a headless browser. Nothing was tested against your live Firebase project.
@@ -117,7 +131,7 @@ Fixed:
 - **Logout on the admin More page did nothing.** The page called `adminLogout()` but never loaded it. Fixed.
 - **Purple gradients and pill shapes were still in `admin.css`** despite the earlier note. All gradients with purple tones are now solid colours, the decorative dots, blob and waves are hidden, and every pill shaped (999px) label or button is now an 8px rounded rectangle. A global 30px rounded `button` rule was reduced to 8px. Em dashes in `admin.css` and `package.json` removed.
 - **Cursor-following tilt effect removed** from 21 pages (login, register and admin cards).
-- **`my-portfolio.html` retired** (renamed `unused-my-portfolio.html`, excluded in `_config.yml`, "About Vivaan" links removed). It had placeholder projects ("Project 01, Coming soon"), a cursor glow, scramble text, a typing effect, emoji and a "Come back!" tab title. Restore it only after it has real content.
+- **`my-portfolio.html` restored** at the owner's request (About Vivaan links are back in every footer). Note: it still has placeholder projects ("Project 01, Coming soon"), a cursor glow, scramble text and a typing effect; replace those with real content when ready.
 - **Content-Security-Policy added** to `404.html`, `privacy.html`, `terms.html`, `cookies.html` and `refund.html` (they had none).
 - **One unescaped value** in `admin.js` (class section names shown in the classes table) is now escaped.
 - Dead "Notices - Soon" card removed from the teacher dashboard. Duplicate page titles fixed. Close buttons on pop-ups now have a screen reader label. Password show/hide, back links and close buttons now have 44 px touch targets.
@@ -134,13 +148,3 @@ Still open (needs you):
 7. **Security headers** (HSTS, frame-ancestors, X-Frame-Options) cannot be set on GitHub Pages. The CSP still allows inline scripts. Cloudflare in front of the site or Firebase Hosting would allow real headers.
 8. **Admin email address** (`vivaan510399@gmail.com`) is in public page scripts and legal pages. Turn on 2-step verification for it, and use a long unique password.
 9. **Emoji remain only in game content** (`games-words.js`, `games-facts.js`: fruit and animal pictures for spelling and counting questions), not as interface icons.
-
-
-## 8. Premium look, 24 October 2026
-
-Colour and finish only. No layout, sizes or behaviour were changed, and the mobile checks were repeated (53 pages, 360 and 320 px, light and dark: no sideways scrolling, no pill shaped buttons, no unlabeled controls).
-- One palette: midnight navy, champagne gold, warm ivory. Icon tiles are one gold tone instead of a rainbow, including the tiles that were bright white in dark mode.
-- Removed the purple glow from the premium layer in `site.css`, and the orange "Last Login" bar on the admin dashboard (now the same navy card).
-- Sign-in screens: navy medallion with a gold ring, gold primary button.
-- Privacy, Terms, Cookies and Refund pages and the 404 page now match (navy header and footer, gold hairlines, calmer table headers).
-- `fix-android-splash.js` is excluded from the website in `_config.yml`.

@@ -1,0 +1,4 @@
+/* protect.css - no text selection / long-press menu anywhere; typing fields still work. */
+html,html body,html body *{-webkit-user-select:none!important;user-select:none!important;-webkit-touch-callout:none!important;-webkit-tap-highlight-color:transparent}
+html body input,html body textarea,html body [contenteditable="true"]{-webkit-user-select:text!important;user-select:text!important;-webkit-touch-callout:default!important}
+html body img{-webkit-user-drag:none;user-drag:none}

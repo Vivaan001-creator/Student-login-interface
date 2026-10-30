@@ -1,8 +1,17 @@
 <!DOCTYPE html>
 <html lang="en-IN">
 <head>
+<link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="modulepreload" href="Firebase.js">
+<link rel="modulepreload" href="https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js">
+<link rel="modulepreload" href="https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js">
+<link rel="modulepreload" href="https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js">
+<link rel="modulepreload" href="https://www.gstatic.com/firebasejs/12.1.0/firebase-storage.js">
+
 <meta charset="UTF-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https://firebasestorage.googleapis.com https://storage.googleapis.com https://*.googleusercontent.com; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://www.gstatic.com; object-src 'none'; base-uri 'self'; form-action 'self' mailto:">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://www.google.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https://firebasestorage.googleapis.com https://storage.googleapis.com https://*.googleusercontent.com; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://www.gstatic.com https://www.google.com; object-src 'none'; frame-src https://www.google.com; base-uri 'self'; form-action 'self' mailto:">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="description" content="Teacher dashboard: your classes, students and tasks.">
 <meta name="theme-color" content="#0e1326">
@@ -17,9 +26,9 @@
 <script src="appearance.js"></script>
 <script src="session-timer.js"></script>
 <title>Teacher Dashboard - GenAlpha</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"></noscript>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap"></noscript>
 
 <style>
   :root{
@@ -157,6 +166,35 @@
     .content{ padding:18px 16px calc(112px + env(safe-area-inset-bottom,0px)); }
   }
 
+
+  /* ===== Stat cards: 4 in a single row, compact tiles ===== */
+  .stats-grid-lg{ display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:10px; margin-bottom:22px; }
+  .stat-card-lg{
+    position:relative; overflow:hidden; min-width:0;
+    display:flex; flex-direction:column; align-items:center; text-align:center; gap:8px;
+    background:var(--surface-card); border:1px solid rgba(36,31,20,.06); border-radius:var(--radius-md);
+    padding:16px 6px 14px; box-shadow:0 10px 24px rgba(36,31,20,.07);
+    transition:box-shadow .2s var(--ease), transform .2s var(--ease);
+  }
+  .stat-card-lg:hover{ transform:translateY(-2px); box-shadow:0 16px 30px rgba(36,31,20,.11); }
+  .stat-card-lg::before{ content:''; position:absolute; left:0; right:0; top:0; height:4px; background:var(--stat-accent, var(--amber)); }
+  .stat-card-lg:nth-child(1){ --stat-accent:var(--blue); }
+  .stat-card-lg:nth-child(2){ --stat-accent:var(--purple); }
+  .stat-card-lg:nth-child(3){ --stat-accent:var(--teal); }
+  .stat-card-lg:nth-child(4){ --stat-accent:var(--green); }
+  .stat-icon-lg{ min-width:40px; width:40px; height:40px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:16px; }
+  .stat-icon-lg.purple{ background:var(--purple-bg); color:var(--purple); }
+  .stat-icon-lg.blue{ background:var(--blue-bg); color:var(--blue); }
+  .stat-icon-lg.green{ background:var(--green-bg); color:var(--green); }
+  .stat-icon-lg.teal{ background:var(--teal-bg); color:var(--teal); }
+  .stat-number-lg{ font-size:22px; line-height:1; font-weight:800; font-family:'Fraunces', serif; }
+  .stat-label-lg{ font-size:10.5px; font-weight:600; line-height:1.25; margin-top:5px; color:var(--ink-soft); overflow-wrap:anywhere; }
+  @media (min-width:561px){
+    .stat-card-lg{ padding:20px 10px 18px; gap:10px; }
+    .stat-icon-lg{ min-width:46px; width:46px; height:46px; font-size:18px; }
+    .stat-number-lg{ font-size:26px; }
+    .stat-label-lg{ font-size:12px; }
+  }
   @media (prefers-reduced-motion: reduce){ *{ animation:none !important; transition:none !important; } }
 
   .loading-state{ text-align:center; padding:36px 20px; color:var(--ink-soft); font-size:13px; }
@@ -164,6 +202,9 @@
     border-radius:50%; animation:spin .8s linear infinite; margin:0 auto 12px; }
   @keyframes spin{ to{ transform:rotate(360deg); } }
 </style>
+<link rel="stylesheet" href="premium.css">
+<link rel="stylesheet" href="protect.css">
+<script src="protect.js"></script>
 </head>
 <body>
 <div class="app-shell">
@@ -188,17 +229,22 @@
 
       <a class="tests-entry" id="openTestsCard" href="teacher-tests.html"><span class="te-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span><span class="te-text"><strong>Online Tests</strong><small>Create tests and see every student's marks</small></span><span class="te-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></span></a>
       <!-- Quick stats -->
-      <section class="card">
-        <div class="card-title"><i class="fa-solid fa-gauge-high"></i><h2>Quick Stats</h2></div>
-        <div class="mini-stats-grid">
-          <div class="mini-stat-card">
-            <div class="mini-stat-icon blue"><i class="fa-solid fa-user-graduate"></i></div>
-            <div class="mini-stat-info"><div class="mini-stat-number" id="dashStudentCount">-</div><div class="mini-stat-label">My Students</div></div>
-          </div>
-          <div class="mini-stat-card">
-            <div class="mini-stat-icon teal"><i class="fa-solid fa-file-lines"></i></div>
-            <div class="mini-stat-info"><div class="mini-stat-number" id="dashHomeworkCount">-</div><div class="mini-stat-label">Homework Posted</div></div>
-          </div>
+      <section class="stats-grid-lg" aria-label="Quick stats">
+        <div class="stat-card-lg">
+          <div class="stat-icon-lg blue"><i class="fa-solid fa-user-graduate"></i></div>
+          <div><div class="stat-number-lg" id="dashStudentCount">-</div><div class="stat-label-lg">My Students</div></div>
+        </div>
+        <div class="stat-card-lg">
+          <div class="stat-icon-lg purple"><i class="fa-solid fa-chalkboard"></i></div>
+          <div><div class="stat-number-lg" id="dashClassCount">-</div><div class="stat-label-lg">My Classes</div></div>
+        </div>
+        <div class="stat-card-lg">
+          <div class="stat-icon-lg teal"><i class="fa-solid fa-file-lines"></i></div>
+          <div><div class="stat-number-lg" id="dashHomeworkCount">-</div><div class="stat-label-lg">Homework Posted</div></div>
+        </div>
+        <div class="stat-card-lg">
+          <div class="stat-icon-lg green"><i class="fa-solid fa-chart-column"></i></div>
+          <div><div class="stat-number-lg" id="dashPublishedCount">-</div><div class="stat-label-lg">Results Published</div></div>
         </div>
       </section>
 
@@ -215,7 +261,7 @@
 
       <!-- My Class -->
       <section class="card" id="my-class">
-        <div class="card-title"><i class="fa-solid fa-chalkboard"></i><h2>My Class</h2></div>
+        <div class="card-title"><i class="fa-solid fa-chalkboard"></i><h2>My Classes</h2></div>
         <div id="teacherClassBox"><div class="loading-state"><div class="spinner"></div>Loading...</div></div>
       </section>
 
@@ -241,7 +287,7 @@
         </div>
       </section>
 
-      <footer class="footer"><nav class="footer-links" aria-label="Legal"><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="cookies.html">Cookies</a><a href="refund.html">Refunds</a></nav><div>&copy; <span data-year>2026</span> GenAlpha</div></footer>
+      <footer class="footer"><nav class="footer-links" aria-label="Legal"><a href="my-portfolio.html">About Vivaan</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="cookies.html">Cookies</a><a href="refund.html">Refunds</a></nav><div>&copy; <span data-year>2026</span> GenAlpha</div></footer>
 <script src="site.js"></script>
     </main>
 

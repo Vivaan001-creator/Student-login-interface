@@ -1,4 +1,7 @@
 import { db } from "./Firebase.js";
+import { claimStudent, markLoggedIn, portalLogout } from "./portal-auth.js";
+
+let loginFails = 0, loginLockedUntil = 0;
 import {
   doc,
   getDoc,
@@ -57,51 +60,45 @@ function formatDateNice(value) {
 // Student / Parent Login (Roll Number + Date of Birth)
 //
 // NOTE on security: this checks the roll+DOB pair against the
-// "students" collection directly from the client - there is no
-// Firebase Auth account per student. That means your Firestore
-// rules must allow read access to a student doc for this check
-// to work, which also means DOB alone is a soft guard, not a
-// strong password. Fine for a school portal MVP; if you need
-// stronger security later, the standard upgrade is a Cloud
-// Function that verifies roll+DOB server-side and mints a
-// custom Firebase Auth token.
+// student login: roll + date of birth + last 4 digits of the registered
+// mobile. The browser signs in anonymously and writes a login claim
+// that the Firestore rules accept only if it matches the student's
+// record (see portal-auth.js and firestore.rules). Student records are
+// no longer readable by the public.
 // ==========================================================
 async function studentLogin() {
-  const rollInput = document.getElementById("studentRoll");
-  const dobInput = document.getElementById("studentDob");
+  const roll = document.getElementById("studentRoll").value.trim();
+  const dob = document.getElementById("studentDob").value.trim();
+  const mobile = document.getElementById("studentMobile") ? document.getElementById("studentMobile").value.trim() : "";
 
-  const roll = rollInput.value.trim();
-  const dob = dobInput.value.trim();
-
-  if (!roll || !dob) {
-    alert("Please enter both Roll Number and Date of Birth.");
+  if (!roll || !dob || !mobile) {
+    alert("Please enter your Roll Number, Date of Birth and the last 4 digits of the registered mobile number.");
+    return;
+  }
+  if (Date.now() < loginLockedUntil) {
+    alert("Too many wrong tries. Please wait " + Math.ceil((loginLockedUntil - Date.now()) / 1000) + " seconds.");
     return;
   }
 
   try {
+    // The proof of login is checked by the database rules, not by this page.
+    const claim = await claimStudent({ roll, dob, mobile });
+    if (!claim.ok) {
+      loginFails++;
+      if (loginFails >= 5) { loginFails = 0; loginLockedUntil = Date.now() + 60000; }
+      alert(claim.message);
+      return;
+    }
+    loginFails = 0;
+
     const studentSnap = await getDoc(doc(db, "students", roll));
-
-    if (!studentSnap.exists()) {
-      alert("This Roll Number was not found in the system.");
-      return;
-    }
-
-    const student = studentSnap.data();
-    const storedDob = toISODate(student.dob);
-    const enteredDob = toISODate(dob);
-
-    if (!storedDob || storedDob !== enteredDob) {
-      alert("Date of Birth does not match. Please try again.");
-      return;
-    }
+    const student = studentSnap.data() || {};
 
     // Login tracking - a record admin can review, plus this account's own
     // last-login shown on the student's dashboard. Never blocks the login
     // itself if tracking happens to fail (e.g. a rules/network hiccup).
     try {
-      // Capture the PREVIOUS login time before we overwrite it - this is
-      // what "Last Login" should show (the time before this current visit),
-      // not the timestamp we're about to write for this very login.
+      // Capture the PREVIOUS login time before we overwrite it.
       const previousLogin = student.lastLogin
         ? (student.lastLogin.toDate ? student.lastLogin.toDate().toISOString() : new Date(student.lastLogin).toISOString())
         : "";
@@ -122,14 +119,14 @@ async function studentLogin() {
       console.error("Login tracking failed:", logErr);
     }
 
-    localStorage.setItem("studentLoggedIn", "true");
+    markLoggedIn("studentLoggedIn");
     localStorage.setItem("studentRoll", roll);
     alert("Login successful. Welcome back!");
     window.location.href = "student-dashboard.html";
 
   } catch (error) {
     console.error(error);
-    alert(error.message);
+    alert("Could not log in right now. Please try again.");
   }
 }
 window.studentLogin = studentLogin;
@@ -154,9 +151,8 @@ if (window.location.pathname.includes("student-dashboard.html")) {
 // ==========================================================
 // Logout
 // ==========================================================
-function studentLogout() {
-  localStorage.removeItem("studentLoggedIn");
-  localStorage.removeItem("studentRoll");
+async function studentLogout() {
+  await portalLogout(["studentLoggedIn", "studentRoll"]);
   window.location.replace("student-login.html");
 }
 window.studentLogout = studentLogout;

@@ -70,6 +70,27 @@ async function getStudentsInClasses(classIds) {
   return allSnap.docs.filter((d) => targetKeys.has(classKeyOf(d.data().class)));
 }
 
+// ==========================================================
+// Teacher-assigned students
+//
+// The admin now picks a teacher while adding a student
+// (student.teacherId = that teacher's document id), so a
+// teacher's students are the ones assigned to them - no class
+// or wing setup needed. Older students saved before this
+// existed have no teacherId; those still fall back to the
+// teacher's class so nothing disappears until admin assigns them.
+// ==========================================================
+async function getMyStudents(ctx) {
+  if (!ctx) return [];
+  const allSnap = await getDocs(collection(db, "students"));
+  const legacyKeys = new Set((ctx.myClasses || []).map((c) => classKeyOf(c.id)));
+  return allSnap.docs.filter((d) => {
+    const s = d.data();
+    if (s.teacherId) return s.teacherId === ctx.teacherId;
+    return legacyKeys.has(classKeyOf(s.class));
+  });
+}
+
 // kept so nothing that still calls the single-class version breaks
 async function getStudentsInClass(classId) {
   return getStudentsInClasses([classId]);
@@ -136,7 +157,7 @@ async function teacherLogin() {
       console.error("Login tracking failed:", logErr);
     }
 
-    localStorage.setItem("teacherLoggedIn", "true");
+    localStorage.setItem("teacherLoggedIn", "true"); localStorage.setItem("teacherLoggedInAt", String(Date.now()));
     localStorage.setItem("teacherDocId", teacherDoc.id);
 
     alert("Login successful. Welcome back!");
@@ -249,50 +270,45 @@ async function loadTeacherDashboard() {
     setText("teacherExperienceText", t.experience ? `${t.experience} yrs` : "-");
     setText("teacherStatusText", t.status);
 
-    // Find the class(es) where this teacher is the class teacher
+    // Students assigned to this teacher by the admin
+    const ctx = await getMyContext();
+    const studentDocs = await getMyStudents(ctx);
+
+    setText("dashStudentCount", studentDocs.length);
+    setText("dashPublishedCount", studentDocs.filter((d) => d.data().publishStatus === "published").length);
+
+    // Classes = the distinct classes of those students (no wings)
+    const byClass = new Map();
+    studentDocs.forEach((d) => {
+      const raw = String(d.data().class || "").trim();
+      if (!raw) return;
+      const key = classKeyOf(raw);
+      const entry = byClass.get(key) || { label: /^\d+$/.test(key) ? `Class ${key}` : raw, count: 0 };
+      entry.count += 1;
+      byClass.set(key, entry);
+    });
+    setText("dashClassCount", byClass.size);
+
     const classBox = document.getElementById("teacherClassBox");
-    if (classBox && t.email) {
-
-      const classQuery = query(collection(db, "classes"), where("teacherEmail", "==", t.email));
-      const classSnap = await getDocs(classQuery);
-
-      if (classSnap.empty) {
-        classBox.innerHTML = `<p class="no-class-msg">No class assigned yet. Contact the admin for class assignment.</p>`;
+    if (classBox) {
+      if (byClass.size === 0) {
+        classBox.innerHTML = `<p class="no-class-msg">No students assigned to you yet. The admin assigns students to you while adding them.</p>`;
       } else {
-        classBox.innerHTML = classSnap.docs.map((d) => {
-          const c = d.data();
-          return `
-            <div class="my-class-card">
-              <div class="my-class-icon"><i class="fa-solid fa-chalkboard"></i></div>
-              <div>
-                <strong>${escapeHtml(c.className || d.id)}</strong>
-                <span>${escapeHtml(c.wing || "")}</span>
-              </div>
+        classBox.innerHTML = Array.from(byClass.values()).map((c) => `
+          <div class="my-class-card">
+            <div class="my-class-icon"><i class="fa-solid fa-chalkboard"></i></div>
+            <div>
+              <strong>${escapeHtml(c.label)}</strong>
+              <span>${c.count} ${c.count === 1 ? "student" : "students"}</span>
             </div>
-          `;
-        }).join("");
+          </div>
+        `).join("");
       }
     }
 
-    // Live counts for the dashboard's quick-stat cards, if present
-    const ctx = await getMyContext();
-
-    if (ctx && ctx.myClasses && ctx.myClasses.length > 0) {
-
-      const classIds = ctx.myClasses.map((c) => c.id);
-
-      // BUG FIX: was scoped to a single class; now covers every
-      // class this teacher is assigned to.
-      const studentDocs = await getStudentsInClasses(classIds);
-      setText("dashStudentCount", studentDocs.length);
-
-      const hwDocs = await getHomeworkForClasses(classIds);
-      setText("dashHomeworkCount", hwDocs.length);
-
-    } else {
-      setText("dashStudentCount", "0");
-      setText("dashHomeworkCount", "0");
-    }
+    // Homework this teacher has posted
+    const hwSnap = await getDocs(query(collection(db, "homework"), where("postedBy", "==", teacherDocId)));
+    setText("dashHomeworkCount", hwSnap.size);
 
   } catch (error) {
     console.error("Could not load teacher dashboard:", error);
@@ -399,6 +415,24 @@ async function getMyContext() {
     myClasses,
     myClass: myClasses[0] || null // kept for any old code expecting a single class
   };
+
+  // Classes of the students the admin assigned to this teacher also count
+  // as "my classes" (e.g. for posting homework), so a teacher no longer
+  // needs a class record / wing set up first.
+  try {
+    const known = new Set(myClasses.map((c) => classKeyOf(c.id)));
+    (await getMyStudents(myContextCache)).forEach((d) => {
+      const raw = String(d.data().class || "").trim().replace(/^class\s*/i, "");
+      const key = classKeyOf(raw);
+      if (!raw || known.has(key)) return;
+      known.add(key);
+      myClasses.push({ id: raw, className: /^\d+$/.test(raw) ? `Class ${raw}` : raw });
+    });
+    myContextCache.myClass = myClasses[0] || null;
+  } catch (e) {
+    console.error("Could not derive classes from assigned students:", e);
+  }
+
   return myContextCache;
 
 }
@@ -420,20 +454,11 @@ async function loadMyStudents() {
 
   const ctx = await getMyContext();
 
-  if (!ctx || !ctx.myClasses || ctx.myClasses.length === 0) {
-    tableBody.innerHTML = `<tr><td colspan="5">No class has been assigned to you yet. Please contact the admin.</td></tr>`;
-    showEmptyClassNote("noClassMsgStudents");
-    return;
-  }
-
-  const classIds = ctx.myClasses.map((c) => c.id);
-
-  // BUG FIX: was scoped to a single class; now covers every class
-  // this teacher is assigned to.
-  const studentDocs = await getStudentsInClasses(classIds);
+  const studentDocs = await getMyStudents(ctx);
 
   if (studentDocs.length === 0) {
-    tableBody.innerHTML = `<tr><td colspan="5">There are no students in your classes yet.</td></tr>`;
+    tableBody.innerHTML = `<tr><td colspan="5">No students have been assigned to you yet. Please contact the admin.</td></tr>`;
+    showEmptyClassNote("noClassMsgStudents");
     return;
   }
 
@@ -501,22 +526,13 @@ async function loadMarksPage() {
 
   const ctx = await getMyContext();
 
-  if (!ctx || !ctx.myClasses || ctx.myClasses.length === 0) {
-    tableBody.innerHTML = `<tr><td colspan="4">No class has been assigned to you yet.</td></tr>`;
-    showEmptyClassNote("noClassMsgMarks");
-    return;
-  }
-
-  const classIds = ctx.myClasses.map((c) => c.id);
-
-  // BUG FIX: was scoped to a single class; now covers every class
-  // this teacher is assigned to.
-  const studentDocs = await getStudentsInClasses(classIds);
+  const studentDocs = await getMyStudents(ctx);
 
   tableBody.innerHTML = "";
 
   if (studentDocs.length === 0) {
-    tableBody.innerHTML = `<tr><td colspan="4">There are no students in your classes.</td></tr>`;
+    tableBody.innerHTML = `<tr><td colspan="4">No students have been assigned to you yet.</td></tr>`;
+    showEmptyClassNote("noClassMsgMarks");
     return;
   }
 
@@ -797,19 +813,11 @@ async function renderAttendanceList(date) {
 
   const ctx = await getMyContext();
 
-  if (!ctx || !ctx.myClasses || ctx.myClasses.length === 0) {
-    tableBody.innerHTML = `<tr><td colspan="4">No class has been assigned to you yet.</td></tr>`;
-    showEmptyClassNote("noClassMsgAttendance");
-    return;
-  }
-
-  const classIds = ctx.myClasses.map((c) => c.id);
-
-  // BUG FIX: fetch + normalize instead of an exact-match where()
-  const studentDocs = await getStudentsInClasses(classIds);
+  const studentDocs = await getMyStudents(ctx);
 
   if (studentDocs.length === 0) {
-    tableBody.innerHTML = `<tr><td colspan="4">There are no students in your classes.</td></tr>`;
+    tableBody.innerHTML = `<tr><td colspan="4">No students have been assigned to you yet.</td></tr>`;
+    showEmptyClassNote("noClassMsgAttendance");
     return;
   }
 

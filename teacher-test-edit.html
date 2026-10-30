@@ -1,19 +1,28 @@
 <!DOCTYPE html>
 <html lang="en-IN">
 <head>
+<link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="modulepreload" href="Firebase.js">
+<link rel="modulepreload" href="https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js">
+<link rel="modulepreload" href="https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js">
+<link rel="modulepreload" href="https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js">
+<link rel="modulepreload" href="https://www.gstatic.com/firebasejs/12.1.0/firebase-storage.js">
+
 <meta charset="UTF-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https://firebasestorage.googleapis.com https://storage.googleapis.com https://*.googleusercontent.com; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://www.gstatic.com; object-src 'none'; base-uri 'self'; form-action 'self' mailto:">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://www.google.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https://firebasestorage.googleapis.com https://storage.googleapis.com https://*.googleusercontent.com; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://www.gstatic.com https://www.google.com; object-src 'none'; frame-src https://www.google.com; base-uri 'self'; form-action 'self' mailto:">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Design a Test - GenAlpha</title>
-<meta name="description" content="Design multiple choice questions, set time and marks, and publish.">
+<meta name="description" content="Design multiple choice questions for one class and section, set time and marks, and publish.">
 <meta name="theme-color" content="#0e1326">
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Inter:wght@400;600;700&display=swap" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Inter:wght@400;600;700&display=swap"></noscript>
 <link rel="stylesheet" href="edit-profile.css">
 <link rel="stylesheet" href="site.css">
 <link rel="stylesheet" href="tests.css">
@@ -21,6 +30,9 @@
 <script src="session-timer.js"></script>
 <script>SessionTimer.start({ flagKey: 'teacherLoggedIn', loginUrl: "teacher-login.html" });</script>
 
+<link rel="stylesheet" href="premium.css">
+<link rel="stylesheet" href="protect.css">
+<script src="protect.js"></script>
 </head>
 <body class="ep">
 <header class="ep-bar">
@@ -41,6 +53,8 @@
         <input type="text" id="f_title" maxlength="80" placeholder="For example: Chapter 3 quiz" aria-describedby="e_title"><p class="ep-error" id="e_title" role="alert"></p></div>
       <div class="ep-field" id="w_class"><label for="f_class">Class <span class="req" aria-hidden="true">*</span></label>
         <select id="f_class" required aria-describedby="e_class"></select><p class="ep-error" id="e_class" role="alert"></p></div>
+      <div class="ep-field" id="w_section"><label for="f_section">Section <span class="req" aria-hidden="true">*</span></label>
+        <select id="f_section" required aria-describedby="e_section"><option value="">Choose the class first</option></select><p class="ep-help">Every section has its own paper. Only students of this class and section will see this test.</p><p class="ep-error" id="e_section" role="alert"></p></div>
       <div class="te-grid">
         <div class="ep-field" id="w_hours"><label for="f_hours">Time: hours</label>
           <input type="number" id="f_hours" min="0" max="5" step="1" value="1" inputmode="numeric" aria-describedby="e_hours"><p class="ep-error" id="e_hours" role="alert"></p></div>
@@ -114,5 +128,6 @@
 </main>
 <script src="site.js"></script>
 <script type="module" src="teacher-test-edit.js"></script>
+<script src="premium-select.js"></script>
 </body>
 </html>

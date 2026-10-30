@@ -8,7 +8,7 @@
 import { db } from "./Firebase.js";
 import { doc, getDoc, setDoc, updateDoc, increment, serverTimestamp }
   from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
-import { escapeHtml, tsMs, fmtDateTime, fmtDuration, fmtCountdown, marksText, openState, LETTERS, attemptId, reportHTML } from "./tests-common.js";
+import { escapeHtml, tsMs, fmtDateTime, fmtDuration, fmtCountdown, marksText, openState, LETTERS, attemptId, reportHTML, testIsForStudent, withReschedule, keyOpenMs } from "./tests-common.js";
 import { normalizeMobile, toISODateInput } from "./profile-utils.js";
 
 const $ = (id) => document.getElementById(id);
@@ -229,7 +229,7 @@ async function showResult(auto) {
   let key = null;
   try { const k = await getDoc(doc(db, "testKeys", aid)); if (k.exists()) key = k.data().answers; } catch (e) { /* key not ready */ }
   const sub = (await getDoc(doc(db, "testSubmissions", aid))).data();
-  $("resultNote").textContent = (auto ? " Time ended, so your test was submitted automatically." : "") + (key ? "" : " Your result will be ready after your teacher checks the test.");
+  $("resultNote").textContent = (auto ? " Time ended, so your test was submitted automatically." : "") + (key ? "" : " Your answers are saved. Your result opens after " + fmtDateTime(keyOpenMs(test)) + ".");
   $("resultBody").innerHTML = key ? reportHTML({ test, paper: paper || { questions: [] }, key, submission: sub }) : "";
   if (key && (!paper || !paper.questions)) {
     // The paper was erased only if the student left; reload it for the report.
@@ -246,8 +246,10 @@ async function init() {
     if (!sSnap.exists()) { window.location.replace("student-login.html"); return; }
     student = sSnap.data();
     const tSnap = await getDoc(doc(db, "tests", testId));
-    if (!tSnap.exists() || tSnap.data().status !== "published" || tSnap.data().class !== student.class) { block("This test is not available.", "Go back and choose a test from your list."); return; }
+    if (!tSnap.exists() || tSnap.data().status !== "published" || !testIsForStudent(tSnap.data(), student)) { block("This test is not available.", "Go back and choose a test from your list."); return; }
     test = tSnap.data();
+    // The teacher may have given this student a new time because they missed the test.
+    try { const rs = await getDoc(doc(db, "testReschedules", aid)); if (rs.exists()) test = withReschedule(test, rs.data()); } catch (e) { /* none set */ }
 
     const done = await getDoc(doc(db, "testSubmissions", aid));
     if (done.exists()) { window.location.replace("test-report.html?id=" + encodeURIComponent(testId)); return; }

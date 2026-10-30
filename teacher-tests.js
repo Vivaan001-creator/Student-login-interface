@@ -2,7 +2,7 @@
 import { db } from "./Firebase.js";
 import { collection, doc, getDoc, getDocs, query, where, deleteDoc }
   from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
-import { escapeHtml, fmtDuration, fmtDateTime, tsMs, marksText, attemptId } from "./tests-common.js";
+import { escapeHtml, fmtDuration, fmtDateTime, tsMs, marksText, attemptId, sameSection } from "./tests-common.js";
 
 const $ = (id) => document.getElementById(id);
 const teacherId = localStorage.getItem("teacherDocId");
@@ -23,7 +23,7 @@ function card(id, t) {
     '<h3 class="t-subject">' + escapeHtml(t.subject || "Test") + "</h3>" +
     '<p class="t-meta">' + escapeHtml(fmtDuration(t.durationMinutes)) + " &middot; " + escapeHtml(marksText(t)) + " &middot; " + (t.questionCount || 0) + " questions</p>" +
     (t.title ? '<p class="t-title">' + escapeHtml(t.title) + "</p>" : "") +
-    '<p class="t-start">Class ' + escapeHtml(t.class || "-") + " &middot; Starts " + escapeHtml(fmtDateTime(tsMs(t.startAt))) + "</p>" +
+    '<p class="t-start">Class ' + escapeHtml(t.class || "-") + (t.section ? " &middot; Section " + escapeHtml(t.section) : " &middot; No section") + " &middot; Starts " + escapeHtml(fmtDateTime(tsMs(t.startAt))) + "</p>" +
     '<p class="t-status"><span class="t-chip ' + (published ? "pub" : "") + '">' + (published ? "Published" : "Draft") + "</span></p>" +
     '<div class="r-actions"><button type="button" class="ep-btn te-mini" data-delete>Delete</button></div></div>' +
     '<a class="t-go" href="' + href + '" aria-label="' + (published ? "Open results for " : "Edit ") + escapeHtml(t.subject || "test") + '">' + ARROW + "</a></article>";
@@ -47,12 +47,13 @@ async function load() {
 async function deleteTest(id) {
   const tSnap = await getDoc(doc(db, "tests", id));
   const cls = tSnap.exists() ? tSnap.data().class : "";
+  const sec = tSnap.exists() ? tSnap.data().section : "";
   const rolls = new Set();
   const subs = await getDocs(query(collection(db, "testSubmissions"), where("testId", "==", id)));
   subs.forEach((d) => rolls.add(d.data().roll));
   const atts = await getDocs(query(collection(db, "testAttempts"), where("testId", "==", id)));
   atts.forEach((d) => rolls.add(d.data().roll));
-  if (cls) { const st = await getDocs(query(collection(db, "students"), where("class", "==", cls))); st.forEach((d) => rolls.add(d.id)); }
+  if (cls) { const st = await getDocs(query(collection(db, "students"), where("class", "==", cls))); st.forEach((d) => { if (!sec || sameSection(d.data().section, sec)) rolls.add(d.id); }); }
   for (const roll of rolls) {
     const aid = attemptId(id, roll);
     await deleteDoc(doc(db, "testSubmissions", aid)).catch(() => {});

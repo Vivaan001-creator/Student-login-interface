@@ -1,8 +1,17 @@
 <!DOCTYPE html>
 <html lang="en-IN">
 <head>
+<link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="modulepreload" href="Firebase.js">
+<link rel="modulepreload" href="https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js">
+<link rel="modulepreload" href="https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js">
+<link rel="modulepreload" href="https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js">
+<link rel="modulepreload" href="https://www.gstatic.com/firebasejs/12.1.0/firebase-storage.js">
+
 <meta charset="UTF-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https://firebasestorage.googleapis.com https://storage.googleapis.com https://*.googleusercontent.com; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://www.gstatic.com; object-src 'none'; base-uri 'self'; form-action 'self' mailto:">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://www.google.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https://firebasestorage.googleapis.com https://storage.googleapis.com https://*.googleusercontent.com; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://www.gstatic.com https://www.google.com; object-src 'none'; frame-src https://www.google.com; base-uri 'self'; form-action 'self' mailto:">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="description" content="Your results, attendance, homework and notices.">
 <meta name="theme-color" content="#0e1326">
@@ -18,9 +27,9 @@
 <script src="session-timer.js"></script>
 <script src="month-picker.js"></script>
 <title>Student Dashboard - GenAlpha</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"></noscript>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Baloo+2:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Baloo+2:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Baloo+2:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap"></noscript>
 
 <style>
   :root{
@@ -211,6 +220,9 @@
 
   @media (prefers-reduced-motion: reduce){ *{ animation:none !important; transition:none !important; } }
 </style>
+<link rel="stylesheet" href="premium.css">
+<link rel="stylesheet" href="protect.css">
+<script src="protect.js"></script>
 </head>
 <body>
 <div class="app-shell">
@@ -260,14 +272,14 @@
         </div>
       </div>
 
-      <footer class="footer"><nav class="footer-links" aria-label="Legal"><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="cookies.html">Cookies</a><a href="refund.html">Refunds</a></nav><div>&copy; <span data-year>2026</span> GenAlpha</div></footer>
+      <footer class="footer"><nav class="footer-links" aria-label="Legal"><a href="my-portfolio.html">About Vivaan</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="cookies.html">Cookies</a><a href="refund.html">Refunds</a></nav><div>&copy; <span data-year>2026</span> GenAlpha</div></footer>
 <script src="site.js"></script>
     </section>
 
     <!-- ================= ATTENDANCE TAB ================= -->
     <section class="tab-panel" data-tab-section="attendance" hidden>
       <div class="card" id="attendance-section">
-        <div class="card-title"><span class="card-title-icon"><i class="fa-regular fa-square-check"></i></span><h2>My Attendance</h2></div>
+        <div class="card-title"><span class="card-title-icon" style="background:var(--teal-bg); color:var(--teal);"><i class="fa-regular fa-square-check"></i></span><h2>My Attendance</h2></div>
         <div class="field" style="max-width:260px;margin-bottom:16px;">
           <label>Select Month</label>
           <div class="input-wrap select-wrap"><select id="attendanceMonth" aria-label="Attendance month"></select></div>
@@ -286,7 +298,7 @@
     <!-- ================= RESULTS TAB ================= -->
     <section class="tab-panel" data-tab-section="results" hidden>
       <div class="card" id="result-section">
-        <div class="card-title"><span class="card-title-icon"><i class="fa-solid fa-file-lines"></i></span><h2>My Result</h2></div>
+        <div class="card-title"><span class="card-title-icon" style="background:var(--blue-bg); color:var(--blue);"><i class="fa-solid fa-file-lines"></i></span><h2>My Result</h2></div>
         <p class="card-note">Select a month and tap the button to view your report card.</p>
         <div class="field" style="margin-bottom:18px;">
           <label>Select Month</label>
@@ -299,7 +311,7 @@
     <!-- ================= FEES TAB ================= -->
     <section class="tab-panel" data-tab-section="fees" hidden>
       <div class="card" id="fees-section">
-        <div class="card-title"><span class="card-title-icon"><i class="fa-solid fa-indian-rupee-sign"></i></span><h2>My Fees</h2></div>
+        <div class="card-title"><span class="card-title-icon" style="background:#fdf0e3; color:var(--amber-deep);"><i class="fa-solid fa-indian-rupee-sign"></i></span><h2>My Fees</h2></div>
         <div id="feeSummaryBox"></div>
         <div class="table-wrapper">
           <table class="classes-table">
@@ -314,7 +326,7 @@
     <!-- ================= NOTICES TAB ================= -->
     <section class="tab-panel" data-tab-section="notices" hidden>
       <div class="card" id="notices-section">
-        <div class="card-title"><span class="card-title-icon"><i class="fa-regular fa-bell"></i></span><h2>Notice Board</h2></div>
+        <div class="card-title"><span class="card-title-icon" style="background:var(--pink-bg); color:var(--pink);"><i class="fa-regular fa-bell"></i></span><h2>Notice Board</h2></div>
         <div id="noticesList"></div>
         <p id="noticesEmptyMsg" class="result-empty-msg" style="display:none;"></p>
       </div>
@@ -391,5 +403,6 @@
   window.viewMyResult = viewMyResult;
 </script>
 <script type="module" src="notify.js" data-notify-role="student"></script>
+<script src="premium-select.js"></script>
 </body>
 </html>

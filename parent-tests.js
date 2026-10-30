@@ -13,8 +13,8 @@ const contact = localStorage.getItem("parentContact");
     const s = await getDoc(doc(db, "students", roll));
     if (!s.exists() || normalizeMobile(s.data().contactNumber) !== normalizeMobile(contact)) { window.location.replace("parent-login.html"); return; }
     const st = s.data();
-    $("childLine").innerHTML = "Showing tests for <strong>" + escapeHtml(st.name || st.studentName || roll) + "</strong>, Class " + escapeHtml(st.class || "-");
-    await startList({ host: $("list"), emptyEl: $("emptyState"), roll, cls: st.class, mode: "parent" });
+    $("childLine").innerHTML = "Showing tests for <strong>" + escapeHtml(st.name || st.studentName || roll) + "</strong>, Class " + escapeHtml(st.class || "-") + (st.section ? " &middot; Section " + escapeHtml(st.section) : "");
+    await startList({ host: $("list"), emptyEl: $("emptyState"), roll, cls: st.class, section: st.section, mode: "parent" });
     $("pageLoading").hidden = true; $("content").hidden = false;
   } catch (error) {
     console.error(error);

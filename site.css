@@ -175,14 +175,14 @@ html:not([data-theme="dark"]) body:has(.app-shell){
   background-color:var(--paper);
   background-image:
     radial-gradient(760px 360px at 100% -40px, rgba(255,194,74,.16), transparent 70%),
-    radial-gradient(620px 320px at -10% 38%, rgba(20,27,58,.05), transparent 70%);
+    radial-gradient(620px 320px at -10% 38%, rgba(138,111,232,.06), transparent 70%);
   background-repeat:no-repeat;
 }
 html[data-theme="dark"] body:has(.app-shell){
   background-color:var(--paper);
   background-image:
     radial-gradient(760px 380px at 100% -40px, rgba(255,194,74,.09), transparent 70%),
-    radial-gradient(640px 360px at -10% 40%, rgba(255,194,74,.05), transparent 70%);
+    radial-gradient(640px 360px at -10% 40%, rgba(110,120,255,.10), transparent 70%);
   background-repeat:no-repeat;
 }
 
@@ -350,50 +350,3 @@ html body .top-header{ animation:premSettle .55s var(--prem-ease) both; }
 @media (prefers-reduced-motion:reduce){
   html body *{ animation-duration:.001ms !important; transition-duration:.001ms !important; }
 }
-
-
-/* =====================================================================
-   PREMIUM LAYER, PART 2
-   One restrained palette: navy, champagne gold, ivory. Icon tiles are one
-   colour instead of a rainbow, sign-in screens match the app, and the
-   primary button is the same gold everywhere. Colour and finish only.
-   ===================================================================== */
-:root{ --tile-bg:#f7edd5; --tile-ink:#8a5a0a; --tile-edge:rgba(160,90,0,.14); }
-html[data-theme="dark"]{ --tile-bg:rgba(255,194,74,.12); --tile-ink:#ffc24a; --tile-edge:rgba(255,194,74,.22); }
-
-/* Icon tiles: one calm gold tone (the [class] keeps this stronger than the per-colour rules in each page) */
-html body :is(.mini-stat-icon,.action-icon,.stat-icon-lg,.stat-icon,.role-card-icon,.more-icon,.activity-icon,.card-title-icon,.info-icon,.te-icon,.icon-badge,.feature-icon):not(.red)[class]{
-  background:var(--tile-bg); background-image:none; color:var(--tile-ink);
-  box-shadow:inset 0 0 0 1px var(--tile-edge), inset 0 1px 0 rgba(255,255,255,.35);
-}
-html body .stat-bar[class]::before{ background:var(--gold-lo); }
-
-/* Sign-in screens: navy medallion with a gold ring instead of an orange blob */
-html body .avatar-circle{
-  background:linear-gradient(160deg, #1b2350 0%, #0b1020 100%);
-  color:var(--gold);
-  border:1px solid rgba(255,214,130,.55);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.12), 0 0 0 5px rgba(255,194,74,.12), 0 16px 30px -12px rgba(8,10,28,.65);
-}
-html body .subtitle-divider .dot{ background:var(--gold-lo); }
-html body .subtitle-divider .line{ background:linear-gradient(90deg, transparent, rgba(242,154,46,.55)); }
-html body .subtitle-divider .line:last-child{ background:linear-gradient(270deg, transparent, rgba(242,154,46,.55)); }
-
-/* The role-picker button on the first screen uses the same gold as every other primary button */
-html body .primary-btn{
-  background:linear-gradient(180deg, var(--gold-hi) 0%, var(--gold) 46%, var(--gold-lo) 100%);
-  color:var(--gold-ink); border:1px solid rgba(160,90,0,.35); border-radius:14px;
-  text-shadow:0 1px 0 rgba(255,255,255,.35);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.65), inset 0 -2px 0 rgba(160,80,0,.18), 0 12px 24px -8px rgba(242,154,46,.6);
-}
-html body .primary-btn:hover{ filter:saturate(1.06) brightness(1.03); }
-html body .role-card{ border-radius:18px; }
-
-/* Links inside forms */
-html:not([data-theme="dark"]) body :is(.forgot-link,.back-link,.amber-link){ color:#8a4a08; }
-
-/* Tab titles and section headings get a little more presence */
-html body :is(.section-title,.page-title,.card-title){ letter-spacing:-.01em; }
-
-/* Number-heavy cards: crisp figures */
-html body :is(.mini-stat-number,.stat-number-lg){ font-feature-settings:"tnum" 1, "lnum" 1; }

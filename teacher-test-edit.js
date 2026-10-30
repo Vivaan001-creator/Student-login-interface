@@ -3,7 +3,7 @@
 import { db } from "./Firebase.js";
 import { collection, doc, getDoc, getDocs, setDoc, query, where, serverTimestamp, Timestamp }
   from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
-import { escapeHtml, tsMs, LETTERS, attemptId, fmtDuration, fmtDateTime } from "./tests-common.js";
+import { escapeHtml, tsMs, LETTERS, attemptId, fmtDuration, fmtDateTime, sameSection } from "./tests-common.js";
 import { readQuestions as parsePasted, SAMPLE_TEXT, SAMPLE_CSV, buildAiPrompt } from "./question-import.js";
 
 const $ = (id) => document.getElementById(id);
@@ -12,6 +12,8 @@ const params = new URLSearchParams(window.location.search);
 let testId = params.get("id") || "";
 let teacherName = "";
 let uid = 0;
+const classSections = {};   // class id -> sections the admin set for it
+let secToken = 0;
 
 const val = (id) => String($(id).value || "").trim();
 function setErr(key, msg) {
@@ -69,13 +71,14 @@ function readQuestions() {
 
 // ---------- validation ----------
 function validate(forPublish) {
-  ["subject", "class", "hours", "minutes", "start", "end", "marks"].forEach((k) => setErr(k, ""));
+  ["subject", "class", "section", "hours", "minutes", "start", "end", "marks"].forEach((k) => setErr(k, ""));
   $("e_form").textContent = "";
   let first = null;
   const bad = (key, msg) => { setErr(key, msg); if (!first) first = $("w_" + key); };
 
   if (val("f_subject").length < 2) bad("subject", "Enter the subject.");
   if (!val("f_class")) bad("class", "Choose the class.");
+  else if (!val("f_section")) bad("section", "Choose the section. Every test is made for one section.");
   const hours = parseInt($("f_hours").value, 10), mins = parseInt($("f_minutes").value, 10);
   if (!(hours >= 0 && hours <= 5)) bad("hours", "Hours must be 0 to 5.");
   if (!(mins >= 0 && mins <= 59)) bad("minutes", "Minutes must be 0 to 59.");
@@ -121,8 +124,10 @@ async function save(publish) {
     if (existing.exists() && existing.data().status === "published") { alert("This test is already published and cannot be changed."); btns.forEach((b) => { b.disabled = false; }); $("publishBtn").textContent = labelPub; return; }
 
     const meta = {
-      subject: val("f_subject"), title: val("f_title"), class: val("f_class"),
+      subject: val("f_subject"), title: val("f_title"), class: val("f_class"), section: val("f_section"),
       durationMinutes: v.duration, startAt: Timestamp.fromMillis(v.start), endAt: Timestamp.fromMillis(v.end),
+      // The answer key stays locked until the last student could have finished (plus 2 minutes).
+      keyOpenAt: Timestamp.fromMillis(v.end + v.duration * 60000 + 2 * 60000),
       questionCount: v.qs.length, marksPerQuestion: v.marks, totalMarks: v.qs.length * v.marks,
       status: publish ? "published" : "draft",
       createdBy: teacherId, createdByName: teacherName,
@@ -138,8 +143,8 @@ async function save(publish) {
     if (publish) {
       // One copy of the key per student. A student can read theirs only after they submit.
       const st = await getDocs(query(collection(db, "students"), where("class", "==", meta.class)));
-      for (const s of st.docs) await setDoc(doc(db, "testKeys", attemptId(testId, s.id)), { testId, roll: s.id, answers });
-      alert("Test published. Students in Class " + meta.class + " will see it on their dashboard.");
+      for (const s of st.docs.filter((d) => sameSection(d.data().section, meta.section))) await setDoc(doc(db, "testKeys", attemptId(testId, s.id)), { testId, roll: s.id, answers });
+      alert("Test published. Students in Class " + meta.class + ", Section " + meta.section + " will see it on their dashboard.");
       window.location.href = "teacher-tests.html";
     } else {
       window.history.replaceState(null, "", "teacher-test-edit.html?id=" + encodeURIComponent(testId));
@@ -154,6 +159,36 @@ async function save(publish) {
   $("publishBtn").textContent = labelPub;
 }
 
+// ---------- sections ----------
+// Sections come from the class (the admin sets them in Classes). If a class has none set, the sections its students actually have are used.
+async function sectionsFor(cls) {
+  if (classSections[cls] && classSections[cls].length) return classSections[cls];
+  const st = await getDocs(query(collection(db, "students"), where("class", "==", cls)));
+  const seen = new Map();
+  st.forEach((d) => { const s = String(d.data().section || "").trim(); if (s) seen.set(s.toUpperCase(), s); });
+  classSections[cls] = [...seen.values()].sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
+  return classSections[cls];
+}
+
+async function fillSections(cls, selected) {
+  const sel = $("f_section"), mine = ++secToken;
+  $("e_section").textContent = "";
+  if (!cls) { sel.innerHTML = '<option value="">Choose the class first</option>'; return; }
+  sel.innerHTML = '<option value="">Loading sections...</option>';
+  let list = [];
+  try { list = await sectionsFor(cls); } catch (e) { console.error(e); }
+  if (mine !== secToken) return;   // the teacher already picked another class
+  if (selected && !list.some((s) => sameSection(s, selected))) list = list.concat(selected);
+  if (!list.length) {
+    sel.innerHTML = '<option value="">No section found</option>';
+    $("e_section").textContent = "Class " + cls + " has no section yet. Ask the admin to add sections in Classes.";
+    return;
+  }
+  sel.innerHTML = '<option value="">Select section</option>' + list.map((s) => '<option value="' + escapeHtml(s) + '">Section ' + escapeHtml(s) + "</option>").join("");
+  const match = selected ? list.find((s) => sameSection(s, selected)) : "";
+  sel.value = match || "";
+}
+
 // ---------- load ----------
 async function init() {
   if (!teacherId) { window.location.replace("teacher-login.html"); return; }
@@ -163,6 +198,7 @@ async function init() {
     teacherName = t.data().name || "";
     const cs = await getDocs(query(collection(db, "classes"), where("teacherEmail", "==", t.data().email)));
     const classes = cs.docs.map((d) => d.id);
+    cs.docs.forEach((d) => { classSections[d.id] = (d.data().sections || []).map((s) => String(s).trim()).filter(Boolean); });
     let existing = null, paper = null, key = null;
     if (testId) {
       const tSnap = await getDoc(doc(db, "tests", testId));
@@ -179,7 +215,7 @@ async function init() {
       $("pageLoading").hidden = true; $("lockedNotice").hidden = false;
       $("lockedReport").setAttribute("href", "teacher-test-report.html?id=" + encodeURIComponent(testId));
       const host = document.createElement("div");
-      host.innerHTML = '<h2 class="t-head">' + escapeHtml(existing.subject) + ' &middot; Class ' + escapeHtml(existing.class) + "</h2>" +
+      host.innerHTML = '<h2 class="t-head">' + escapeHtml(existing.subject) + ' &middot; Class ' + escapeHtml(existing.class) + (existing.section ? " &middot; Section " + escapeHtml(existing.section) : "") + "</h2>" +
         '<p class="ep-hint">' + escapeHtml(fmtDuration(existing.durationMinutes)) + " | " + existing.totalMarks + " marks | Starts " + escapeHtml(fmtDateTime(tsMs(existing.startAt))) + "</p>" +
         (paper.questions || []).map((q, i) => '<article class="t-q"><h3>Question ' + (i + 1) + '</h3><p class="t-qtext">' + escapeHtml(q.q) + '</p><ul class="t-options">' +
           q.options.map((o, k) => '<li class="' + (k === key[i] ? "is-right" : "") + '"><b>' + LETTERS[k] + ".</b> <span>" + escapeHtml(o) + "</span>" + (k === key[i] ? '<em class="tag ok">Correct answer</em>' : "") + "</li>").join("") + "</ul></article>").join("");
@@ -189,6 +225,7 @@ async function init() {
 
     if (existing) {
       $("f_subject").value = existing.subject || ""; $("f_title").value = existing.title || ""; $("f_class").value = existing.class || "";
+      await fillSections(existing.class || "", existing.section || "");
       $("f_hours").value = Math.floor((existing.durationMinutes || 60) / 60); $("f_minutes").value = (existing.durationMinutes || 60) % 60;
       if (existing.startAt) $("f_start").value = toLocalInput(tsMs(existing.startAt));
       if (existing.endAt) $("f_end").value = toLocalInput(tsMs(existing.endAt));
@@ -199,6 +236,7 @@ async function init() {
       $("f_start").value = toLocalInput(now.getTime());
       $("f_end").value = toLocalInput(now.getTime() + 90 * 60000);
       addQuestion();
+      if (classes.length === 1) { $("f_class").value = classes[0]; await fillSections(classes[0], ""); }
     }
     $("pageLoading").hidden = true; $("editForm").hidden = false; updateTotals();
   } catch (error) {
@@ -286,7 +324,7 @@ function refreshPrompt() {
   $("qiPrompt").value = buildAiPrompt({ subject: val("f_subject"), cls: val("f_class"), topic: val("qiTopic"), count: $("qiCount").value });
 }
 ["qiTopic", "qiCount", "f_subject", "f_class"].forEach((id) => $(id).addEventListener("input", refreshPrompt));
-$("f_class").addEventListener("change", refreshPrompt);
+$("f_class").addEventListener("change", () => { fillSections(val("f_class"), ""); refreshPrompt(); });
 $("qiBtnAi").addEventListener("click", refreshPrompt);
 $("qiCopy").addEventListener("click", async () => {
   refreshPrompt();

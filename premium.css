@@ -1,0 +1,67 @@
+/* premium.css - shared premium layer for login + dashboard pages. Loaded last, so it refines the page styles. */
+html body ::selection{background:var(--amber,#ffb347);color:#1a1203}
+html body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+html{scrollbar-width:thin}
+
+/* ---------- LOGIN PAGES ---------- */
+html body:has(.login-card)::before,html body:has(.login-card)::after{content:"";position:fixed;z-index:0;border-radius:50%;filter:blur(90px);pointer-events:none;opacity:.5}
+html body:has(.login-card)::before{width:380px;height:380px;top:-120px;right:-100px;background:var(--purple,#8a6fe8)}
+html body:has(.login-card)::after{width:340px;height:340px;bottom:-120px;left:-100px;background:var(--amber,#ffb347);opacity:.28}
+html[data-theme=light] body:has(.login-card)::before,html[data-theme=light] body:has(.login-card)::after{opacity:.22}
+html body .login-card{position:relative;z-index:1;border-radius:30px;box-shadow:0 40px 80px -20px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.08)}
+html body .login-card::before{content:"";position:absolute;inset:-1px;border-radius:inherit;padding:1px;background:linear-gradient(150deg,rgba(255,179,71,.7),transparent 38%,rgba(138,111,232,.6));-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none}
+html body .brand-title,html body .welcome-title{letter-spacing:-.02em}
+html body .input-wrap input{border-radius:14px;padding-top:14px;padding-bottom:14px}
+html body .input-wrap input:focus{box-shadow:0 0 0 4px rgba(255,179,71,.2)}
+html body .login-btn{position:relative;overflow:hidden;border-radius:14px;letter-spacing:.2px;box-shadow:0 12px 30px -8px rgba(255,140,66,.55)}
+html body .login-btn::after{content:"";position:absolute;top:0;left:-70%;width:45%;height:100%;background:linear-gradient(120deg,transparent,rgba(255,255,255,.45),transparent);transform:skewX(-20deg);transition:left .6s}
+html body .login-btn:hover{box-shadow:0 18px 38px -8px rgba(255,140,66,.7)}
+html body .login-btn:hover::after{left:130%}
+html body .login-btn:active{transform:translateY(1px);box-shadow:0 6px 16px -6px rgba(255,140,66,.6)}
+html body .back-link{padding:10px 18px;border-radius:999px;border:1px solid var(--card-border,rgba(255,255,255,.12));background:var(--card-bg,rgba(255,255,255,.04));margin-top:14px}
+html body .back-link:hover{border-color:var(--amber,#ffb347);transform:translateY(-1px)}
+html body .secure-login{opacity:.85}
+
+/* ---------- DASHBOARDS ---------- */
+html body .top-header{border-radius:0 0 34px 34px;box-shadow:0 24px 50px -22px rgba(14,19,38,.7);background-image:radial-gradient(520px 240px at 90% -20%,rgba(138,111,232,.45),transparent 65%),radial-gradient(420px 220px at 0 120%,rgba(255,179,71,.28),transparent 65%),linear-gradient(135deg,#161d3a,#0e1326)}
+html body .top-header h1{letter-spacing:-.02em}
+html body .streak-chip{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-radius:18px}
+html body .header-icon-btn{backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.16)}
+html body .card,html body .stat-card-lg,html body .action-item,html body .mini-stat{border-radius:24px;border:1px solid var(--surface-card-border,rgba(36,31,20,.07));box-shadow:0 18px 40px -22px rgba(20,24,50,.35);transition:transform .25s,box-shadow .25s,border-color .25s}
+html body .action-item:hover,html body .stat-card-lg:hover{transform:translateY(-4px);border-color:rgba(255,179,71,.55);box-shadow:0 26px 50px -22px rgba(20,24,50,.5)}
+html body .card-title h2{letter-spacing:-.01em}
+html body .clock-card{border-radius:22px;border:1px solid rgba(255,255,255,.1);background-image:radial-gradient(300px 120px at 100% 0,rgba(255,179,71,.3),transparent 70%),linear-gradient(120deg,#161d3a,#0e1326);box-shadow:0 18px 40px -20px rgba(14,19,38,.8)}
+html body .bottom-nav{border-radius:26px;backdrop-filter:blur(18px) saturate(1.4);-webkit-backdrop-filter:blur(18px) saturate(1.4);border:1px solid rgba(255,255,255,.12);box-shadow:0 22px 50px -14px rgba(0,0,0,.55)}
+html body .tab-panel{animation:premIn .35s cubic-bezier(.16,.84,.44,1)}
+@keyframes premIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+html body button:focus-visible,html body a:focus-visible,html body input:focus-visible,html body select:focus-visible{outline:2px solid var(--amber,#ffb347);outline-offset:2px}
+@media(prefers-reduced-motion:reduce){html body *{animation:none!important;transition:none!important}}
+
+/* ---------- OTHER PAGES (forms, lists, tests, games) ---------- */
+html body .form-card,html body .table-card,html body .tt-q,html body .list-card{border-radius:24px;box-shadow:0 18px 40px -22px rgba(20,24,50,.35)}
+html body .form-card input:focus,html body .form-card select:focus,html body .form-card textarea:focus{border-color:var(--amber,#ffb347);box-shadow:0 0 0 4px rgba(255,179,71,.2);outline:none}
+html body h1,html body h2{letter-spacing:-.02em}
+html body table{border-collapse:separate;border-spacing:0 6px}
+
+/* ---------- NO TEXT SELECTION / LONG-PRESS MENU (typing fields stay usable) ---------- */
+html,html body,html body *{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}
+html body input,html body textarea,html body [contenteditable=true]{-webkit-user-select:text;user-select:text}
+html body img{-webkit-user-drag:none;user-drag:none}
+
+/* ---------- ALL OTHER PAGES (forms, tables, tests, games, modals) ---------- */
+html body .form-card,html body .modal-card,html body .classes-card,html body .ep-card,html body .g-card,html body .tt-q{border-radius:24px;box-shadow:0 18px 40px -22px rgba(20,24,50,.4)}
+html body .modal-backdrop{backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+html body .modal-card{box-shadow:0 40px 80px -24px rgba(0,0,0,.6);border:1px solid rgba(255,179,71,.25)}
+html body .field input,html body .field select,html body .field textarea,html body .ep-field input,html body .ep-field select,html body .ep-field textarea,html body .input-wrap select{border-radius:14px;transition:border-color .2s,box-shadow .2s}
+html body .field input:focus,html body .field select:focus,html body .field textarea:focus,html body .ep-field input:focus,html body .ep-field select:focus,html body .ep-field textarea:focus{border-color:var(--amber,#ffb347);box-shadow:0 0 0 4px rgba(255,179,71,.18);outline:none}
+html body .btn-primary,html body .ep-btn.primary,html body .btn.primary{position:relative;overflow:hidden;border-radius:14px;background:linear-gradient(135deg,var(--amber,#ffb347),var(--coral,#ff6f61));color:#241608;font-weight:700;border:0;box-shadow:0 12px 28px -10px rgba(255,140,66,.6);transition:transform .2s,box-shadow .2s}
+html body .btn-primary:hover,html body .ep-btn.primary:hover,html body .btn.primary:hover{transform:translateY(-2px);box-shadow:0 18px 34px -10px rgba(255,140,66,.75)}
+html body .btn-secondary,html body .ep-btn:not(.primary){border-radius:14px}
+html body .table-wrapper{border-radius:22px;border:1px solid var(--surface-card-border,rgba(36,31,20,.08));box-shadow:0 18px 40px -26px rgba(20,24,50,.4);overflow:auto}
+html body .table-wrapper th{letter-spacing:.06em;text-transform:uppercase;font-size:11px}
+html body .table-wrapper tbody tr{transition:background .2s}
+html body .section-title,html body .form-section-title{letter-spacing:-.01em}
+html body .tt-bar,html body .ep-bar{border-radius:0 0 22px 22px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+html body .tt-progress{border-radius:999px;overflow:hidden}
+html body .tt-q{border:1px solid var(--ep-line,rgba(36,31,20,.1))}
+html body .tt-q:hover{border-color:rgba(255,179,71,.5)}

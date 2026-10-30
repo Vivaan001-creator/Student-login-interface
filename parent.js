@@ -1,4 +1,7 @@
 import { db } from "./Firebase.js";
+import { claimParent, markLoggedIn, portalLogout } from "./portal-auth.js";
+
+let loginFails = 0, loginLockedUntil = 0;
 import {
   doc,
   getDoc,
@@ -120,27 +123,24 @@ async function parentLogin() {
     alert("Please enter both Roll Number and Mobile Number.");
     return;
   }
+  if (Date.now() < loginLockedUntil) {
+    alert("Too many wrong tries. Please wait " + Math.ceil((loginLockedUntil - Date.now()) / 1000) + " seconds.");
+    return;
+  }
 
   try {
+    // The proof of login is checked by the database rules, not by this page.
+    const claim = await claimParent({ roll, contact });
+    if (!claim.ok) {
+      loginFails++;
+      if (loginFails >= 5) { loginFails = 0; loginLockedUntil = Date.now() + 60000; }
+      alert(claim.message);
+      return;
+    }
+    loginFails = 0;
+
     const studentSnap = await getDoc(doc(db, "students", roll));
-
-    if (!studentSnap.exists()) {
-      alert("This Roll Number was not found in the system.");
-      return;
-    }
-
-    const student = studentSnap.data();
-    const storedContact = String(student.contactNumber || "").trim();
-
-    if (!storedContact) {
-      alert("No mobile number is registered for this Roll Number. Please contact the tuition office.");
-      return;
-    }
-
-    if (storedContact !== contact) {
-      alert("Mobile number does not match. Please try again.");
-      return;
-    }
+    const student = studentSnap.data() || {};
 
     // Record this login so it shows on the admin's Login Activity page.
     // A tracking problem must never stop the parent from logging in.
@@ -156,7 +156,7 @@ async function parentLogin() {
       console.error("Login tracking failed:", logErr);
     }
 
-    localStorage.setItem("parentLoggedIn", "true");
+    markLoggedIn("parentLoggedIn");
     localStorage.setItem("parentContact", contact);
     localStorage.setItem("parentActiveRoll", roll);
 
@@ -165,7 +165,7 @@ async function parentLogin() {
 
   } catch (error) {
     console.error(error);
-    alert(error.message);
+    alert("Could not log in right now. Please try again.");
   }
 }
 window.parentLogin = parentLogin;
@@ -190,10 +190,8 @@ if (window.location.pathname.includes("parent-dashboard.html")) {
 // ==========================================================
 // Logout
 // ==========================================================
-function parentLogout() {
-  localStorage.removeItem("parentLoggedIn");
-  localStorage.removeItem("parentContact");
-  localStorage.removeItem("parentActiveRoll");
+async function parentLogout() {
+  await portalLogout(["parentLoggedIn", "parentContact", "parentActiveRoll"]);
   window.location.replace("parent-login.html");
 }
 window.parentLogout = parentLogout;

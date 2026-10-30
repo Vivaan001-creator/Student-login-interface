@@ -6,6 +6,12 @@ export const tsMs = (v) => (v && typeof v.toMillis === "function" ? v.toMillis()
 export const LETTERS = ["A", "B", "C", "D"];
 export const attemptId = (testId, roll) => testId + "_" + roll;
 
+// ---------- Section ----------
+// A test is made for one class AND one section. Older tests have no section and stay visible to the whole class.
+export const sameSection = (a, b) => String(a || "").trim().toUpperCase() === String(b || "").trim().toUpperCase();
+export const testIsForStudent = (test, student) => !!test && !!student && test.class === student.class && (!test.section || sameSection(test.section, student.section));
+export const classLabel = (t) => "Class " + (t.class || "-") + (t.section ? " \u00b7 Section " + t.section : "");
+
 export function fmtDuration(minutes) {
   const m = Math.max(0, Math.round(Number(minutes) || 0));
   const h = Math.floor(m / 60), r = m % 60;
@@ -51,6 +57,19 @@ export function openState(test, now) {
   if (now < start) return "upcoming";
   if (now > end) return "closed";
   return "live";
+}
+
+// When the answer key may be shown. The database refuses to give it out earlier, so nobody can
+// pass the answers to a classmate who is still taking the test. Older tests have no keyOpenAt.
+export function keyOpenMs(test) {
+  if (test && test.keyOpenAt) return tsMs(test.keyOpenAt);
+  return tsMs(test && test.endAt) + ((test && test.durationMinutes) || 0) * 60000;
+}
+
+// A teacher can give a student who missed the test a new time window (testReschedules/{testId}_{roll}).
+// The questions and the time limit stay the same. Pass the test and that student's reschedule (or null).
+export function withReschedule(test, r) {
+  return r && r.startAt && r.endAt ? { ...test, startAt: r.startAt, endAt: r.endAt, rescheduled: true } : test;
 }
 
 const ARROW = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>';

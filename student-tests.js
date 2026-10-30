@@ -10,7 +10,7 @@ const roll = localStorage.getItem("studentRoll");
   try {
     const s = await getDoc(doc(db, "students", roll));
     if (!s.exists()) { window.location.replace("student-login.html"); return; }
-    await startList({ host: $("list"), emptyEl: $("emptyState"), roll, cls: s.data().class, mode: "student" });
+    await startList({ host: $("list"), emptyEl: $("emptyState"), roll, cls: s.data().class, section: s.data().section, mode: "student" });
     $("pageLoading").hidden = true; $("content").hidden = false;
   } catch (error) {
     console.error(error);

@@ -1,6 +1,30 @@
 {
-  "version": "2026.10.15",
+  "version": "2026.10.30",
   "releases": [
+    {
+      "version": "2026.10.30",
+      "date": "2026-10-30",
+      "roles": [
+        "student"
+      ],
+      "title": "Safer login",
+      "notes": [
+        "Login now also asks for the last 4 digits of your parent's registered mobile number, with your roll number and date of birth.",
+        "You stay logged in for 12 hours, then log in again. Your marks and fee details are now private to you and your parents."
+      ]
+    },
+    {
+      "version": "2026.10.30",
+      "date": "2026-10-30",
+      "roles": [
+        "parent"
+      ],
+      "title": "Safer login",
+      "notes": [
+        "Your child's marks, attendance and fee details can now be opened only after you log in with the roll number and registered mobile number.",
+        "You stay logged in for 12 hours, then log in again."
+      ]
+    },
     {
       "version": "2026.10.15",
       "date": "2026-10-15",
