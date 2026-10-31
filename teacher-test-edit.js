@@ -126,8 +126,6 @@ async function save(publish) {
     const meta = {
       subject: val("f_subject"), title: val("f_title"), class: val("f_class"), section: val("f_section"),
       durationMinutes: v.duration, startAt: Timestamp.fromMillis(v.start), endAt: Timestamp.fromMillis(v.end),
-      // The answer key stays locked until the last student could have finished (plus 2 minutes).
-      keyOpenAt: Timestamp.fromMillis(v.end + v.duration * 60000 + 2 * 60000),
       questionCount: v.qs.length, marksPerQuestion: v.marks, totalMarks: v.qs.length * v.marks,
       status: publish ? "published" : "draft",
       createdBy: teacherId, createdByName: teacherName,
@@ -160,14 +158,17 @@ async function save(publish) {
 }
 
 // ---------- sections ----------
-// Sections come from the class (the admin sets them in Classes). If a class has none set, the sections its students actually have are used.
+// The list is the sections set for the class (Classes page) PLUS every section that students of that class really have.
+// So a student who was moved to section B shows up even if the class list only says A.
+const sectionCache = {};
 async function sectionsFor(cls) {
-  if (classSections[cls] && classSections[cls].length) return classSections[cls];
-  const st = await getDocs(query(collection(db, "students"), where("class", "==", cls)));
+  if (sectionCache[cls]) return sectionCache[cls];
   const seen = new Map();
-  st.forEach((d) => { const s = String(d.data().section || "").trim(); if (s) seen.set(s.toUpperCase(), s); });
-  classSections[cls] = [...seen.values()].sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
-  return classSections[cls];
+  (classSections[cls] || []).forEach((s) => seen.set(s.toUpperCase(), s));
+  const st = await getDocs(query(collection(db, "students"), where("class", "==", cls)));
+  st.forEach((d) => { const s = String(d.data().section || "").trim(); if (s && !seen.has(s.toUpperCase())) seen.set(s.toUpperCase(), s); });
+  sectionCache[cls] = [...seen.values()].sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
+  return sectionCache[cls];
 }
 
 async function fillSections(cls, selected) {
