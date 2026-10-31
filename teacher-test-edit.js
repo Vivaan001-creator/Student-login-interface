@@ -158,15 +158,15 @@ async function save(publish) {
 }
 
 // ---------- sections ----------
-// The list is the sections set for the class (Classes page) PLUS every section that students of that class really have.
-// So a student who was moved to section B shows up even if the class list only says A.
+// Only sections that really have students in this class are listed. If the class has no students yet,
+// the sections set for it on the Classes page are used instead.
 const sectionCache = {};
 async function sectionsFor(cls) {
   if (sectionCache[cls]) return sectionCache[cls];
   const seen = new Map();
-  (classSections[cls] || []).forEach((s) => seen.set(s.toUpperCase(), s));
   const st = await getDocs(query(collection(db, "students"), where("class", "==", cls)));
   st.forEach((d) => { const s = String(d.data().section || "").trim(); if (s && !seen.has(s.toUpperCase())) seen.set(s.toUpperCase(), s); });
+  if (!seen.size) (classSections[cls] || []).forEach((s) => seen.set(s.toUpperCase(), s));
   sectionCache[cls] = [...seen.values()].sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
   return sectionCache[cls];
 }
